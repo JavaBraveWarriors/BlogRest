@@ -1,30 +1,25 @@
 package com.yeutushenka;
 
 
-import javax.persistence.*;
 import java.util.Objects;
 
-@Entity
-@Table(name = "TAG")
+
 public class Tag {
 
 
-    @Id
-    @Column(name = "ID")
-    @GeneratedValue
     private Long id;
 
-    @Column(name = "TITLE")
     private String title;
 
-    @Column(name = "PATH_IMAGE")
     private String pathImage;
 
-    public Tag(String title) {
+    public Tag(Long id, String title) {
+        this.id = id;
         this.title = title;
     }
 
-    public Tag(String title, String pathImage) {
+    public Tag(Long id, String title, String pathImage) {
+        this.id = id;
         this.title = title;
         this.pathImage = pathImage;
     }

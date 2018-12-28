@@ -1,62 +1,39 @@
 package com.yeutushenka;
 
 
-import javax.persistence.*;
+import java.time.LocalDate;
 import java.util.Objects;
 
-@Entity
-@Table(name = "USER")
-public class User {
+public class Author {
 
-    @Id
-    @Column(name = "ID")
-    @GeneratedValue
     private Long id;
 
-    @Column(name = "MAIL")
     private String mail;
 
-    @Column(name = "LOGIN")
     private String login;
 
-    @Column(name = "PASSWORD")
     private String password;
 
-    @Column(name = "FIRST_NAME")
     private String firstName;
 
-    @Column(name = "LAST_NAME")
     private String lastName;
 
-    @Column(name = "REGISTRATION_TIME")
-    private String registrationTime;
+    private LocalDate registrationTime;
 
-    @Column(name = "PHONE")
     private String phone;
-
-    @Column(name = "DESCRIPTION")
     private String description;
 
-    public User(String mail, String login, String password, String firstName, String lastName, String registrationTime, String description) {
+    public Author(Long id, String mail, String login, String password, String firstName, String lastName, String description, String phone) {
+        this.id = id;
         this.mail = mail;
         this.login = login;
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.registrationTime = registrationTime;
         this.description = description;
+        this.phone = phone;
     }
 
-    public User(String mail, String login, String password, String firstName, String lastName, String registrationTime, String phone, String description) {
-        this.mail = mail;
-        this.login = login;
-        this.password = password;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.registrationTime = registrationTime;
-        this.phone = phone;
-        this.description = description;
-    }
 
     public Long getId() {
         return id;
@@ -106,11 +83,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public String getRegistrationTime() {
+    public LocalDate getRegistrationTime() {
         return registrationTime;
     }
 
-    public void setRegistrationTime(String registrationTime) {
+    public void setRegistrationTime(LocalDate registrationTime) {
         this.registrationTime = registrationTime;
     }
 
@@ -133,17 +110,17 @@ public class User {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof User)) return false;
-        User user = (User) o;
-        return Objects.equals(getId(), user.getId()) &&
-                Objects.equals(getMail(), user.getMail()) &&
-                Objects.equals(getLogin(), user.getLogin()) &&
-                Objects.equals(getPassword(), user.getPassword()) &&
-                Objects.equals(getFirstName(), user.getFirstName()) &&
-                Objects.equals(getLastName(), user.getLastName()) &&
-                Objects.equals(getRegistrationTime(), user.getRegistrationTime()) &&
-                Objects.equals(getPhone(), user.getPhone()) &&
-                Objects.equals(getDescription(), user.getDescription());
+        if (!(o instanceof Author)) return false;
+        Author author = (Author) o;
+        return Objects.equals(getId(), author.getId()) &&
+                Objects.equals(getMail(), author.getMail()) &&
+                Objects.equals(getLogin(), author.getLogin()) &&
+                Objects.equals(getPassword(), author.getPassword()) &&
+                Objects.equals(getFirstName(), author.getFirstName()) &&
+                Objects.equals(getLastName(), author.getLastName()) &&
+                Objects.equals(getRegistrationTime(), author.getRegistrationTime()) &&
+                Objects.equals(getPhone(), author.getPhone()) &&
+                Objects.equals(getDescription(), author.getDescription());
     }
 
     @Override
@@ -153,7 +130,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "User{" +
+        return "Author{" +
                 "id=" + id +
                 ", mail='" + mail + '\'' +
                 ", login='" + login + '\'' +

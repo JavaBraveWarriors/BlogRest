@@ -1,47 +1,36 @@
 package com.yeutushenka;
 
 
-import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 
-@Entity
-@Table(name = "TAG")
 public class Post {
 
-    @Id
-    @Column(name = "ID")
-    @GeneratedValue
     private Long id;
 
-    @Column(name = "TITLE")
     private String title;
 
-    @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "TEXT")
     private String text;
 
-    @Column(name = "CREATED_TIME")
     private LocalDate date;
 
-    @Column(name = "PATH_IMAGE")
     private String pathImage;
 
-    public Post(String title, String description, String text, LocalDate date) {
-        this.title = title;
-        this.description = description;
-        this.text = text;
-        this.date = date;
-    }
+    private Long authorId;
 
-    public Post(String title, String description, String text, LocalDate date, String pathImage) {
+    private List<Tag> Tags;
+
+
+    public Post(Long id, String title, String description, String text, String pathImage, Long authorId) {
+        this.id = id;
         this.title = title;
         this.description = description;
         this.text = text;
-        this.date = date;
         this.pathImage = pathImage;
+        this.authorId = authorId;
     }
 
     public Long getId() {
@@ -92,6 +81,22 @@ public class Post {
         this.pathImage = pathImage;
     }
 
+    public List<Tag> getTags() {
+        return Tags;
+    }
+
+    public void setTags(List<Tag> tags) {
+        Tags = tags;
+    }
+
+    public Long getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(Long authorId) {
+        this.authorId = authorId;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -102,12 +107,14 @@ public class Post {
                 Objects.equals(getDescription(), post.getDescription()) &&
                 Objects.equals(getText(), post.getText()) &&
                 Objects.equals(getDate(), post.getDate()) &&
-                Objects.equals(getPathImage(), post.getPathImage());
+                Objects.equals(getPathImage(), post.getPathImage()) &&
+                Objects.equals(getAuthorId(), post.getAuthorId()) &&
+                Objects.equals(getTags(), post.getTags());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getTitle(), getDescription(), getText(), getDate(), getPathImage());
+        return Objects.hash(getId(), getTitle(), getDescription(), getText(), getDate(), getPathImage(), getAuthorId(), getTags());
     }
 
     @Override
@@ -119,6 +126,8 @@ public class Post {
                 ", text='" + text + '\'' +
                 ", date=" + date +
                 ", pathImage='" + pathImage + '\'' +
+                ", authorId=" + authorId +
+                ", Tags=" + Tags +
                 '}';
     }
 }
