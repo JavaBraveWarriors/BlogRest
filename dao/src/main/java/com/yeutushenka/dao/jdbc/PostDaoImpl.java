@@ -1,6 +1,7 @@
 package com.yeutushenka.dao.jdbc;
 
 import com.yeutushenka.Post;
+import com.yeutushenka.ResponseStatus;
 import com.yeutushenka.dao.PostDao;
 import com.yeutushenka.dao.jdbc.mapper.PostRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,9 @@ public class PostDaoImpl implements PostDao {
 
     @Value("${post.selectByUserId}")
     String getAllPostsByAuthorIdSql;
+
+    @Value("${post.selectByInitialIdAndQuantity}")
+    String getAllPostsByInitialIdAndQuantitySql;
 
     @Value("${post.selectByTag}")
     String getAllPostsByTagSql;
@@ -69,13 +73,23 @@ public class PostDaoImpl implements PostDao {
     }
 
     @Override
-    public List<Post> getAllPostsByUserId(Long userId) throws DataAccessException {
+    public List<Post> getAllPostsByAuthorId(Long userId) throws DataAccessException {
         SqlParameterSource parameterSource = new MapSqlParameterSource(AUTHOR_ID, userId);
         return jdbcTemplate.queryForList(getAllPostsByAuthorIdSql, parameterSource, Post.class);
     }
 
     @Override
-    public List<Post> getAllPostsByTagId(Long userId, Long tagId) throws DataAccessException {
+    public List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws DataAccessException {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue("initial", initial);
+        parameterSource.addValue("quantity", quantity);
+        return jdbcTemplate.queryForList(getAllPostsByInitialIdAndQuantitySql, parameterSource, Post.class);
+
+    }
+
+
+    @Override
+    public List<Post> getAllPostsByAuthorIdAndTagId(Long userId, Long tagId) throws DataAccessException {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(AUTHOR_ID, userId);
         parameterSource.addValue("tag_id", tagId);
         return jdbcTemplate.queryForList(getAllPostsByAuthorIdSql, parameterSource, Post.class);
@@ -97,7 +111,7 @@ public class PostDaoImpl implements PostDao {
     }
 
     @Override
-    public int updatePost(Post post) throws DataAccessException {
+    public ResponseStatus updatePost(Post post) throws DataAccessException {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue(ID, post.getId());
         parameterSource.addValue(TITLE, post.getTitle());
@@ -106,14 +120,21 @@ public class PostDaoImpl implements PostDao {
         parameterSource.addValue(CREATED_DATE, post.getTitle());
         parameterSource.addValue(PATH_IMAGE, post.getTitle());
         parameterSource.addValue(AUTHOR_ID, post.getTitle());
-        return jdbcTemplate.update(updatePostSql, parameterSource);
+        if (jdbcTemplate.update(updatePostSql, parameterSource) == 0)
+            return ResponseStatus.ERROR;
+        else
+            return ResponseStatus.SUCCESS;
 
     }
 
     @Override
-    public int deletePost(Long id) throws DataAccessException {
+    public ResponseStatus deletePost(Long id) throws DataAccessException {
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
-        return jdbcTemplate.update(deletePostSql, parameterSource);
+        if (jdbcTemplate.update(deletePostSql, parameterSource) == 0)
+            return ResponseStatus.ERROR;
+        else
+            return ResponseStatus.SUCCESS;
+
     }
 
     @Override
@@ -123,7 +144,7 @@ public class PostDaoImpl implements PostDao {
     }
 
     @Override
-    public boolean checkPostByUserId(Long userId) {
+    public boolean checkPostByAuthorId(Long userId) {
         SqlParameterSource parameterSource = new MapSqlParameterSource(AUTHOR_ID, userId);
         return jdbcTemplate.queryForObject(checkPostByUserIdSql, parameterSource, boolean.class);
     }

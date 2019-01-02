@@ -7,8 +7,8 @@ public class NotFoundException extends RuntimeException {
 
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public NotFoundException(String massage) {
-        super(massage);
-        LOGGER.error(massage);
+    public NotFoundException(String message) {
+        super(message);
+        LOGGER.error(message);
     }
 }

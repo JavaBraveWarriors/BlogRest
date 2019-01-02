@@ -1,6 +1,7 @@
 package com.yeutushenka.controller.handler;
 
 import com.yeutushenka.ExceptionResponse;
+import com.yeutushenka.exception.InternalServerException;
 import com.yeutushenka.exception.NotFoundException;
 import com.yeutushenka.exception.ValidationException;
 import org.springframework.dao.DataAccessException;
@@ -40,6 +41,14 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
                 request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(InternalServerException.class)
+    public final ResponseEntity<ExceptionResponse> handleInternalServerException(InternalServerException ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
+                request.getDescription(false));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
