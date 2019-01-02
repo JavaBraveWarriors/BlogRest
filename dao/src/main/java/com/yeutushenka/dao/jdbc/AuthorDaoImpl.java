@@ -70,34 +70,15 @@ public class AuthorDaoImpl implements AuthorDao {
     @Override
     public Long addAuthor(Author author) throws DataAccessException {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue(ID, author.getId());
-        parameterSource.addValue(MAIL, author.getMail());
-        parameterSource.addValue(LOGIN, author.getLogin());
-        parameterSource.addValue(PASSWORD, author.getPassword());
-        parameterSource.addValue(FIRST_NAME, author.getFirstName());
-        parameterSource.addValue(LAST_NAME, author.getLastName());
-        parameterSource.addValue(REGISTRATION_DATE, author.getRegistrationTime());
-        parameterSource.addValue(PHONE, author.getPhone());
-        parameterSource.addValue(DESCRIPTION, author.getDescription());
+        MapSqlParameterSource parameterSource = getParameterSourceAuthor(author);
         jdbcTemplate.update(addAuthorSql, parameterSource, keyHolder);
         return keyHolder.getKey().longValue();
     }
 
     @Override
     public int updateAuthor(Author author) throws DataAccessException {
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue(ID, author.getId());
-        parameterSource.addValue(MAIL, author.getMail());
-        parameterSource.addValue(LOGIN, author.getLogin());
-        parameterSource.addValue(PASSWORD, author.getPassword());
-        parameterSource.addValue(FIRST_NAME, author.getFirstName());
-        parameterSource.addValue(LAST_NAME, author.getLastName());
-        parameterSource.addValue(REGISTRATION_DATE, author.getRegistrationTime());
-        parameterSource.addValue(PHONE, author.getPhone());
-        parameterSource.addValue(DESCRIPTION, author.getDescription());
+        MapSqlParameterSource parameterSource = getParameterSourceAuthor(author);
         return jdbcTemplate.update(updateAuthorSql, parameterSource);
-
     }
 
     @Override
@@ -119,6 +100,19 @@ public class AuthorDaoImpl implements AuthorDao {
         return jdbcTemplate.queryForObject(checkAuthorByIdSql, parameterSource, boolean.class);
     }
 
+    private MapSqlParameterSource getParameterSourceAuthor(Author author) {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue(ID, author.getId());
+        parameterSource.addValue(MAIL, author.getMail());
+        parameterSource.addValue(LOGIN, author.getLogin());
+        parameterSource.addValue(PASSWORD, author.getPassword());
+        parameterSource.addValue(FIRST_NAME, author.getFirstName());
+        parameterSource.addValue(LAST_NAME, author.getLastName());
+        parameterSource.addValue(REGISTRATION_DATE, author.getRegistrationTime());
+        parameterSource.addValue(PHONE, author.getPhone());
+        parameterSource.addValue(DESCRIPTION, author.getDescription());
+        return parameterSource;
+    }
 
     @Autowired
     public void setTagRowMapper(AuthorRowMapper authorRowMapper) {

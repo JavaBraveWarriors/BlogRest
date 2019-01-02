@@ -1,26 +1,48 @@
 package com.yeutushenka;
 
 
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Entity
 public class Author {
-
+    @Id
+    @GeneratedValue
     private Long id;
 
+    @NotNull
+    @Size(max = 100, message = "mail should be less than 100 characters")
+    @Email
     private String mail;
 
+    @NotNull
+    @Size(max = 100, message = "login should be less than 100 characters")
     private String login;
 
+    @NotNull
+    @Size(max = 255, message = "password should be less than 255 characters")
     private String password;
 
+    @NotNull
+    @Size(max = 45, message = "firstName should be less than 255 characters")
     private String firstName;
 
+    @NotNull
+    @Size(max = 45, message = "lastName should be less than 255 characters")
     private String lastName;
 
+    @NotNull
     private LocalDate registrationTime;
 
     private String phone;
+
+    @NotNull
     private String description;
 
     public Author(Long id, String mail, String login, String password, String firstName, String lastName, String description, String phone) {

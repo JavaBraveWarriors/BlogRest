@@ -34,14 +34,7 @@
         <property name="dataSource" ref="dataSource" />
     </bean>
 
-    <bean id="userDao" class="com.yeutushenka.dao.jdbc.AuthorDaoImpl">
-    </bean>
 
-    <bean id="fileDao" class="com.yeutushenka.dao.jdbc.PostDaoImpl">
-    </bean>
-
-    <bean id="categoryDao" class="com.yeutushenka.dao.jdbc.TagDaoImpl">
-    </bean>
 
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
         <property name="messageConverters">
