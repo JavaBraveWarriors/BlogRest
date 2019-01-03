@@ -21,11 +21,12 @@ public class AuthorRestController {
     private PostService postService;
 
     @Autowired
-    public AuthorRestController(AuthorService authorService) {
+    public AuthorRestController(AuthorService authorService, PostService postService) {
         this.authorService = authorService;
+        this.postService = postService;
     }
 
-    @GetMapping("/all")
+    @GetMapping("")
     @ResponseStatus(value = HttpStatus.OK)
     public List<Author> getAllAuthors() {
         return authorService.getAllAuthors();

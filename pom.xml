@@ -32,6 +32,7 @@
         <jsonassert.version>1.5.0</jsonassert.version>
         <checkstyle-plugin.version>3.0.0</checkstyle-plugin.version>
         <hibernate-validator.version>6.0.13.Final</hibernate-validator.version>
+        <jetty.version>9.4.12.v20180830</jetty.version>
     </properties>
 
     <dependencyManagement>
@@ -52,6 +53,7 @@
                 <artifactId>service</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <!--tests-->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
@@ -73,7 +75,7 @@
                 <version>${mockito-all.version}</version>
                 <scope>test</scope>
             </dependency>
-
+            <!--spring-->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
@@ -105,14 +107,14 @@
                 <artifactId>jackson-databind</artifactId>
                 <version>${jackson.databind-version}</version>
             </dependency>
-            <dependency>
+            <!--<dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-jpa</artifactId>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
-            </dependency>
+            </dependency>-->
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
@@ -134,7 +136,7 @@
                 <artifactId>log4j-jcl</artifactId>
                 <version>${log4j2.version}</version>
             </dependency>
-
+            <!--DataBase-->
             <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
@@ -146,15 +148,32 @@
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.skyscreamer</groupId>
                 <artifactId>jsonassert</artifactId>
                 <version>${jsonassert.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.jayway.jsonpath</groupId>
+                <artifactId>json-path</artifactId>
+                <version>${json-path.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-server</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-webapp</artifactId>
+                <version>${jetty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.jetty</groupId>
+                <artifactId>jetty-jsp</artifactId>
+                <version>${jetty.version}</version>
             </dependency>
         </dependencies>
 
