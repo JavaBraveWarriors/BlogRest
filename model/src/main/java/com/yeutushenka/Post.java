@@ -23,6 +23,8 @@ public class Post {
 
     private List<Tag> Tags;
 
+    public Post() {
+    }
 
     public Post(Long id, String title, String description, String text, String pathImage, Long authorId) {
         this.id = id;

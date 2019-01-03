@@ -33,7 +33,7 @@ public class AuthorRestController {
     }
 
     @GetMapping("/{id}")
-    @ResponseStatus(value = HttpStatus.FOUND)
+    @ResponseStatus(value = HttpStatus.OK)
     public Author getAuthorById(@PathVariable(value = "id") Long userId) {
         return authorService.getAuthorById(userId);
     }
@@ -51,10 +51,12 @@ public class AuthorRestController {
     }
 
     @GetMapping("/login/{login}")
-    @ResponseStatus(value = HttpStatus.FOUND)
+    @ResponseStatus(value = HttpStatus.OK)
     public Author getAuthorByLogin(@PathVariable(value = "login") String login) {
         return authorService.getAuthorByLogin(login);
     }
+
+    // TODO: узнать можно ли делать исключения в контроллере, если нет, то как делать валидацию (просто перенести @Valid в service ?)
 
     @PostMapping("")
     @ResponseStatus(value = HttpStatus.CREATED)

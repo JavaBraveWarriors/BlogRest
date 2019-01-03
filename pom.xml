@@ -75,6 +75,11 @@
                 <version>${mockito-all.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+            </dependency>
             <!--spring-->
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -115,11 +120,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-web</artifactId>
             </dependency>-->
-            <dependency>
-                <groupId>com.h2database</groupId>
-                <artifactId>h2</artifactId>
-                <version>${h2.version}</version>
-            </dependency>
+
             <!--logging-->
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>

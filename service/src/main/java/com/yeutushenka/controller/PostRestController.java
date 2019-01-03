@@ -24,9 +24,9 @@ public class PostRestController {
         return postService.getAllPosts();
     }
 
-    @GetMapping("/")
+    @GetMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
-    public Post getPostById(Long id) {
+    public Post getPostById(@PathVariable(value = "id") Long id) {
         return postService.getPostById(id);
     }
 

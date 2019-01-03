@@ -46,8 +46,6 @@ public class PostDaoImpl implements PostDao {
     @Value("${post.delete}")
     String deletePostSql;
 
-    @Value("${post.deleteAll}")
-    String deleteAllPostsSql;
 
     @Value("${post.checkPostByUserId}")
     String checkPostByIdSql;
@@ -58,6 +56,16 @@ public class PostDaoImpl implements PostDao {
 
     private PostRowMapper postRowMapper;
     private NamedParameterJdbcTemplate jdbcTemplate;
+
+    @Autowired
+    public void setTagRowMapper(PostRowMapper postRowMapper) {
+        this.postRowMapper = postRowMapper;
+    }
+
+    @Autowired
+    public void setJdbcTemplate(NamedParameterJdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
 
 
     @Override
@@ -98,28 +106,14 @@ public class PostDaoImpl implements PostDao {
     @Override
     public Long addPost(Post post) throws DataAccessException {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue(ID, post.getId());
-        parameterSource.addValue(TITLE, post.getTitle());
-        parameterSource.addValue(DESCRIPTION, post.getTitle());
-        parameterSource.addValue(TEXT, post.getTitle());
-        parameterSource.addValue(CREATED_DATE, post.getTitle());
-        parameterSource.addValue(PATH_IMAGE, post.getTitle());
-        parameterSource.addValue(AUTHOR_ID, post.getTitle());
+        MapSqlParameterSource parameterSource = buildParamSourse(post);
         jdbcTemplate.update(addPostSql, parameterSource, keyHolder);
         return keyHolder.getKey().longValue();
     }
 
     @Override
     public ResponseStatus updatePost(Post post) throws DataAccessException {
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue(ID, post.getId());
-        parameterSource.addValue(TITLE, post.getTitle());
-        parameterSource.addValue(DESCRIPTION, post.getTitle());
-        parameterSource.addValue(TEXT, post.getTitle());
-        parameterSource.addValue(CREATED_DATE, post.getTitle());
-        parameterSource.addValue(PATH_IMAGE, post.getTitle());
-        parameterSource.addValue(AUTHOR_ID, post.getTitle());
+        MapSqlParameterSource parameterSource = buildParamSourse(post);
         if (jdbcTemplate.update(updatePostSql, parameterSource) == 0)
             return ResponseStatus.ERROR;
         else
@@ -150,13 +144,16 @@ public class PostDaoImpl implements PostDao {
     }
 
 
-    @Autowired
-    public void setTagRowMapper(PostRowMapper postRowMapper) {
-        this.postRowMapper = postRowMapper;
+    private MapSqlParameterSource buildParamSourse(Post post) {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue(ID, post.getId());
+        parameterSource.addValue(TITLE, post.getTitle());
+        parameterSource.addValue(DESCRIPTION, post.getTitle());
+        parameterSource.addValue(TEXT, post.getTitle());
+        parameterSource.addValue(CREATED_DATE, post.getTitle());
+        parameterSource.addValue(PATH_IMAGE, post.getTitle());
+        parameterSource.addValue(AUTHOR_ID, post.getTitle());
+        return parameterSource;
     }
 
-    @Autowired
-    public void setJdbcTemplate(NamedParameterJdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 }
