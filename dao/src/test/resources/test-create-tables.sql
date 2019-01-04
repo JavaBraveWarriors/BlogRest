@@ -1,9 +1,9 @@
 -- create-schema
--- CREATE SCHEMA `blog` DEFAULT CHARACTER SET utf8;
+--CREATE SCHEMA `blog` DEFAULT CHARACTER SET utf8;
 
-
+-- create-tables.sql
 CREATE TABLE `author` (
-  `id` bigint(11) unsigned NOT NULL,
+  `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
   `mail` varchar(45) NOT NULL,
   `login` varchar(45) NOT NULL,
   `password` varchar(255) NOT NULL,
@@ -13,8 +13,14 @@ CREATE TABLE `author` (
   `phone` varchar(20) DEFAULT NULL,
   `description` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+CREATE TABLE `tag` (
+ `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
+ `title` varchar(255) NOT NULL,
+ `path_image` varchar(255) DEFAULT NULL,
+ PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `post` (
   `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -27,8 +33,7 @@ CREATE TABLE `post` (
   PRIMARY KEY (`id`,`author_id`),
   KEY `fk_post_1_idx` (`author_id`),
   CONSTRAINT `fk_post_1` FOREIGN KEY (`author_id`) REFERENCES `author` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `post_has_tag` (
   `post_id` bigint(11) unsigned NOT NULL,
@@ -37,11 +42,5 @@ CREATE TABLE `post_has_tag` (
   KEY `fk_post_has_tag_2_idx` (`tag_id`),
   CONSTRAINT `fk_post_has_tag_1` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_post_has_tag_2` FOREIGN KEY (`tag_id`) REFERENCES `tag` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-CREATE TABLE `tag` (
- `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
- `title` varchar(255) NOT NULL,
- `path_image` varchar(255) DEFAULT NULL,
- PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
