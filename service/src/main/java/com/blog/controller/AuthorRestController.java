@@ -44,23 +44,15 @@ public class AuthorRestController {
         return postService.getAllPostsByAuthorId(userId);
     }
 
-    @GetMapping("/{id}/posts/tags/{tagId}")
-    @ResponseStatus(value = HttpStatus.OK)
-    public List<Post> getAllPostsByAuthorIdAndTagId(@PathVariable(value = "id") Long userId, @PathVariable(value = "tagId") Long tagId) {
-        return postService.getAllPostsByAuthorIdAndTagId(userId, tagId);
-    }
-
     @GetMapping("/login/{login}")
     @ResponseStatus(value = HttpStatus.OK)
     public Author getAuthorByLogin(@PathVariable(value = "login") String login) {
         return authorService.getAuthorByLogin(login);
     }
 
-    // TODO: узнать можно ли делать исключения в контроллере, если нет, то как делать валидацию (просто перенести @Valid в service ?)
-
     @PostMapping("")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public Long addAuthor(@Valid @RequestBody Author author, BindingResult result) {
+    public Long addAuthor(@RequestBody Author author, BindingResult result) {
         if (result.hasErrors()) {
             throw new ValidationException(result.getFieldErrors().toString());// TODO: протестировать!!!
         } else {

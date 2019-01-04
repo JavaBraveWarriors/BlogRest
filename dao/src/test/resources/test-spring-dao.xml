@@ -32,13 +32,6 @@
         <constructor-arg ref="dataSource"/>
     </bean>
 
-
-    <!--<jdbc:embedded-database id="dataSource" type="H2">
-        <jdbc:script location="classpath:test-create-tables.sql"/>
-        <jdbc:script location="classpath:test-data-script.sql"/>
-    </jdbc:embedded-database>-->
-
-
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>

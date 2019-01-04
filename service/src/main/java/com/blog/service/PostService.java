@@ -7,11 +7,11 @@ import java.util.List;
 public interface PostService {
     List<Post> getAllPostsByAuthorId(Long userId);
 
-    List<Post> getAllPostsByAuthorIdAndTagId(Long userId, Long tagId);
-
     List<Post> getAllPosts();
 
     List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity);
+
+    List<Post> getAllPostsByTagId(Long tagId);
 
     Post getPostById(Long id);
 

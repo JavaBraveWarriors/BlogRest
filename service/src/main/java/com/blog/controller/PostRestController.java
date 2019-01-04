@@ -38,13 +38,19 @@ public class PostRestController {
         return postService.getPostsByInitialIdAndQuantity(initial, quantity);
     }
 
-    @PostMapping("/")
+    @GetMapping("/tag/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<Post> getAllPostsByTagId(@PathVariable(value = "id") Long tagId) {
+        return postService.getAllPostsByTagId(tagId);
+    }
+
+    @PostMapping("")
     @ResponseStatus(value = HttpStatus.CREATED)
     public Long addPost(@RequestBody Post post) {
         return postService.addPost(post);
     }
 
-    @PutMapping("/")
+    @PutMapping("")
     @ResponseStatus(value = HttpStatus.OK)
     public void updatePost(@RequestBody Post post) {
         postService.updatePost(post);

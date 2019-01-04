@@ -1,7 +1,6 @@
 package com.blog.service.impls;
 
 import com.blog.Post;
-import com.blog.ResponseStatus;
 import com.blog.dao.AuthorDao;
 import com.blog.dao.PostDao;
 import com.blog.dao.TagDao;
@@ -14,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -68,18 +68,6 @@ public class PostServiceImpl implements PostService {
         return postDao.getAllPostsByAuthorId(userId);
     }
 
-    @Override
-    public List<Post> getAllPostsByAuthorIdAndTagId(Long userId, Long tagId) {
-        if (userId < 0L || userId == null)
-            throw new ValidationException(incorrectAuthorId);
-        if (tagId < 0L || tagId == null)
-            throw new ValidationException(incorrectTagId);
-        if (!tagDao.checkTagById(tagId))
-            throw new NotFoundException(notExistTag);
-        if (!authorDao.checkAuthorById(userId))
-            throw new NotFoundException(notExistAuthor);
-        return postDao.getAllPostsByAuthorIdAndTagId(userId, tagId);
-    }
 
     @Override
     public List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity) {
@@ -88,6 +76,13 @@ public class PostServiceImpl implements PostService {
         if (quantity < 0L || quantity == null)
             throw new ValidationException(incorrectTagId);
         return postDao.getPostsByInitialIdAndQuantity(initial, quantity);
+    }
+
+    @Override
+    public List<Post> getAllPostsByTagId(Long tagId) {
+        if (tagId < 0L || tagId == null)
+            throw new ValidationException(incorrectAuthorId);
+        return postDao.getAllPostsByTagId(tagId);
     }
 
     @Override
@@ -101,6 +96,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Long addPost(Post post) {
+        post.setDate(LocalDate.now());
         return postDao.addPost(post);
     }
 
@@ -110,7 +106,7 @@ public class PostServiceImpl implements PostService {
             throw new NotFoundException(notExistPost);
         if (!authorDao.checkAuthorById(post.getAuthorId()))
             throw new NotFoundException(notExistAuthor);
-        if (postDao.updatePost(post) == ResponseStatus.ERROR)
+        if (postDao.updatePost(post) == 0)
             throw new InternalServerException(updateError);
     }
 
@@ -120,7 +116,7 @@ public class PostServiceImpl implements PostService {
             throw new ValidationException(incorrectPostId);
         if (!postDao.checkPostById(id))
             throw new NotFoundException(notExistPost);
-        if (postDao.deletePost(id) == ResponseStatus.ERROR)
+        if (postDao.deletePost(id) == 0)
             throw new InternalServerException(updateError);
     }
 }

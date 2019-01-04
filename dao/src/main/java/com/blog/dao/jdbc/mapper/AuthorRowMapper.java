@@ -8,18 +8,10 @@ import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import static com.blog.dao.jdbc.AuthorDaoImpl.*;
+
 @Component
 public class AuthorRowMapper implements RowMapper<Author> {
-
-    public static final String ID = "id";
-    public static final String MAIL = "mail";
-    public static final String LOGIN = "login";
-    public static final String PASSWORD = "password";
-    public static final String FIRST_NAME = "first_name";
-    public static final String LAST_NAME = "last_name";
-    public static final String REGISTRATION_DATE = "registration_date";
-    public static final String PHONE = "phone";
-    public static final String DESCRIPTION = "description";
 
 
     public Author mapRow(ResultSet rs, int rowNum) throws SQLException {

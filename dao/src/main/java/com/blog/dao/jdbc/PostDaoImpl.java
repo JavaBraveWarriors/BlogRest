@@ -1,9 +1,8 @@
 package com.blog.dao.jdbc;
 
-import com.blog.dao.jdbc.mapper.PostRowMapper;
 import com.blog.Post;
-import com.blog.ResponseStatus;
 import com.blog.dao.PostDao;
+import com.blog.dao.jdbc.mapper.PostRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
@@ -19,6 +18,17 @@ import java.util.List;
 @Repository
 public class PostDaoImpl implements PostDao {
 
+    public static final String ID = "id";
+    public static final String TITLE = "title";
+    public static final String DESCRIPTION = "description";
+    public static final String TEXT = "text";
+    public static final String CREATED_DATE = "created_date";
+    public static final String PATH_IMAGE = "path_image";
+    public static final String AUTHOR_ID = "author_id";
+    private static final String INITIAL = "initial";
+    private static final String QUANTITY = "quantity";
+
+    private static final String TAG_ID = "tag_id";
 
     @Value("${post.select}")
     String getAllPostsSql;
@@ -45,10 +55,10 @@ public class PostDaoImpl implements PostDao {
     String deletePostSql;
 
 
-    @Value("${post.checkPostByUserId}")
+    @Value("${post.checkPostById}")
     String checkPostByIdSql;
 
-    @Value("${post.checkPostById}")
+    @Value("${post.checkPostByUserId}")
     String checkPostByUserIdSql;
 
 
@@ -74,84 +84,74 @@ public class PostDaoImpl implements PostDao {
 
     @Override
     public Post getPostById(Long id) throws DataAccessException {
-        SqlParameterSource parameterSource = new MapSqlParameterSource("id", id);
+        SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.queryForObject(getPostByIdSql, parameterSource, postRowMapper);
     }
 
     @Override
     public List<Post> getAllPostsByAuthorId(Long userId) throws DataAccessException {
-        SqlParameterSource parameterSource = new MapSqlParameterSource(PostRowMapper.AUTHOR_ID, userId);
-        return jdbcTemplate.queryForList(getAllPostsByAuthorIdSql, parameterSource, Post.class);
+        SqlParameterSource parameterSource = new MapSqlParameterSource(AUTHOR_ID, userId);
+        return jdbcTemplate.query(getAllPostsByAuthorIdSql, parameterSource, (resultSet, i) -> new PostRowMapper().mapRow(resultSet, i));
     }
 
+    /*TODO: refactor "initial - 1L"*/
     @Override
     public List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws DataAccessException {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue("initial", initial);
-        parameterSource.addValue("quantity", quantity);
-        return jdbcTemplate.queryForList(getAllPostsByInitialIdAndQuantitySql, parameterSource, Post.class);
-
+        parameterSource.addValue(INITIAL, initial - 1L);
+        parameterSource.addValue(QUANTITY, quantity);
+        return jdbcTemplate.query(getAllPostsByInitialIdAndQuantitySql, parameterSource, (resultSet, i) -> new PostRowMapper().mapRow(resultSet, i));
     }
 
-
     @Override
-    public List<Post> getAllPostsByAuthorIdAndTagId(Long userId, Long tagId) throws DataAccessException {
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource(PostRowMapper.AUTHOR_ID, userId);
-        parameterSource.addValue("tag_id", tagId);
-        return jdbcTemplate.queryForList(getAllPostsByAuthorIdSql, parameterSource, Post.class);
+    public List<Post> getAllPostsByTagId(Long tagId) throws DataAccessException {
+        SqlParameterSource parameterSource = new MapSqlParameterSource(TAG_ID, tagId);
+        return jdbcTemplate.query(getAllPostsByTagSql, parameterSource, (resultSet, i) -> new PostRowMapper().mapRow(resultSet, i));
     }
 
     @Override
     public Long addPost(Post post) throws DataAccessException {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        MapSqlParameterSource parameterSource = buildParamSourse(post);
+        MapSqlParameterSource parameterSource = getParameterSourcePost(post);
         jdbcTemplate.update(addPostSql, parameterSource, keyHolder);
         return keyHolder.getKey().longValue();
     }
 
     @Override
-    public ResponseStatus updatePost(Post post) throws DataAccessException {
-        MapSqlParameterSource parameterSource = buildParamSourse(post);
-        if (jdbcTemplate.update(updatePostSql, parameterSource) == 0)
-            return ResponseStatus.ERROR;
-        else
-            return ResponseStatus.SUCCESS;
-
+    public int updatePost(Post post) throws DataAccessException {
+        MapSqlParameterSource parameterSource = getParameterSourcePost(post);
+        return jdbcTemplate.update(updatePostSql, parameterSource);
     }
 
     @Override
-    public ResponseStatus deletePost(Long id) throws DataAccessException {
-        SqlParameterSource parameterSource = new MapSqlParameterSource(PostRowMapper.ID, id);
-        if (jdbcTemplate.update(deletePostSql, parameterSource) == 0)
-            return ResponseStatus.ERROR;
-        else
-            return ResponseStatus.SUCCESS;
-
+    public int deletePost(Long id) throws DataAccessException {
+        SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
+        return jdbcTemplate.update(deletePostSql, parameterSource);
     }
 
     @Override
     public boolean checkPostById(Long id) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource(PostRowMapper.ID, id);
+        SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.queryForObject(checkPostByIdSql, parameterSource, boolean.class);
     }
 
     @Override
     public boolean checkPostByAuthorId(Long userId) {
-        SqlParameterSource parameterSource = new MapSqlParameterSource(PostRowMapper.AUTHOR_ID, userId);
+        SqlParameterSource parameterSource = new MapSqlParameterSource(AUTHOR_ID, userId);
         return jdbcTemplate.queryForObject(checkPostByUserIdSql, parameterSource, boolean.class);
     }
 
-
-    private MapSqlParameterSource buildParamSourse(Post post) {
+    private MapSqlParameterSource getParameterSourcePost(Post post) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue(PostRowMapper.ID, post.getId());
-        parameterSource.addValue(PostRowMapper.TITLE, post.getTitle());
-        parameterSource.addValue(PostRowMapper.DESCRIPTION, post.getTitle());
-        parameterSource.addValue(PostRowMapper.TEXT, post.getTitle());
-        parameterSource.addValue(PostRowMapper.CREATED_DATE, post.getTitle());
-        parameterSource.addValue(PostRowMapper.PATH_IMAGE, post.getTitle());
-        parameterSource.addValue(PostRowMapper.AUTHOR_ID, post.getTitle());
+        parameterSource.addValue(ID, post.getId());
+        parameterSource.addValue(TITLE, post.getTitle());
+        parameterSource.addValue(DESCRIPTION, post.getDescription());
+        parameterSource.addValue(TEXT, post.getText());
+        parameterSource.addValue(CREATED_DATE, post.getDate());
+        parameterSource.addValue(PATH_IMAGE, post.getPathImage());
+        parameterSource.addValue(AUTHOR_ID, post.getAuthorId());
         return parameterSource;
     }
+
 
 }
