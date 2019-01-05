@@ -19,11 +19,17 @@ public interface PostDao {
 
     Long addPost(Post post) throws DataAccessException;
 
+    int addTagToPost(Long id, Long tagId) throws DataAccessException;
+
     int updatePost(Post post) throws DataAccessException;
 
     int deletePost(Long id) throws DataAccessException;
 
+    int deleteTagInPost(Long id, Long tagId) throws DataAccessException;
+
     boolean checkPostById(Long id);
+
+    boolean checkTagInPostById(Long id, Long tagId);
 
     boolean checkPostByAuthorId(Long userId);
 

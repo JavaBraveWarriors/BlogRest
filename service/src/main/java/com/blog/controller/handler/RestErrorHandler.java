@@ -11,50 +11,58 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.util.Collections;
 
-@ControllerAdvice
-@RestController
+@ControllerAdvice("com.blog")
 public class RestErrorHandler extends ResponseEntityExceptionHandler {
 
+
     @ExceptionHandler(DataAccessException.class)
-    public final ResponseEntity<Object> handleAllExceptions(DataAccessException ex, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
-                request.getDescription(false));
+    public final @ResponseBody
+    ResponseEntity<Object> handleAllExceptions(DataAccessException ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
+                request.getDescription(true));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public final ResponseEntity<ExceptionResponse> handleNotFoundException(NotFoundException ex, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
+    public ResponseEntity<ExceptionResponse> handleNotFoundException(NotFoundException ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
                 request.getDescription(false));
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionResponse);
     }
 
     @ExceptionHandler(ValidationException.class)
-    public final ResponseEntity<ExceptionResponse> handleValidationException(ValidationException ex, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
-                request.getDescription(false));
+    public final @ResponseBody
+    ResponseEntity<ExceptionResponse> handleValidationException(ValidationException ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
+                request.getDescription(true));
+
+
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(InternalServerException.class)
-    public final ResponseEntity<ExceptionResponse> handleInternalServerException(InternalServerException ex, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), ex.getMessage(),
-                request.getDescription(false));
+    public final @ResponseBody
+    ResponseEntity<ExceptionResponse> handleInternalServerException(InternalServerException ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
+                request.getDescription(true));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
                                                                   HttpHeaders headers, HttpStatus status, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(new Date(), "Validation Failed",
+        ExceptionResponse errorDetails = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
                 ex.getBindingResult().toString());
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
+
+
 }

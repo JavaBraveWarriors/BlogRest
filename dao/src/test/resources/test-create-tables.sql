@@ -31,7 +31,7 @@ CREATE TABLE `tag`
 CREATE TABLE `post`
 (
   `id`           bigint(11) unsigned NOT NULL AUTO_INCREMENT,
-  `title`        varchar(100)        NOT NULL,
+  `title`        varchar(200)        NOT NULL,
   `description`  varchar(600)        NOT NULL,
   `text`         text                NOT NULL,
   `created_date` date                NOT NULL,

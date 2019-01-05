@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -27,6 +28,9 @@ public class AuthorServiceImpl implements AuthorService {
     @Value("${authorService.incorrectLogin}")
     private String incorrectAuthorLogin;
 
+    @Value("${authorService.exist}")
+    private String authorExist;
+
     @Autowired
     public AuthorServiceImpl(AuthorDao authorDao) {
         this.authorDao = authorDao;
@@ -39,35 +43,60 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public Author getAuthorById(Long userId) {
-        if (userId == null || userId < 0L)
-            throw new ValidationException(incorrectAuthorId);
-        if (!authorDao.checkAuthorById(userId))
-            throw new NotFoundException(authorDoesNotExist);
-        return authorDao.getAuthorById(userId);
+    public Author getAuthorById(Long authorId) {
+        validateAuthorId(authorId);
+        checkAuthor(authorId);
+        return authorDao.getAuthorById(authorId);
     }
 
     @Override
     public Author getAuthorByLogin(String login) {
-        if (login == null || login.isEmpty())
-            throw new ValidationException(incorrectAuthorLogin);
-        if (!authorDao.checkAuthorByLogin(login))
-            throw new NotFoundException(authorDoesNotExist);
+        validateAuthorLogin(login);
+        checkAuthor(login);
         return authorDao.getAuthorByLogin(login);
     }
 
     @Override
     public Long addAuthor(Author author) {
-        return 0L;
+        checkAuthorExistence(author);
+        author.setRegistrationTime(LocalDate.now());
+        return authorDao.addAuthor(author);
     }
 
     @Override
     public int updateAuthor(Author author) {
-        return 0;
+        return authorDao.updateAuthor(author);
     }
 
     @Override
-    public int deleteAuthor(Long userId) {
-        return 0;
+    public int deleteAuthor(Long authorId) {
+        validateAuthorId(authorId);
+        checkAuthor(authorId);
+        return authorDao.deleteAuthor(authorId);
+    }
+
+    private void checkAuthorExistence(Author author) {
+        if (authorDao.checkAuthorByLogin(author.getLogin()))
+            throw new ValidationException(authorExist);
+    }
+
+    private void checkAuthor(Long authorId) {
+        if (!authorDao.checkAuthorById(authorId))
+            throw new NotFoundException(authorDoesNotExist);
+    }
+
+    private void checkAuthor(String authorLogin) {
+        if (!authorDao.checkAuthorByLogin(authorLogin))
+            throw new NotFoundException(authorDoesNotExist);
+    }
+
+    private void validateAuthorId(Long authorId) {
+        if (authorId == null || authorId < 0L)
+            throw new ValidationException(incorrectAuthorId);
+    }
+
+    private void validateAuthorLogin(String authorLogin) {
+        if (authorLogin == null || authorLogin.isEmpty())
+            throw new ValidationException(incorrectAuthorLogin);
     }
 }

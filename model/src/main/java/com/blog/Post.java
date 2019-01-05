@@ -4,6 +4,8 @@ package com.blog;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
@@ -15,19 +17,26 @@ public class Post {
     @GeneratedValue
     private Long id;
 
+    @NotNull
+    @Size(max = 200, message = "Title should be less than 200 characters.")
     private String title;
 
+    @NotNull
+    @Size(max = 600, message = "Description should be less than 600 characters.")
     private String description;
 
+    @NotNull
     private String text;
 
     private LocalDate date;
 
     private String pathImage;
 
+    @NotNull
     private Long authorId;
 
-    private List<Tag> Tags;
+    @NotNull
+    private List<Long> tagsId;
 
     public Post() {
     }
@@ -89,12 +98,12 @@ public class Post {
         this.pathImage = pathImage;
     }
 
-    public List<Tag> getTags() {
-        return Tags;
+    public List<Long> getTagsId() {
+        return tagsId;
     }
 
-    public void setTags(List<Tag> tags) {
-        Tags = tags;
+    public void setTagsId(List<Tag> tags) {
+        tags = tags;
     }
 
     public Long getAuthorId() {
@@ -117,12 +126,12 @@ public class Post {
                 Objects.equals(getDate(), post.getDate()) &&
                 Objects.equals(getPathImage(), post.getPathImage()) &&
                 Objects.equals(getAuthorId(), post.getAuthorId()) &&
-                Objects.equals(getTags(), post.getTags());
+                Objects.equals(getTagsId(), post.getTagsId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getTitle(), getDescription(), getText(), getDate(), getPathImage(), getAuthorId(), getTags());
+        return Objects.hash(getId(), getTitle(), getDescription(), getText(), getDate(), getPathImage(), getAuthorId(), getTagsId());
     }
 
     @Override
@@ -135,7 +144,7 @@ public class Post {
                 ", date=" + date +
                 ", pathImage='" + pathImage + '\'' +
                 ", authorId=" + authorId +
-                ", Tags=" + Tags +
+                ", tagsId=" + tagsId +
                 '}';
     }
 }

@@ -96,6 +96,10 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public Long addPost(Post post) {
+        if (!authorDao.checkAuthorById(post.getAuthorId()))
+            throw new ValidationException(incorrectAuthorId);
+        System.out.println(post.getTagsId());
+        post.getTagsId().forEach(tagId -> postDao.addTagToPost(post.getId(), tagId));
         post.setDate(LocalDate.now());
         return postDao.addPost(post);
     }

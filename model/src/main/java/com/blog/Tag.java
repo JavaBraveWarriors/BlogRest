@@ -17,6 +17,9 @@ public class Tag {
 
     private String pathImage;
 
+    public Tag() {
+    }
+
     public Tag(Long id, String title) {
         this.id = id;
         this.title = title;

@@ -48,15 +48,24 @@ public class PostDaoImpl implements PostDao {
     @Value("${post.insert}")
     String addPostSql;
 
+    @Value("${post.insertTagToPost}")
+    String addTagToPostSql;
+
     @Value("${post.update}")
     String updatePostSql;
 
     @Value("${post.delete}")
     String deletePostSql;
 
+    @Value("${post.deleteTag}")
+    String deleteTagInPostSql;
+
 
     @Value("${post.checkPostById}")
     String checkPostByIdSql;
+
+    @Value("${post.checkTagInPostById}")
+    String checkTagInPostByIdSql;
 
     @Value("${post.checkPostByUserId}")
     String checkPostByUserIdSql;
@@ -118,6 +127,14 @@ public class PostDaoImpl implements PostDao {
     }
 
     @Override
+    public int addTagToPost(Long id, Long tagId) throws DataAccessException {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue(ID, id);
+        parameterSource.addValue(TAG_ID, tagId);
+        return jdbcTemplate.update(addTagToPostSql, parameterSource);
+    }
+
+    @Override
     public int updatePost(Post post) throws DataAccessException {
         MapSqlParameterSource parameterSource = getParameterSourcePost(post);
         return jdbcTemplate.update(updatePostSql, parameterSource);
@@ -130,9 +147,25 @@ public class PostDaoImpl implements PostDao {
     }
 
     @Override
+    public int deleteTagInPost(Long id, Long tagId) throws DataAccessException {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue(ID, id);
+        parameterSource.addValue(TAG_ID, tagId);
+        return jdbcTemplate.update(deleteTagInPostSql, parameterSource);
+    }
+
+    @Override
     public boolean checkPostById(Long id) {
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.queryForObject(checkPostByIdSql, parameterSource, boolean.class);
+    }
+
+    @Override
+    public boolean checkTagInPostById(Long id, Long tagId) {
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue(ID, id);
+        parameterSource.addValue(TAG_ID, tagId);
+        return jdbcTemplate.queryForObject(checkTagInPostByIdSql, parameterSource, boolean.class);
     }
 
     @Override

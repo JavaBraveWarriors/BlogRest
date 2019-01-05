@@ -24,6 +24,9 @@ public class PostDaoImplTest {
     private static Long INCORRECT_POST_ID = 6L;
     private static Long CORRECT_USER_ID = 1L;
     private static Long INCORRECT_USER_ID = 9L;
+    private static Long CORRECT_TAG_ID = 3L;
+    private static Long CORRECT_TAG_ID_2 = 2L;
+
 
     private static Long NEW_POST_ID_4 = 4L;
     private static String NEW_POST_TITLE_4 = "newTitle4";
@@ -87,8 +90,7 @@ public class PostDaoImplTest {
 
     @Test
     public void getAllPostsByTagId() {
-        List<Post> posts = postDao.getAllPostsByTagId(2L);
-        System.out.println(posts);
+        List<Post> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID);
         assertNotNull(posts);
         assertEquals(2, posts.size());
     }
@@ -113,6 +115,21 @@ public class PostDaoImplTest {
         assertNotNull(posts);
         assertEquals(initialSize + 1, posts.size());
     }
+
+    @Test
+    public void addTagToPost() {
+        Post post = postDao.getPostById(CORRECT_POST_ID);
+        assertNotNull(post);
+        post.setDate(LocalDate.now());
+
+        List<Post> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID);
+        int initialSize = posts.size();
+
+        assertEquals(1, postDao.addTagToPost(post.getId(), CORRECT_TAG_ID));
+        posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID);
+        assertEquals(initialSize + 1, posts.size());
+    }
+
 
     @Test
     public void updatePost() {
@@ -146,6 +163,30 @@ public class PostDaoImplTest {
         posts = postDao.getAllPosts();
         assertNotNull(posts);
         assertEquals(initialSize - 1, posts.size());
+    }
+
+    @Test
+    public void deleteTagInPost() {
+        Post post = postDao.getPostById(CORRECT_POST_ID);
+        assertNotNull(post);
+        post.setDate(LocalDate.now());
+
+        List<Post> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID_2);
+        int initialSize = posts.size();
+
+        assertEquals(1, postDao.deleteTagInPost(post.getId(), CORRECT_TAG_ID_2));
+        posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID_2);
+        assertEquals(initialSize - 1, posts.size());
+    }
+
+    @Test
+    public void checkTagInPostByIdReturnedTrue() {
+        assertTrue(postDao.checkTagInPostById(CORRECT_POST_ID, CORRECT_TAG_ID_2));
+    }
+
+    @Test
+    public void checkTagInPostByIdReturnedFalse() {
+        assertFalse(postDao.checkTagInPostById(CORRECT_POST_ID, CORRECT_TAG_ID));
     }
 
 

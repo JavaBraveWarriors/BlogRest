@@ -9,7 +9,7 @@ public interface AuthorDao {
 
     List<Author> getAllAuthors() throws DataAccessException;
 
-    Author getAuthorById(Long userId) throws DataAccessException;
+    Author getAuthorById(Long authorId) throws DataAccessException;
 
     Author getAuthorByLogin(String login) throws DataAccessException;
 
@@ -17,9 +17,9 @@ public interface AuthorDao {
 
     int updateAuthor(Author author) throws DataAccessException;
 
-    int deleteAuthor(Long userId) throws DataAccessException;
+    int deleteAuthor(Long authorId) throws DataAccessException;
 
-    boolean checkAuthorById(Long userId);
+    boolean checkAuthorById(Long authorId);
 
     boolean checkAuthorByLogin(String login);
 
