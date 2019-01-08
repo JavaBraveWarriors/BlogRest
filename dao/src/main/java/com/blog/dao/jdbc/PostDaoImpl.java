@@ -1,8 +1,10 @@
 package com.blog.dao.jdbc;
 
 import com.blog.Post;
+import com.blog.Tag;
 import com.blog.dao.PostDao;
 import com.blog.dao.jdbc.mapper.PostRowMapper;
+import com.blog.dao.jdbc.mapper.TagRowMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
@@ -32,6 +34,9 @@ public class PostDaoImpl implements PostDao {
 
     @Value("${post.select}")
     String getAllPostsSql;
+
+    @Value("${tag.selectAllByPostId}")
+    String selectAllByPostId;
 
     @Value("${post.selectById}")
     String getPostByIdSql;
@@ -89,6 +94,12 @@ public class PostDaoImpl implements PostDao {
     public List<Post> getAllPosts() throws DataAccessException {
         return jdbcTemplate.query(getAllPostsSql, postRowMapper);
 
+    }
+
+    @Override
+    public List<Tag> getAllTagsByPostId(Long id) throws DataAccessException {
+        SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
+        return jdbcTemplate.query(selectAllByPostId, parameterSource, (resultSet, i) -> new TagRowMapper().mapRow(resultSet, i));
     }
 
     @Override

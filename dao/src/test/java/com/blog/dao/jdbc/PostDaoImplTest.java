@@ -1,6 +1,7 @@
 package com.blog.dao.jdbc;
 
 import com.blog.Post;
+import com.blog.Tag;
 import com.blog.dao.PostDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,6 +65,14 @@ public class PostDaoImplTest {
         assertNotNull(post);
         assertEquals(CORRECT_POST_ID, post.getId());
     }
+
+    @Test
+    public void getAllTagsByPostId() {
+        List<Tag> tags = postDao.getAllTagsByPostId(CORRECT_POST_ID);
+        assertNotNull(tags);
+        assertEquals(2, tags.size());
+    }
+
 
     @Test(expected = DataAccessException.class)
     public void getPostByIdWithException() {

@@ -36,7 +36,7 @@ public class Post {
     private Long authorId;
 
     @NotNull
-    private List<Long> tagsId;
+    private List<Tag> tags;
 
     public Post() {
     }
@@ -98,12 +98,12 @@ public class Post {
         this.pathImage = pathImage;
     }
 
-    public List<Long> getTagsId() {
-        return tagsId;
+    public List<Tag> getTags() {
+        return tags;
     }
 
-    public void setTagsId(List<Tag> tags) {
-        tags = tags;
+    public void setTags(List<Tag> tags) {
+        this.tags = tags;
     }
 
     public Long getAuthorId() {
@@ -126,12 +126,12 @@ public class Post {
                 Objects.equals(getDate(), post.getDate()) &&
                 Objects.equals(getPathImage(), post.getPathImage()) &&
                 Objects.equals(getAuthorId(), post.getAuthorId()) &&
-                Objects.equals(getTagsId(), post.getTagsId());
+                Objects.equals(getTags(), post.getTags());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getTitle(), getDescription(), getText(), getDate(), getPathImage(), getAuthorId(), getTagsId());
+        return Objects.hash(getId(), getTitle(), getDescription(), getText(), getDate(), getPathImage(), getAuthorId(), getTags());
     }
 
     @Override
@@ -144,7 +144,7 @@ public class Post {
                 ", date=" + date +
                 ", pathImage='" + pathImage + '\'' +
                 ", authorId=" + authorId +
-                ", tagsId=" + tagsId +
+                ", tagsId=" + tags +
                 '}';
     }
 }

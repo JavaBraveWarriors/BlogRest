@@ -32,7 +32,10 @@
         <jsonassert.version>1.5.0</jsonassert.version>
         <checkstyle-plugin.version>3.0.0</checkstyle-plugin.version>
         <hibernate-validator.version>6.0.13.Final</hibernate-validator.version>
+        <validation-api.version>2.0.1.Final</validation-api.version>
+        <persistence-api.version>2.2</persistence-api.version>
         <jetty.version>9.4.12.v20180830</jetty.version>
+        <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
     </properties>
 
     <dependencyManagement>
@@ -118,14 +121,12 @@
                 <version>${jackson.databind-version}</version>
             </dependency>
 
-            <!--<dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-jpa</artifactId>
-            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-            </dependency>-->
+                <artifactId>spring-boot-starter-test</artifactId>
+                <version>${spring-boot.version}</version>
+                <scope>test</scope>
+            </dependency>
 
             <!--logging-->
             <dependency>
@@ -170,6 +171,22 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-jsp</artifactId>
                 <version>${jetty.version}</version>
+            </dependency>
+            <!-- validation -->
+            <dependency>
+                <groupId>org.hibernate.validator</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate-validator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.validation</groupId>
+                <artifactId>validation-api</artifactId>
+                <version>${validation-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.persistence</groupId>
+                <artifactId>javax.persistence-api</artifactId>
+                <version>${persistence-api.version}</version>
             </dependency>
         </dependencies>
 
