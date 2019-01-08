@@ -1,4 +1,4 @@
-package com.blog.controller;
+package com.blog;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

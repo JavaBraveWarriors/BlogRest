@@ -14,8 +14,8 @@ public interface AuthorService {
 
     Long addAuthor(Author author);
 
-    int updateAuthor(Author author);
+    void updateAuthor(Author author);
 
-    int deleteAuthor(Long userId);
+    void deleteAuthor(Long userId);
 
 }

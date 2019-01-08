@@ -15,38 +15,43 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+import static com.blog.dao.jdbc.mapper.TagRowMapper.*;
+
 @Repository
 public class TagDaoImpl implements TagDao {
 
-    public static final String ID = "id";
-    public static final String TITLE = "title";
-    public static final String PATH_IMAGE = "path_image";
 
     @Value("${tag.select}")
-    String getAllTagsSql;
+    private String getAllTagsSql;
+
+    @Value("${tag.selectAllByPostId}")
+    private String selectAllByPostId;
 
     @Value("${tag.insert}")
-    String addTagSql;
+    private String addTagSql;
 
     @Value("${tag.update}")
-    String updateTagSql;
+    private String updateTagSql;
 
     @Value("${tag.delete}")
-    String deleteTagSql;
+    private String deleteTagSql;
 
     @Value("${tag.selectById}")
-    String getTagByIdSql;
+    private String getTagByIdSql;
 
     @Value("${tag.checkTagById}")
-    String checkTagByIdSql;
+    private String checkTagByIdSql;
 
     @Value("${tag.checkTagByTitle}")
-    String checkTagByTitleSql;
+    private String checkTagByTitleSql;
 
     private TagRowMapper tagRowMapper;
     private NamedParameterJdbcTemplate jdbcTemplate;
 
-    public TagDaoImpl() {
+    @Autowired
+    public TagDaoImpl(TagRowMapper tagRowMapper, NamedParameterJdbcTemplate jdbcTemplate) {
+        this.tagRowMapper = tagRowMapper;
+        this.jdbcTemplate = jdbcTemplate;
     }
 
     public List<Tag> getAllTags() {
@@ -58,7 +63,11 @@ public class TagDaoImpl implements TagDao {
         return jdbcTemplate.queryForObject(getTagByIdSql, parameterSource, tagRowMapper);
     }
 
-    @Override
+    public List<Tag> getAllTagsByPostId(Long id) throws DataAccessException {
+        SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
+        return jdbcTemplate.query(selectAllByPostId, parameterSource, (resultSet, i) -> new TagRowMapper().mapRow(resultSet, i));
+    }
+
     public Long addTag(Tag tag) throws DataAccessException {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         MapSqlParameterSource parameterSource = getParameterSourceTag(tag);
@@ -67,16 +76,14 @@ public class TagDaoImpl implements TagDao {
         return keyHolder.getKey().longValue();
     }
 
-    @Override
-    public int updateTag(Tag tag) throws DataAccessException {
+    public boolean updateTag(Tag tag) throws DataAccessException {
         MapSqlParameterSource parameterSource = getParameterSourceTag(tag);
-        return jdbcTemplate.update(updateTagSql, parameterSource);
+        return jdbcTemplate.update(updateTagSql, parameterSource) == 1;
     }
 
-    @Override
-    public int deleteTag(Long id) throws DataAccessException {
+    public boolean deleteTag(Long id) throws DataAccessException {
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
-        return jdbcTemplate.update(deleteTagSql, parameterSource);
+        return jdbcTemplate.update(deleteTagSql, parameterSource) == 1;
 
     }
 
@@ -85,7 +92,6 @@ public class TagDaoImpl implements TagDao {
         return jdbcTemplate.queryForObject(checkTagByIdSql, parameterSource, boolean.class);
     }
 
-    @Override
     public boolean checkTagByTitle(String title) {
         SqlParameterSource parameterSource = new MapSqlParameterSource(TITLE, title);
         return jdbcTemplate.queryForObject(checkTagByTitleSql, parameterSource, boolean.class);
@@ -99,13 +105,4 @@ public class TagDaoImpl implements TagDao {
         return parameterSource;
     }
 
-    @Autowired
-    public void setTagRowMapper(TagRowMapper tagRowMapper) {
-        this.tagRowMapper = tagRowMapper;
-    }
-
-    @Autowired
-    public void setJdbcTemplate(NamedParameterJdbcTemplate jdbcTemplate) {
-        this.jdbcTemplate = jdbcTemplate;
-    }
 }

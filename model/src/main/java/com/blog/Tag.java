@@ -1,10 +1,10 @@
 package com.blog;
 
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import java.util.Objects;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Entity
 public class Tag {
@@ -13,16 +13,13 @@ public class Tag {
     @GeneratedValue
     private Long id;
 
+    @NotNull
+    @Size(min = 3, max = 100, message = "Title should be less than 100 characters.")
     private String title;
 
     private String pathImage;
 
     public Tag() {
-    }
-
-    public Tag(Long id, String title) {
-        this.id = id;
-        this.title = title;
     }
 
     public Tag(Long id, String title, String pathImage) {
@@ -55,22 +52,6 @@ public class Tag {
         this.pathImage = pathImage;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Tag)) return false;
-        Tag tag = (Tag) o;
-        return Objects.equals(getId(), tag.getId()) &&
-                Objects.equals(getTitle(), tag.getTitle()) &&
-                Objects.equals(getPathImage(), tag.getPathImage());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getTitle(), getPathImage());
-    }
-
-    @Override
     public String toString() {
         return "Tag{" +
                 "id=" + id +

@@ -8,7 +8,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 public class Post {
@@ -114,27 +113,6 @@ public class Post {
         this.authorId = authorId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Post)) return false;
-        Post post = (Post) o;
-        return Objects.equals(getId(), post.getId()) &&
-                Objects.equals(getTitle(), post.getTitle()) &&
-                Objects.equals(getDescription(), post.getDescription()) &&
-                Objects.equals(getText(), post.getText()) &&
-                Objects.equals(getDate(), post.getDate()) &&
-                Objects.equals(getPathImage(), post.getPathImage()) &&
-                Objects.equals(getAuthorId(), post.getAuthorId()) &&
-                Objects.equals(getTags(), post.getTags());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getTitle(), getDescription(), getText(), getDate(), getPathImage(), getAuthorId(), getTags());
-    }
-
-    @Override
     public String toString() {
         return "Post{" +
                 "id=" + id +

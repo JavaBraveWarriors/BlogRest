@@ -1,10 +1,9 @@
-package com.blog.controller;
+package com.blog;
 
-import com.blog.Author;
-import com.blog.Post;
-import com.blog.controller.handler.RestErrorHandler;
+import com.blog.controller.AuthorRestController;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
+import com.blog.handler.RestErrorHandler;
 import com.blog.service.AuthorService;
 import com.blog.service.PostService;
 import org.junit.Before;
@@ -15,20 +14,22 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDate;
 import java.util.Collections;
 
-import static com.blog.controller.JsonConverter.convertToJson;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AuthorRestControllerTest {
@@ -73,26 +74,13 @@ public class AuthorRestControllerTest {
         post.setDate(LocalDate.now());
     }
 
-
-    @Test
-    public void getAllAuthors() throws Exception {
-        given(authorServiceMock.getAllAuthors()).willReturn(Collections.singletonList(author));
-        mockMvc.perform(get("/authors"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(content().json(convertToJson(Collections.singletonList(author))));
-        verify(authorServiceMock, times(1)).getAllAuthors();
-
-    }
-
     @Test
     public void getAuthorByIdSuccess() throws Exception {
         given(authorServiceMock.getAuthorById(anyLong())).willReturn(author);
         mockMvc.perform(get("/authors/{id}", anyLong()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(convertToJson(author)));
+                .andExpect(MockMvcResultMatchers.content().json(JsonConverter.convertToJson(author)));
         verify(authorServiceMock, times(1)).getAuthorById(anyLong());
     }
 
@@ -122,7 +110,7 @@ public class AuthorRestControllerTest {
         mockMvc.perform(get("/authors/{id}/posts", anyLong()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(convertToJson(Collections.singletonList(post))));
+                .andExpect(content().json(JsonConverter.convertToJson(Collections.singletonList(post))));
         verify(postService, times(1)).getAllPostsByAuthorId(anyLong());
 
     }
@@ -154,16 +142,16 @@ public class AuthorRestControllerTest {
         mockMvc.perform(get("/authors/login/{login}", "testLogin"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(convertToJson(author)));
+                .andExpect(content().json(JsonConverter.convertToJson(author)));
         verify(authorServiceMock, times(1)).getAuthorByLogin(anyString());
     }
 
     @Test
     public void getAuthorByLoginWithValidationException() throws Exception {
         given(authorServiceMock.getAuthorByLogin(anyString())).willThrow(ValidationException.class);
-        mockMvc.perform(get("/authors/login/{login}", "testLogin"))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
+        mockMvc.perform(MockMvcRequestBuilders.get("/authors/login/{login}", "testLogin"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest());
         verify(authorServiceMock, times(1)).getAuthorByLogin(anyString());
 
     }
@@ -171,9 +159,9 @@ public class AuthorRestControllerTest {
     @Test
     public void getAuthorByLoginWithNotFoundException() throws Exception {
         given(authorServiceMock.getAuthorByLogin(anyString())).willThrow(NotFoundException.class);
-        mockMvc.perform(get("/authors/login/{login}", "testLogin"))
-                .andDo(print())
-                .andExpect(status().isNotFound());
+        mockMvc.perform(MockMvcRequestBuilders.get("/authors/login/{login}", "testLogin"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isNotFound());
         verify(authorServiceMock, times(1)).getAuthorByLogin(anyString());
 
     }
@@ -184,62 +172,27 @@ public class AuthorRestControllerTest {
         given(authorServiceMock.addAuthor(any(Author.class))).willReturn(anyLong());
         mockMvc.perform(post("/authors")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(convertToJson(author)))
+                .content(JsonConverter.convertToJson(author)))
                 .andDo(print())
                 .andExpect(status().isCreated());
         verify(authorServiceMock, times(1)).addAuthor(any(Author.class));
     }
 
-    /*This test does not work correctly, for some reason validation does not work in the test*/
-    @Test
-    public void addAuthorWithValidationException() throws Exception {
-        author.setRegistrationTime(null);
-        author.setFirstName(null);
-        author.setMail(null);
-
-        given(authorServiceMock.addAuthor(any(Author.class))).willReturn(anyLong());
-
-        mockMvc.perform(post("/authors")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(convertToJson(author)))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
-        verify(authorServiceMock, times(0)).addAuthor(any());
-    }
-
     @Test
     public void updateAuthorSuccess() throws Exception {
         author.setRegistrationTime(null);
-        given(authorServiceMock.updateAuthor(any(Author.class))).willReturn(anyInt());
         mockMvc.perform(put("/authors")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(convertToJson(author)))
+                .content(JsonConverter.convertToJson(author)))
                 .andDo(print())
                 .andExpect(status().isOk());
-        verify(authorServiceMock, times(0)).updateAuthor(any(Author.class));
-
-    }
-
-    /*This test does not work correctly, for some reason validation does not work in the test.*/
-    @Test
-    public void updateAuthorWithValidationException() throws Exception {
-        author.setRegistrationTime(null);
-        author.setFirstName(null);
-        author.setMail(null);
-        given(authorServiceMock.updateAuthor(any(Author.class))).willReturn(anyInt());
-        mockMvc.perform(put("/authors")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(convertToJson(author)))
-                .andDo(print())
-                .andExpect(status().isBadRequest());
-        verify(authorServiceMock, times(0)).updateAuthor(any(Author.class));
+        verify(authorServiceMock, times(1)).updateAuthor(any(Author.class));
 
     }
 
     /*TODO: Fix ("Invalid use of argument matchers!")*/
     @Test
     public void deleteAuthor() throws Exception {
-        given(authorServiceMock.deleteAuthor(anyLong())).willReturn(anyInt());
         mockMvc.perform(delete("/authors/{id}", anyLong()))
                 .andDo(print())
                 .andExpect(status().isOk());

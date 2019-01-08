@@ -18,7 +18,7 @@ public class PostRestController {
         this.postService = postService;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     @ResponseStatus(value = HttpStatus.OK)
     public List<Post> getAllPosts() {
         return postService.getAllPosts();
@@ -30,7 +30,7 @@ public class PostRestController {
         return postService.getPostById(id);
     }
 
-    @GetMapping("/{initial}-{quantity}")
+    @GetMapping("from{initial}/{quantity}")
     @ResponseStatus(value = HttpStatus.OK)
     public List<Post> getPostsByInitialIdAndQuantity(
             @PathVariable(value = "initial") Long initial,

@@ -1,7 +1,6 @@
 package com.blog.dao.jdbc;
 
 import com.blog.Post;
-import com.blog.Tag;
 import com.blog.dao.PostDao;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,7 +17,6 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:test-spring-dao.xml"})
-@Transactional
 public class PostDaoImplTest {
 
     private static Long CORRECT_POST_ID = 1L;
@@ -66,12 +64,7 @@ public class PostDaoImplTest {
         assertEquals(CORRECT_POST_ID, post.getId());
     }
 
-    @Test
-    public void getAllTagsByPostId() {
-        List<Tag> tags = postDao.getAllTagsByPostId(CORRECT_POST_ID);
-        assertNotNull(tags);
-        assertEquals(2, tags.size());
-    }
+
 
 
     @Test(expected = DataAccessException.class)

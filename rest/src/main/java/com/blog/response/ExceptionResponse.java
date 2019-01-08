@@ -1,4 +1,4 @@
-package com.blog;
+package com.blog.response;
 
 
 import java.time.LocalDate;

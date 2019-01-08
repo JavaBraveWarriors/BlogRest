@@ -16,7 +16,6 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:test-spring-dao.xml"})
-@Transactional
 public class AuthorDaoImplTest {
 
     private static Long CORRECT_ID_1 = 1L;
@@ -35,7 +34,7 @@ public class AuthorDaoImplTest {
     private static String NEW_AUTHOR_PhONE_4 = "8072123";
 
 
-    private static String UPDATED_AUTHOR_PhONE_1 = "1232223";
+    private static String UPDATED_AUTHOR_PHONE_1 = "1232223";
     private static String UPDATED_AUTHOR_MAIL_1 = "testUpdateMail1";
     private static String UPDATED_AUTHOR_PASSWORD_1 = "testUpdatePsw1";
     private static String UPDATED_AUTHOR_LAST_NAME_1 = "testUpdateLast1";
@@ -116,7 +115,7 @@ public class AuthorDaoImplTest {
         Author author = authorDao.getAuthorById(CORRECT_ID_1);
         assertNotNull(author);
 
-        author.setPhone(UPDATED_AUTHOR_PhONE_1);
+        author.setPhone(UPDATED_AUTHOR_PHONE_1);
         author.setMail(UPDATED_AUTHOR_MAIL_1);
         author.setPassword(UPDATED_AUTHOR_PASSWORD_1);
         author.setLastName(UPDATED_AUTHOR_LAST_NAME_1);

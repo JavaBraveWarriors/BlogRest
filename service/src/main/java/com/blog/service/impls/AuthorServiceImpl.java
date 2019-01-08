@@ -37,42 +37,36 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
 
-    @Override
     public List<Author> getAllAuthors() {
         return authorDao.getAllAuthors();
     }
 
-    @Override
     public Author getAuthorById(Long authorId) {
         validateAuthorId(authorId);
         checkAuthor(authorId);
         return authorDao.getAuthorById(authorId);
     }
 
-    @Override
     public Author getAuthorByLogin(String login) {
         validateAuthorLogin(login);
         checkAuthor(login);
         return authorDao.getAuthorByLogin(login);
     }
 
-    @Override
     public Long addAuthor(Author author) {
         checkAuthorExistence(author);
         author.setRegistrationTime(LocalDate.now());
         return authorDao.addAuthor(author);
     }
 
-    @Override
-    public int updateAuthor(Author author) {
-        return authorDao.updateAuthor(author);
+    public void updateAuthor(Author author) {
+        authorDao.updateAuthor(author);
     }
 
-    @Override
-    public int deleteAuthor(Long authorId) {
+    public void deleteAuthor(Long authorId) {
         validateAuthorId(authorId);
         checkAuthor(authorId);
-        return authorDao.deleteAuthor(authorId);
+        authorDao.deleteAuthor(authorId);
     }
 
     private void checkAuthorExistence(Author author) {

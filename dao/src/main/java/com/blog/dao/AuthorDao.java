@@ -15,9 +15,9 @@ public interface AuthorDao {
 
     Long addAuthor(Author author) throws DataAccessException;
 
-    int updateAuthor(Author author) throws DataAccessException;
+    boolean updateAuthor(Author author) throws DataAccessException;
 
-    int deleteAuthor(Long authorId) throws DataAccessException;
+    boolean deleteAuthor(Long authorId) throws DataAccessException;
 
     boolean checkAuthorById(Long authorId);
 

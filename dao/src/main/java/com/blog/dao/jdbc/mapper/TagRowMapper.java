@@ -7,13 +7,12 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static com.blog.dao.jdbc.TagDaoImpl.*;
-
 @Component
 public class TagRowMapper implements RowMapper<Tag> {
+    public static final String ID = "id";
+    public static final String TITLE = "title";
+    public static final String PATH_IMAGE = "path_image";
 
-
-    @Override
     public Tag mapRow(ResultSet rs, int rowNum) throws SQLException {
         return new Tag(
                 rs.getLong(ID),

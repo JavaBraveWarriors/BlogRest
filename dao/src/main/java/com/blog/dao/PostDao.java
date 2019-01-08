@@ -1,7 +1,6 @@
 package com.blog.dao;
 
 import com.blog.Post;
-import com.blog.Tag;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
@@ -12,8 +11,6 @@ public interface PostDao {
 
     List<Post> getAllPosts() throws DataAccessException;
 
-    List<Tag> getAllTagsByPostId(Long id) throws DataAccessException;
-
     List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws DataAccessException;
 
     List<Post> getAllPostsByTagId(Long tagId) throws DataAccessException;
@@ -22,13 +19,13 @@ public interface PostDao {
 
     Long addPost(Post post) throws DataAccessException;
 
-    int addTagToPost(Long id, Long tagId) throws DataAccessException;
+    boolean addTagToPost(Long id, Long tagId) throws DataAccessException;
 
-    int updatePost(Post post) throws DataAccessException;
+    boolean updatePost(Post post) throws DataAccessException;
 
-    int deletePost(Long id) throws DataAccessException;
+    boolean deletePost(Long id) throws DataAccessException;
 
-    int deleteTagInPost(Long id, Long tagId) throws DataAccessException;
+    boolean deleteTagInPost(Long id, Long tagId) throws DataAccessException;
 
     boolean checkPostById(Long id);
 

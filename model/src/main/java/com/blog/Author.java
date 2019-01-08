@@ -8,7 +8,6 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.Objects;
 
 @Entity
 public class Author {
@@ -37,7 +36,6 @@ public class Author {
     @Size(max = 45, message = "LastName should be less than 255 characters.")
     private String lastName;
 
-
     private LocalDate registrationTime;
 
     private String phone;
@@ -57,7 +55,6 @@ public class Author {
         this.description = description;
         this.phone = phone;
     }
-
 
     public Long getId() {
         return id;
@@ -131,28 +128,6 @@ public class Author {
         this.description = description;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Author)) return false;
-        Author author = (Author) o;
-        return Objects.equals(getId(), author.getId()) &&
-                Objects.equals(getMail(), author.getMail()) &&
-                Objects.equals(getLogin(), author.getLogin()) &&
-                Objects.equals(getPassword(), author.getPassword()) &&
-                Objects.equals(getFirstName(), author.getFirstName()) &&
-                Objects.equals(getLastName(), author.getLastName()) &&
-                Objects.equals(getRegistrationTime(), author.getRegistrationTime()) &&
-                Objects.equals(getPhone(), author.getPhone()) &&
-                Objects.equals(getDescription(), author.getDescription());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getId(), getMail(), getLogin(), getPassword(), getFirstName(), getLastName(), getRegistrationTime(), getPhone(), getDescription());
-    }
-
-    @Override
     public String toString() {
         return "Author{" +
                 "id=" + id +

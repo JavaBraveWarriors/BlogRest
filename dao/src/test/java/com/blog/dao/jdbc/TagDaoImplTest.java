@@ -16,11 +16,11 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:test-spring-dao.xml"})
-@Transactional
 public class TagDaoImplTest {
 
     private static Long CORRECT_TAG_ID = 1L;
     private static Long INCORRECT_TAG_ID = 6L;
+    private static Long CORRECT_POST_ID = 1L;
 
 
     private static Long NEW_TAG_ID_5 = 5L;
@@ -45,6 +45,13 @@ public class TagDaoImplTest {
 
         assertNotNull(tags);
         assertEquals(4, tags.size());
+    }
+
+    @Test
+    public void getAllTagsByPostId() {
+        List<Tag> tags = tagDao.getAllTagsByPostId(CORRECT_POST_ID);
+        assertNotNull(tags);
+        assertEquals(2, tags.size());
     }
 
     @Test

@@ -26,12 +26,6 @@ public class AuthorRestController {
         this.postService = postService;
     }
 
-    @GetMapping("")
-    @ResponseStatus(value = HttpStatus.OK)
-    public List<Author> getAllAuthors() {
-        return authorService.getAllAuthors();
-    }
-
     @GetMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public Author getAuthorById(@PathVariable(value = "id") Long userId) {
@@ -76,6 +70,4 @@ public class AuthorRestController {
     public void deleteAuthor(@PathVariable(value = "id") Long userId) {
         authorService.deleteAuthor(userId);
     }
-
-
 }
