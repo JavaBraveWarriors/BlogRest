@@ -48,7 +48,7 @@ public class AuthorRestController {
     @ResponseStatus(value = HttpStatus.CREATED)
     public Long addAuthor(@Valid @RequestBody Author author, BindingResult result) {
         if (result.hasErrors()) {
-            throw new ValidationException(result.getFieldErrors().toString());// TODO: протестировать!!!
+            throw new ValidationException(result.getFieldErrors().toString());
         } else {
             return authorService.addAuthor(author);
         }

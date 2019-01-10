@@ -5,6 +5,8 @@ import com.blog.dao.AuthorDao;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
 import com.blog.service.AuthorService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import java.util.List;
 @Service
 @Transactional
 public class AuthorServiceImpl implements AuthorService {
+
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private AuthorDao authorDao;
 
@@ -32,7 +36,7 @@ public class AuthorServiceImpl implements AuthorService {
     private String authorExist;
 
     @Autowired
-    public AuthorServiceImpl(AuthorDao authorDao) {
+    public AuthorServiceImpl(final AuthorDao authorDao) {
         this.authorDao = authorDao;
     }
 
@@ -42,6 +46,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     public Author getAuthorById(Long authorId) {
+        LOGGER.debug("Search author by id = [" + authorId + "]");
         validateAuthorId(authorId);
         checkAuthor(authorId);
         return authorDao.getAuthorById(authorId);
@@ -60,6 +65,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     public void updateAuthor(Author author) {
+        checkAuthor(author.getId());
         authorDao.updateAuthor(author);
     }
 

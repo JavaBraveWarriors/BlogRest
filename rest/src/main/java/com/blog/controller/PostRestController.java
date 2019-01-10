@@ -44,6 +44,14 @@ public class PostRestController {
         return postService.getAllPostsByTagId(tagId);
     }
 
+    @PutMapping("{postId}/tag/{tagId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void addTagToPost(
+            @PathVariable(value = "postId") Long postId,
+            @PathVariable(value = "tagId") Long tagId) {
+        postService.addTagToPost(postId, tagId);
+    }
+
     @PostMapping("")
     @ResponseStatus(value = HttpStatus.CREATED)
     public Long addPost(@RequestBody Post post) {

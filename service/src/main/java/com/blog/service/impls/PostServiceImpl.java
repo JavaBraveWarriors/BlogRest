@@ -59,6 +59,8 @@ public class PostServiceImpl implements PostService {
     @Value("${postService.errorOfDeleting}")
     private String deleteError;
 
+    @Value("${postService.tagExistInPost}")
+    private String tagExistInPost;
 
     @Autowired
     public PostServiceImpl(PostDao postDao, TagService tagService, AuthorDao authorDao) {
@@ -93,9 +95,7 @@ public class PostServiceImpl implements PostService {
     }
 
     public List<Post> getAllPostsByTagId(Long tagId) {
-        if (tagId == null || tagId < 0L)
-            throw new ValidationException(incorrectTagId);
-
+        validateTagId(tagId);
         List<Post> posts = postDao.getAllPostsByTagId(tagId);
         posts.forEach(post -> post.setTags(tagService.getAllTagsByPostId(post.getId())));
         return posts;
@@ -110,13 +110,23 @@ public class PostServiceImpl implements PostService {
 
     public Long addPost(Post post) {
         checkAuthor(post.getAuthorId());
+        post.setDate(LocalDate.now());
         Long key = postDao.addPost(post);
         post.getTags().forEach(tag -> {
             tagService.validateTagId(tag.getId());
             postDao.addTagToPost(key, tag.getId());
         });
-        post.setDate(LocalDate.now());
         return key;
+    }
+
+    @Override
+    public void addTagToPost(Long postId, Long tagId) {
+        validatePostId(postId);
+        validateTagId(tagId);
+        if(postDao.checkTagInPostById(postId,tagId))
+            throw new ValidationException(tagExistInPost);
+        postDao.addTagToPost(postId,tagId);
+
     }
 
     public void updatePost(Post post) {
@@ -149,6 +159,10 @@ public class PostServiceImpl implements PostService {
             throw new ValidationException(incorrectPostId);
         if (!postDao.checkPostById(id))
             throw new NotFoundException(notExistPost);
+    }
+    private void validateTagId(Long tagId){
+        if (tagId == null || tagId < 0L)
+            throw new ValidationException(incorrectTagId);
     }
 
     private void validateTags(List<Tag> tagsValidation) {

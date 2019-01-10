@@ -3,6 +3,8 @@ package com.blog.dao.jdbc;
 import com.blog.Author;
 import com.blog.dao.AuthorDao;
 import com.blog.dao.jdbc.mapper.AuthorRowMapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataAccessException;
@@ -17,8 +19,22 @@ import java.util.List;
 
 import static com.blog.dao.jdbc.mapper.AuthorRowMapper.*;
 
+/**
+ * This interface implementation {AuthorDao} allows operations to easily manage a database for an Author object.
+ * Use this class if you want to access the Author database.
+ *
+ * @author Aliaksandr Yeutushenka
+ * @see AuthorDao
+ * @see AuthorRowMapper
+ * @see Author
+ */
 @Repository
 public class AuthorDaoImpl implements AuthorDao {
+
+    /**
+     * This field used for logging events
+     */
+    private static final Logger LOGGER = LogManager.getLogger();
 
 
     @Value("${author.select}")
@@ -45,9 +61,22 @@ public class AuthorDaoImpl implements AuthorDao {
     @Value("${author.checkUserByLogin}")
     private String checkAuthorByLoginSql;
 
+    /**
+     * Allows to make a mapping for an {Author} object from database.
+     */
     private AuthorRowMapper authorRowMapper;
+
+    /**
+     * The JdbcTemplate which uses named parameters.
+     */
     private NamedParameterJdbcTemplate jdbcTemplate;
 
+    /**
+     * Create a new AuthorDaoImpl for the given {@link AuthorRowMapper} and {@link NamedParameterJdbcTemplate }
+     *
+     * @param authorRowMapper the author row mapper
+     * @param jdbcTemplate    the jdbc template
+     */
     @Autowired
     public AuthorDaoImpl(AuthorRowMapper authorRowMapper, NamedParameterJdbcTemplate jdbcTemplate) {
         this.authorRowMapper = authorRowMapper;
@@ -55,44 +84,52 @@ public class AuthorDaoImpl implements AuthorDao {
     }
 
     public List<Author> getAllAuthors() throws DataAccessException {
+        LOGGER.debug("Get all authors from database.");
         return jdbcTemplate.query(getAllAuthorsSql, authorRowMapper);
 
     }
 
     public Author getAuthorById(Long id) throws DataAccessException {
+        LOGGER.debug("Get author by id = [{}] from database.", id);
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.queryForObject(getAuthorByIdSql, parameterSource, authorRowMapper);
     }
 
 
     public Author getAuthorByLogin(String login) throws DataAccessException {
+        LOGGER.debug("Get author by Login = {} from database.", login);
         SqlParameterSource parameterSource = new MapSqlParameterSource(LOGIN, login);
         return jdbcTemplate.queryForObject(getAuthorByLoginSql, parameterSource, authorRowMapper);
     }
 
-    public Long addAuthor(Author author) throws DataAccessException {
+    public Long addAuthor(final Author author) throws DataAccessException {
+        LOGGER.debug("Add new author [{}] in database.", author);
         KeyHolder keyHolder = new GeneratedKeyHolder();
         MapSqlParameterSource parameterSource = getParameterSourceAuthor(author);
         jdbcTemplate.update(addAuthorSql, parameterSource, keyHolder);
         return keyHolder.getKey().longValue();
     }
 
-    public boolean updateAuthor(Author author) throws DataAccessException {
+    public boolean updateAuthor(final Author author) throws DataAccessException {
+        LOGGER.debug("Update author [{}] in database.", author);
         MapSqlParameterSource parameterSource = getParameterSourceAuthor(author);
         return jdbcTemplate.update(updateAuthorSql, parameterSource) == 1;
     }
 
     public boolean deleteAuthor(Long id) throws DataAccessException {
+        LOGGER.debug("Delete author by id = [{}] from database.", id);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.update(deleteAuthorSql, parameterSource) == 1;
     }
 
     public boolean checkAuthorById(Long id) {
+        LOGGER.debug("Check author by id = [{}] from database.", id);
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.queryForObject(checkAuthorByIdSql, parameterSource, boolean.class);
     }
 
     public boolean checkAuthorByLogin(String login) {
+        LOGGER.debug("Check author by id = [{}] from database.", login);
         SqlParameterSource parameterSource = new MapSqlParameterSource(LOGIN, login);
         return jdbcTemplate.queryForObject(checkAuthorByLoginSql, parameterSource, boolean.class);
     }

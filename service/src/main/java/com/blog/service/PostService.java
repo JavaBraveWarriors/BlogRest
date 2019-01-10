@@ -17,6 +17,9 @@ public interface PostService {
 
     Long addPost(Post post);
 
+    void addTagToPost(Long postId, Long tagId);
+
+
     void updatePost(Post post);
 
     void deletePost(Long id);

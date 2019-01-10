@@ -1,0 +1,17 @@
+<Configuration status="WARN">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <File name="File" fileName="log/dao.log">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Root level="ERROR">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="File"/>
+        </Root>
+        <Logger name="com.blog.dao" level="DEBUG"/>
+    </Loggers>
+</Configuration>

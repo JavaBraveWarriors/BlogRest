@@ -6,7 +6,7 @@ import com.blog.exception.ValidationException;
 import com.blog.handler.RestErrorHandler;
 import com.blog.service.AuthorService;
 import com.blog.service.PostService;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -65,7 +65,7 @@ public class AuthorRestControllerTest {
     );
 
 
-    @Before
+    @BeforeClass
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(authorRestController)
                 .setControllerAdvice(new RestErrorHandler())

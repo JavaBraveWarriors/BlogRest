@@ -1,14 +1,13 @@
 package com.blog;
 
 import com.blog.controller.PostRestController;
-import com.blog.handler.RestErrorHandler;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
+import com.blog.handler.RestErrorHandler;
 import com.blog.service.PostService;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -51,8 +50,8 @@ public class PostRestControllerTest {
             1L
     );
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(postRestController)
                 .setControllerAdvice(new RestErrorHandler())
                 .build();
@@ -89,6 +88,7 @@ public class PostRestControllerTest {
                 .andExpect(status().isBadRequest());
         verify(postService, times(1)).getPostById(anyLong());
     }
+
     @Test
     public void getPostByIdWithNotFoundException() throws Exception {
         given(postService.getPostById(anyLong())).willThrow(NotFoundException.class);
@@ -126,6 +126,7 @@ public class PostRestControllerTest {
                 .andExpect(content().json(convertToJson(Collections.singletonList(post))));
         verify(postService, times(1)).getAllPostsByTagId(anyLong());
     }
+
     @Test
     public void getAllPostsByTagIdWithValidationException() throws Exception {
         given(postService.getAllPostsByTagId(anyLong())).willThrow(ValidationException.class);

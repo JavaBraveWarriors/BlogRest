@@ -5,6 +5,7 @@ import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
 import com.blog.response.ExceptionResponse;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -56,12 +57,24 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                                  HttpHeaders headers, HttpStatus status, WebRequest request) {
-        ExceptionResponse errorDetails = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
+    // if it is wrong to add links to the database (tag_id or post_id does not exist)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public final @ResponseBody
+    ResponseEntity<ExceptionResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
+                request.getDescription(true));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
+        ExceptionResponse errorDetails = new ExceptionResponse(
+                LocalDate.now(),
+                Collections.singletonList(ex.getMessage()),
                 ex.getBindingResult().toString());
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
-
-
 }

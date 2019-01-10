@@ -6,9 +6,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -16,14 +16,16 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath*:test-spring-dao.xml"})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class TagDaoImplTest {
 
     private static Long CORRECT_TAG_ID = 1L;
-    private static Long INCORRECT_TAG_ID = 6L;
+    private static Long CORRECT_TAG_UPDATED_ID = 2L;
+    private static Long INCORRECT_TAG_ID = 7L;
     private static Long CORRECT_POST_ID = 1L;
 
 
-    private static Long NEW_TAG_ID_5 = 5L;
+    private static Long NEW_TAG_ID_5 = 6L;
     private static String NEW_TAG_TITLE_5 = "newTitle4";
     private static String NEW_TAG_PATH_IMAGE_5 = "newPathImage4";
 
@@ -44,7 +46,7 @@ public class TagDaoImplTest {
         List<Tag> tags = tagDao.getAllTags();
 
         assertNotNull(tags);
-        assertEquals(4, tags.size());
+        assertEquals(5, tags.size());
     }
 
     @Test
@@ -62,7 +64,7 @@ public class TagDaoImplTest {
 
     @Test(expected = DataAccessException.class)
     public void getTagByIdWithException() {
-        assertEquals("", tagDao.getTagById(5L).getTitle());
+        assertNull(tagDao.getTagById(6L));
     }
 
     @Test
@@ -86,15 +88,15 @@ public class TagDaoImplTest {
 
     @Test
     public void updateTag() {
-        Tag tag = tagDao.getTagById(CORRECT_TAG_ID);
+        Tag tag = tagDao.getTagById(CORRECT_TAG_UPDATED_ID);
         assertNotNull(tag);
         tag.setTitle(UPDATED_TAG_TITLE_1);
 
-        assertEquals(1, tagDao.updateTag(tag));
+        assertTrue(tagDao.updateTag(tag));
 
-        Tag updatedPost = tagDao.getTagById(CORRECT_TAG_ID);
+        Tag updatedPost = tagDao.getTagById(CORRECT_TAG_UPDATED_ID);
         assertNotNull(updatedPost);
-        assertEquals(tag, updatedPost);
+        assertEquals(tag.getTitle(), updatedPost.getTitle());
     }
 
     @Test
@@ -106,8 +108,8 @@ public class TagDaoImplTest {
         Tag newAuthor = tagDao.getTagById(CORRECT_TAG_ID);
         assertNotNull(newAuthor);
 
-        assertEquals(1, tagDao.deleteTag(CORRECT_TAG_ID));
-        assertEquals(0, tagDao.deleteTag(INCORRECT_TAG_ID));
+        assertTrue(tagDao.deleteTag(CORRECT_TAG_ID));
+        assertFalse(tagDao.deleteTag(INCORRECT_TAG_ID));
 
         tags = tagDao.getAllTags();
         assertNotNull(tags);
@@ -118,12 +120,12 @@ public class TagDaoImplTest {
 
     @Test
     public void checkTagByIdReturnedTrue() {
-        assert (tagDao.checkTagById(1L));
+        assertTrue(tagDao.checkTagById(2L));
     }
 
     @Test
     public void checkTagByIdReturnedFalse() {
-        assertFalse(tagDao.checkTagById(5L));
+        assertFalse(tagDao.checkTagById(6L));
     }
 
     @Test

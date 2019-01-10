@@ -1,6 +1,7 @@
 -- create-schema
 -- CREATE SCHEMA `blog` DEFAULT CHARACTER SET utf8;
 
+DROP TABLE IF EXISTS `author`;
 -- create-tables.sql
 CREATE TABLE `author`
 (
@@ -18,6 +19,7 @@ CREATE TABLE `author`
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
 
+DROP TABLE IF EXISTS `tag`;
 CREATE TABLE `tag`
 (
   `id`         bigint(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -28,6 +30,7 @@ CREATE TABLE `tag`
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
 
+DROP TABLE IF EXISTS `post`;
 CREATE TABLE `post`
 (
   `id`           bigint(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -44,6 +47,7 @@ CREATE TABLE `post`
   AUTO_INCREMENT = 1
   DEFAULT CHARSET = utf8;
 
+DROP TABLE IF EXISTS `post_has_tag`;
 CREATE TABLE `post_has_tag`
 (
   `post_id` bigint(11) unsigned NOT NULL,
