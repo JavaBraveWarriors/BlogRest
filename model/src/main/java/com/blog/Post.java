@@ -1,12 +1,17 @@
 package com.blog;
 
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -27,7 +32,9 @@ public class Post {
     @NotNull
     private String text;
 
-    private LocalDate date;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime timeOfCreation;
 
     private String pathImage;
 
@@ -81,12 +88,12 @@ public class Post {
         this.text = text;
     }
 
-    public LocalDate getDate() {
-        return date;
+    public LocalDateTime getTimeOfCreation() {
+        return timeOfCreation;
     }
 
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setTimeOfCreation(LocalDateTime timeOfCreation) {
+        this.timeOfCreation = timeOfCreation;
     }
 
     public String getPathImage() {
@@ -119,7 +126,7 @@ public class Post {
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
                 ", text='" + text + '\'' +
-                ", date=" + date +
+                ", timeOfCreation=" + timeOfCreation +
                 ", pathImage='" + pathImage + '\'' +
                 ", authorId=" + authorId +
                 ", tagsId=" + tags +

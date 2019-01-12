@@ -6,7 +6,7 @@ import com.blog.exception.ValidationException;
 import com.blog.handler.RestErrorHandler;
 import com.blog.service.AuthorService;
 import com.blog.service.PostService;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -19,7 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.*;
@@ -65,13 +65,13 @@ public class AuthorRestControllerTest {
     );
 
 
-    @BeforeClass
+    @Before
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(authorRestController)
                 .setControllerAdvice(new RestErrorHandler())
                 .build();
-        author.setRegistrationTime(LocalDate.now());
-        post.setDate(LocalDate.now());
+        author.setRegistrationTime(LocalDateTime.now());
+        post.setTimeOfCreation(LocalDateTime.now());
     }
 
     @Test
@@ -91,7 +91,6 @@ public class AuthorRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
         verify(authorServiceMock, times(1)).getAuthorById(anyLong());
-
     }
 
     @Test
@@ -101,7 +100,6 @@ public class AuthorRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
         verify(authorServiceMock, times(1)).getAuthorById(anyLong());
-
     }
 
     @Test
@@ -112,7 +110,6 @@ public class AuthorRestControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().json(JsonConverter.convertToJson(Collections.singletonList(post))));
         verify(postService, times(1)).getAllPostsByAuthorId(anyLong());
-
     }
 
     @Test
@@ -122,7 +119,6 @@ public class AuthorRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isBadRequest());
         verify(postService, times(1)).getAllPostsByAuthorId(anyLong());
-
     }
 
     @Test
@@ -132,7 +128,6 @@ public class AuthorRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
         verify(postService, times(1)).getAllPostsByAuthorId(anyLong());
-
     }
 
 
@@ -163,7 +158,6 @@ public class AuthorRestControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isNotFound());
         verify(authorServiceMock, times(1)).getAuthorByLogin(anyString());
-
     }
 
     @Test
@@ -187,10 +181,8 @@ public class AuthorRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
         verify(authorServiceMock, times(1)).updateAuthor(any(Author.class));
-
     }
 
-    /*TODO: Fix ("Invalid use of argument matchers!")*/
     @Test
     public void deleteAuthor() throws Exception {
         mockMvc.perform(delete("/authors/{id}", anyLong()))

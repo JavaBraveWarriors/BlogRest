@@ -28,7 +28,7 @@ public interface PostDao {
      * Gets the list of objects of the all posts from database.
      *
      * @return {List<Post>} is a list of all posts from the database.
-     * @throws DataAccessException Will throw an error if the data is not access or the table {post} is empty.
+     * @throws DataAccessException Will throw an error if the data is not access.
      */
     List<Post> getAllPosts() throws DataAccessException;
 

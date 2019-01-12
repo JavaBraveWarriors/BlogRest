@@ -5,7 +5,7 @@ import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
 import com.blog.handler.RestErrorHandler;
 import com.blog.service.PostService;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -15,7 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 
 import static com.blog.JsonConverter.convertToJson;
@@ -50,12 +50,12 @@ public class PostRestControllerTest {
             1L
     );
 
-    @BeforeClass
+    @Before
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(postRestController)
                 .setControllerAdvice(new RestErrorHandler())
                 .build();
-        post.setDate(LocalDate.now());
+        post.setTimeOfCreation(LocalDateTime.now());
     }
 
     @Test
@@ -69,6 +69,7 @@ public class PostRestControllerTest {
         verify(postService, times(1)).getAllPosts();
     }
 
+
     @Test
     public void getPostByIdSuccess() throws Exception {
         given(postService.getPostById(anyLong())).willReturn(post);
@@ -81,7 +82,7 @@ public class PostRestControllerTest {
 
     @Test
     public void getPostByIdWithValidationException() throws Exception {
-        post.setDate(null);
+        post.setTimeOfCreation(null);
         given(postService.getPostById(anyLong())).willThrow(ValidationException.class);
         mockMvc.perform(get("/posts/{id}", anyLong()))
                 .andDo(print())
@@ -138,7 +139,7 @@ public class PostRestControllerTest {
 
     @Test
     public void addPost() throws Exception {
-        post.setDate(null);
+        post.setTimeOfCreation(null);
         given(postService.addPost(any(Post.class))).willReturn(anyLong());
         mockMvc.perform(post("/posts")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -150,7 +151,7 @@ public class PostRestControllerTest {
 
     @Test
     public void updatePost() throws Exception {
-        post.setDate(null);
+        post.setTimeOfCreation(null);
         mockMvc.perform(put("/posts")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(convertToJson(post)))

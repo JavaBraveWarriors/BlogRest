@@ -11,7 +11,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -169,7 +169,7 @@ public class PostDaoImplTest {
     public void addTagToPostSuccess() {
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
-        post.setDate(LocalDate.now());
+        post.setTimeOfCreation(LocalDateTime.now());
 
         List<Post> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID);
         int initialSize = posts.size();
@@ -183,7 +183,7 @@ public class PostDaoImplTest {
     public void addTagToPostWithDataIntegrityViolationException1() {
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
-        post.setDate(LocalDate.now());
+        post.setTimeOfCreation(LocalDateTime.now());
         assertTrue(postDao.addTagToPost(post.getId(), INCORRECT_NEGATIVE_ID));
     }
 
@@ -191,7 +191,7 @@ public class PostDaoImplTest {
     public void addTagToPostWithDataIntegrityViolationException2() {
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
-        post.setDate(LocalDate.now());
+        post.setTimeOfCreation(LocalDateTime.now());
         assertTrue(postDao.addTagToPost(post.getId(), null));
     }
 
@@ -199,7 +199,7 @@ public class PostDaoImplTest {
     public void updatePostSuccess() {
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
-        post.setDate(LocalDate.now());
+        post.setTimeOfCreation(LocalDateTime.now());
 
         post.setTitle(UPDATED_POST_TITLE_1);
         post.setText(UPDATED_POST_TEXT_1);
@@ -221,7 +221,7 @@ public class PostDaoImplTest {
     public void updatePostNotUpdated() {
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
-        post.setDate(LocalDate.now());
+        post.setTimeOfCreation(LocalDateTime.now());
         post.setId(INCORRECT_POST_ID);
         post.setTitle(UPDATED_POST_TITLE_1);
         post.setText(UPDATED_POST_TEXT_1);
@@ -268,7 +268,7 @@ public class PostDaoImplTest {
     public void deleteTagInPostSuccess() {
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
-        post.setDate(LocalDate.now());
+        post.setTimeOfCreation(LocalDateTime.now());
 
         List<Post> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID_2);
         int initialSize = posts.size();
@@ -282,7 +282,7 @@ public class PostDaoImplTest {
     public void deleteTagInPostNotDeleted() {
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
-        post.setDate(LocalDate.now());
+        post.setTimeOfCreation(LocalDateTime.now());
 
         List<Post> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID_2);
         int initialSize = posts.size();

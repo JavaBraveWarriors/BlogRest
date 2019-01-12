@@ -20,7 +20,7 @@ public interface AuthorDao {
      * Gets the list of objects of the all authors from database.
      *
      * @return {List<Author>} is a list of all authors in the database.
-     * @throws DataAccessException Will throw an error if the data is not access or the table {author} is empty.
+     * @throws DataAccessException Will throw an error if the data is not access.
      */
     List<Author> getAllAuthors() throws DataAccessException;
 

@@ -20,7 +20,7 @@ public interface TagDao {
      * Gets the list of objects of the all tags from database.
      *
      * @return {List<Tag>} is a list of all tags from the database.
-     * @throws DataAccessException Will throw an error if the data is not access or the table {tag} is empty.
+     * @throws DataAccessException Will throw an error if the data is not access.
      */
     List<Tag> getAllTags();
 

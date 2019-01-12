@@ -4,9 +4,10 @@ import com.blog.Author;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
+
 
 @Component
 public class AuthorRowMapper implements RowMapper<Author> {
@@ -32,9 +33,9 @@ public class AuthorRowMapper implements RowMapper<Author> {
                 rs.getString(DESCRIPTION),
                 rs.getString(PHONE)
         );
-        Date date = rs.getDate(REGISTRATION_DATE);
+        Timestamp date = rs.getTimestamp(REGISTRATION_DATE);
         if (date != null) {
-            author.setRegistrationTime(date.toLocalDate());
+            author.setRegistrationTime(date.toLocalDateTime());
         }
         return author;
     }

@@ -6,8 +6,6 @@ import java.util.List;
 
 public interface TagService {
 
-
-
     List<Tag> getAllTags();
 
     Tag getTagById(Long id);
@@ -20,5 +18,4 @@ public interface TagService {
 
     void deleteTag(Long id);
 
-    void validateTagId(Long id);
 }

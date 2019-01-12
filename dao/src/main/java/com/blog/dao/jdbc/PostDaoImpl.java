@@ -193,7 +193,7 @@ public class PostDaoImpl implements PostDao {
         parameterSource.addValue(TITLE, post.getTitle());
         parameterSource.addValue(DESCRIPTION, post.getDescription());
         parameterSource.addValue(TEXT, post.getText());
-        parameterSource.addValue(CREATED_DATE, post.getDate());
+        parameterSource.addValue(CREATED_DATE, post.getTimeOfCreation());
         parameterSource.addValue(PATH_IMAGE, post.getPathImage());
         parameterSource.addValue(AUTHOR_ID, post.getAuthorId());
         return parameterSource;

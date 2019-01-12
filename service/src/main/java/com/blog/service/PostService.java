@@ -5,6 +5,7 @@ import com.blog.Post;
 import java.util.List;
 
 public interface PostService {
+
     List<Post> getAllPostsByAuthorId(Long userId);
 
     List<Post> getAllPosts();
@@ -19,8 +20,8 @@ public interface PostService {
 
     void addTagToPost(Long postId, Long tagId);
 
-
     void updatePost(Post post);
 
     void deletePost(Long id);
+
 }

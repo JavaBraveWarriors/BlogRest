@@ -31,7 +31,7 @@ public class TagRestController {
     }
 
     @PostMapping("")
-    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseStatus(value = HttpStatus.CREATED)
     public Long addTag(@RequestBody Tag tag) {
         return tagService.addTag(tag);
     }
@@ -42,7 +42,7 @@ public class TagRestController {
         tagService.updateTag(tag);
     }
 
-    @DeleteMapping("")
+    @DeleteMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public void deleteTag(@PathVariable(value = "id") Long id) {
         tagService.deleteTag(id);

@@ -1,13 +1,18 @@
 package com.blog;
 
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 public class Author {
@@ -36,7 +41,9 @@ public class Author {
     @Size(max = 45, message = "LastName should be less than 255 characters.")
     private String lastName;
 
-    private LocalDate registrationTime;
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    private LocalDateTime registrationTime;
 
     private String phone;
 
@@ -104,11 +111,11 @@ public class Author {
         this.lastName = lastName;
     }
 
-    public LocalDate getRegistrationTime() {
+    public LocalDateTime getRegistrationTime() {
         return registrationTime;
     }
 
-    public void setRegistrationTime(LocalDate registrationTime) {
+    public void setRegistrationTime(LocalDateTime registrationTime) {
         this.registrationTime = registrationTime;
     }
 

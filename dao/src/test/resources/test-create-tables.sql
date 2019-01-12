@@ -11,7 +11,7 @@ CREATE TABLE `author`
   `password`          varchar(255)        NOT NULL,
   `first_name`        varchar(45) DEFAULT NULL,
   `last_name`         varchar(45) DEFAULT NULL,
-  `registration_date` date        DEFAULT NULL,
+  `registration_date` datetime        DEFAULT NULL,
   `phone`             varchar(20) DEFAULT NULL,
   `description`       text,
   PRIMARY KEY (`id`)
@@ -37,7 +37,7 @@ CREATE TABLE `post`
   `title`        varchar(200)        NOT NULL,
   `description`  varchar(600)        NOT NULL,
   `text`         text                NOT NULL,
-  `created_date` date                NOT NULL,
+  `created_date` datetime                NOT NULL,
   `path_image`   varchar(45) DEFAULT NULL,
   `author_id`    bigint(11) unsigned NOT NULL,
   PRIMARY KEY (`id`, `author_id`),

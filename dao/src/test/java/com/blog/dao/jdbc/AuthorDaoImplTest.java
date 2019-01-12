@@ -67,6 +67,7 @@ public class AuthorDaoImplTest {
     public void getAuthorByIdSuccess() {
         Author author = authorDao.getAuthorById(CORRECT_ID_1);
         assertNotNull(author);
+        System.out.println();
         assertEquals(CORRECT_ID_1, author.getId());
     }
 

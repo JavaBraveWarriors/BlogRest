@@ -4,9 +4,9 @@ import com.blog.Post;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
-import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 
 @Component
 public class PostRowMapper implements RowMapper<Post> {
@@ -32,9 +32,9 @@ public class PostRowMapper implements RowMapper<Post> {
                 rs.getString(PATH_IMAGE),
                 rs.getLong(AUTHOR_ID)
         );
-        Date date = rs.getDate(CREATED_DATE);
+        Timestamp date = rs.getTimestamp(CREATED_DATE);
         if (date != null) {
-            post.setDate(date.toLocalDate());
+            post.setTimeOfCreation(date.toLocalDateTime());
         }
         return post;
     }

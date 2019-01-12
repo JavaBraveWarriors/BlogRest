@@ -32,11 +32,12 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ExceptionResponse> handleNotFoundException(NotFoundException ex, WebRequest request) {
+    public final @ResponseBody
+    ResponseEntity<ExceptionResponse> handleNotFoundException(NotFoundException ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
                 request.getDescription(false));
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exceptionResponse);
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(ValidationException.class)
@@ -44,8 +45,6 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
     ResponseEntity<ExceptionResponse> handleValidationException(ValidationException ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
                 request.getDescription(true));
-
-
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
