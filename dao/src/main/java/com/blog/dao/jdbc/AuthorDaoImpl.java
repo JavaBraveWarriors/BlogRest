@@ -31,9 +31,6 @@ import static com.blog.dao.jdbc.mapper.AuthorRowMapper.*;
 @Repository
 public class AuthorDaoImpl implements AuthorDao {
 
-    /**
-     * This field used for logging events
-     */
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Value("${author.select}")

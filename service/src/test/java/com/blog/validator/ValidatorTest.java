@@ -103,17 +103,17 @@ public class ValidatorTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void validatePostIdWithValidationException1() {
+    public void validatePostIncorrectId() {
         validator.validatePostId(INCORRECT_POST_ID);
     }
 
     @Test(expected = ValidationException.class)
-    public void validatePostIdWithValidationException2() {
+    public void validatePostNullId() {
         validator.validatePostId(NULL_LONG);
     }
 
     @Test(expected = NotFoundException.class)
-    public void validatePostIdWithNotFoundException() {
+    public void validateNotExistPostId() {
         when(postDao.checkPostById(anyLong())).thenReturn(false);
         validator.validatePostId(CORRECT_POST_ID);
         verify(postDao, times(1)).checkPostById(anyLong());
@@ -128,7 +128,7 @@ public class ValidatorTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void validateTagsWithValidationException1() {
+    public void validateNotExistTags() {
         when(tagService.getTagById(anyLong())).thenReturn(null);
         when(tagDao.checkTagById(anyLong())).thenReturn(true);
         validator.validateTags(Collections.singletonList(correctTag), tagService);
@@ -136,7 +136,7 @@ public class ValidatorTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void validateTagsWithValidationException2() {
+    public void validateTagsWhereNotEqualsWithDataInDB() {
         when(tagService.getTagById(anyLong())).thenReturn(new Tag(4L, "1", "1"));
         when(tagDao.checkTagById(anyLong())).thenReturn(true);
         validator.validateTags(Collections.singletonList(correctTag), tagService);
@@ -144,20 +144,20 @@ public class ValidatorTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void validateTagsWithValidationException3() {
+    public void validateIncorrectTags() {
         validator.validateTags(Collections.singletonList(incorrectTag), tagService);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
     @Test(expected = ValidationException.class)
-    public void validateTagsWithValidationException4() {
+    public void validateTagsWhereTagHasIdEqualsNull() {
         incorrectTag.setId(NULL_LONG);
         validator.validateTags(Collections.singletonList(incorrectTag), tagService);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
-    public void validateTagsWithNotFoundException() {
+    public void validateTagsWhereTagNotExistInDB() {
         when(tagDao.checkTagById(anyLong())).thenReturn(false);
         validator.validateTags(Collections.singletonList(correctTag), tagService);
         verify(tagDao, times(1)).checkTagById(anyLong());
@@ -173,18 +173,18 @@ public class ValidatorTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void checkPostWithValidationException1() {
+    public void checkPostWithIncorrectNegativeId() {
         validator.checkPost(incorrectPost1);
     }
 
     @Test(expected = ValidationException.class)
-    public void checkPostWithValidationException2() {
+    public void checkPostWithIncorrectNegativeAuthorId() {
         when(postDao.checkPostById(anyLong())).thenReturn(true);
         validator.checkPost(incorrectPost2);
     }
 
     @Test(expected = NotFoundException.class)
-    public void checkPostWithNotFoundException1() {
+    public void checkNotExistPost() {
         when(postDao.checkPostById(anyLong())).thenReturn(false);
         validator.checkPost(correctPost);
         verify(authorDao, never()).checkAuthorById(anyLong());
@@ -192,7 +192,7 @@ public class ValidatorTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void checkPostWithNotFoundException() {
+    public void checkPostWhereAuthorIdNotEqualWithPostInDB() {
         when(postDao.checkPostById(anyLong())).thenReturn(true);
         when(authorDao.checkAuthorById(anyLong())).thenReturn(false);
         validator.checkPost(correctPost);
@@ -208,17 +208,17 @@ public class ValidatorTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void validateAuthorIdWithValidationException1() {
+    public void validateAuthorIncorrectId() {
         validator.validateAuthorId(INCORRECT_AUTHOR_ID);
     }
 
     @Test(expected = ValidationException.class)
-    public void validateAuthorIdWithValidationException2() {
+    public void validateAuthorNullId() {
         validator.validateAuthorId(NULL_LONG);
     }
 
     @Test(expected = NotFoundException.class)
-    public void validateAuthorIdWithNotFoundException() {
+    public void validateNotExistAuthorById() {
         when(authorDao.checkAuthorById(anyLong())).thenReturn(false);
         validator.validateAuthorId(CORRECT_AUTHOR_ID);
         verify(authorDao, times(1)).checkAuthorById(anyLong());
@@ -231,17 +231,17 @@ public class ValidatorTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void validateAuthorLoginWithValidationException1() {
+    public void validateAuthorIncorrectLogin() {
         validator.validateAuthorLogin(INCORRECT_AUTHOR_LOGIN);
     }
 
     @Test(expected = ValidationException.class)
-    public void validateAuthorLoginWithValidationException2() {
+    public void validateAuthorNullLogin() {
         validator.validateAuthorLogin(NULL_STRING);
     }
 
     @Test(expected = NotFoundException.class)
-    public void validateAuthorLoginWithNotFoundException() {
+    public void validateNotExistAuthorByLogin() {
         when(authorDao.checkAuthorByLogin(anyString())).thenReturn(false);
         validator.validateAuthorLogin(CORRECT_AUTHOR_LOGIN);
     }
@@ -253,17 +253,17 @@ public class ValidatorTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void validateTagIdWithValidationException1() {
+    public void validateTagIncorrectId() {
         validator.validateTagId(INCORRECT_TAG_ID);
     }
 
     @Test(expected = ValidationException.class)
-    public void validateTagIdWithValidationException2() {
+    public void validateTagNullId() {
         validator.validateTagId(NULL_LONG);
     }
 
     @Test(expected = NotFoundException.class)
-    public void validateTagIdWithNotFoundException() {
+    public void validateNotExistTagById() {
         when(tagDao.checkTagById(anyLong())).thenReturn(false);
         validator.validateTagId(CORRECT_TAG_ID);
     }
@@ -275,7 +275,7 @@ public class ValidatorTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void checkTagWithTitleWithValidationException() {
+    public void checkExistTagWithTitle() {
         when(tagDao.checkTagByTitle(anyString())).thenReturn(true);
         validator.checkTagWithTitle(correctTag);
     }
@@ -286,36 +286,35 @@ public class ValidatorTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void validateInitialAndQuantityWithValidationException1() {
+    public void validateIncorrectInitialAndQuantity() {
         validator.validateInitialAndQuantity(INCORRECT_INITIAL_NUMBER, CORRECT_QUANTITY_NUMBER);
     }
 
     @Test(expected = ValidationException.class)
-    public void validateInitialAndQuantityWithValidationException2() {
+    public void validateInitialAndIncorrectQuantity() {
         validator.validateInitialAndQuantity(CORRECT_INITIAL_NUMBER, INCORRECT_QUANTITY_NUMBER);
     }
 
     @Test(expected = ValidationException.class)
-    public void validateInitialAndQuantityWithValidationException3() {
+    public void validateIncorrectInitialAndIncorrectQuantity() {
         validator.validateInitialAndQuantity(INCORRECT_INITIAL_NUMBER, INCORRECT_QUANTITY_NUMBER);
     }
 
     @Test(expected = ValidationException.class)
-    public void validateInitialAndQuantityWithValidationException4() {
+    public void validateNullInitialAndQuantity() {
         validator.validateInitialAndQuantity(NULL_LONG, CORRECT_QUANTITY_NUMBER);
     }
 
     @Test(expected = ValidationException.class)
-    public void validateInitialAndQuantityWithValidationException5() {
+    public void validateInitialAndNullQuantity() {
         validator.validateInitialAndQuantity(CORRECT_INITIAL_NUMBER, NULL_LONG);
     }
 
 
     @Test(expected = ValidationException.class)
-    public void validateInitialAndQuantityWithValidationException6() {
+    public void validateNullInitialAndNullQuantity() {
         validator.validateInitialAndQuantity(NULL_LONG, NULL_LONG);
     }
-
 
     @Test
     public void checkAuthorExistenceSuccess() {
@@ -324,20 +323,20 @@ public class ValidatorTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void checkAuthorExistenceWithValidationException() {
+    public void checkExistAuthorExistence() {
         when(authorDao.checkAuthorByLogin(anyString())).thenReturn(true);
         validator.checkAuthorExistence(author);
     }
 
     @Test
     public void validateTagInPostSuccess() {
-        when(postDao.checkTagInPostById(anyLong(),anyLong())).thenReturn(false);
-        validator.validateTagInPost(CORRECT_POST_ID,CORRECT_TAG_ID);
+        when(postDao.checkTagInPostById(anyLong(), anyLong())).thenReturn(false);
+        validator.validateTagInPost(CORRECT_POST_ID, CORRECT_TAG_ID);
     }
 
     @Test(expected = ValidationException.class)
-    public void validateTagInPostWithValidationException() {
-        when(postDao.checkTagInPostById(anyLong(),anyLong())).thenReturn(true);
-        validator.validateTagInPost(CORRECT_POST_ID,CORRECT_TAG_ID);
+    public void validateExistTagInPost() {
+        when(postDao.checkTagInPostById(anyLong(), anyLong())).thenReturn(true);
+        validator.validateTagInPost(CORRECT_POST_ID, CORRECT_TAG_ID);
     }
 }

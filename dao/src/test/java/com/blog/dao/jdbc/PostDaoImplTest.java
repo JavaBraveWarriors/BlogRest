@@ -70,12 +70,12 @@ public class PostDaoImplTest {
     }
 
     @Test(expected = DataAccessException.class)
-    public void getPostByIdWithException1() {
+    public void getPostByIncorrectId() {
         assertNull(postDao.getPostById(INCORRECT_POST_ID));
     }
 
     @Test(expected = DataAccessException.class)
-    public void getPostByIdWithException2() {
+    public void getPostByNullId() {
         assertNull(postDao.getPostById(null));
     }
 
@@ -87,14 +87,14 @@ public class PostDaoImplTest {
     }
 
     @Test
-    public void getAllPostsByAuthorIdReturnedEmptyList1() {
+    public void getAllPostsByIncorrectAuthorId() {
         List<Post> posts = postDao.getAllPostsByAuthorId(INCORRECT_USER_ID);
         assertNotNull(posts);
         assertEquals(0, posts.size());
     }
 
     @Test
-    public void getAllPostsByAuthorIdReturnedEmptyList2() {
+    public void getAllPostsByNullAuthorId() {
         List<Post> posts = postDao.getAllPostsByAuthorId(null);
         assertNotNull(posts);
         assertEquals(0, posts.size());
@@ -111,7 +111,7 @@ public class PostDaoImplTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void getPostsByInitialIdAndQuantityWithNullPointerException() {
+    public void getPostsByInitialIdAndQuantityByNullNumbers() {
         assertNull(postDao.getPostsByInitialIdAndQuantity(null, null));
     }
 
@@ -123,14 +123,14 @@ public class PostDaoImplTest {
     }
 
     @Test
-    public void getAllPostsByTagIdReturnedEmptyList1() {
+    public void getAllPostsByNullTagId() {
         List<Post> posts = postDao.getAllPostsByTagId(null);
         assertNotNull(posts);
         assertEquals(0, posts.size());
     }
 
     @Test
-    public void getAllPostsByTagIdReturnedEmptyList2() {
+    public void getAllPostsByIncorrectTagId() {
         List<Post> posts = postDao.getAllPostsByTagId(INCORRECT_NEGATIVE_ID);
         assertNotNull(posts);
         assertEquals(0, posts.size());
@@ -158,7 +158,7 @@ public class PostDaoImplTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void addPostWithNullPointerException1() {
+    public void addNullPost() {
         assertNull(postDao.addPost(null));
     }
 
@@ -178,7 +178,7 @@ public class PostDaoImplTest {
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void addTagToPostWithDataIntegrityViolationException1() {
+    public void addIncorrectTagToPost() {
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
         post.setTimeOfCreation(LocalDateTime.now());
@@ -186,7 +186,7 @@ public class PostDaoImplTest {
     }
 
     @Test(expected = DataIntegrityViolationException.class)
-    public void addTagToPostWithDataIntegrityViolationException2() {
+    public void addNullTagToPost() {
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
         post.setTimeOfCreation(LocalDateTime.now());
@@ -211,12 +211,12 @@ public class PostDaoImplTest {
     }
 
     @Test(expected = NullPointerException.class)
-    public void updatePostWithNullPointerException() {
+    public void updateNullPost() {
         assertFalse(postDao.updatePost(null));
     }
 
     @Test
-    public void updatePostNotUpdated() {
+    public void updateIncorrectPost() {
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
         post.setTimeOfCreation(LocalDateTime.now());
@@ -245,7 +245,7 @@ public class PostDaoImplTest {
     }
 
     @Test
-    public void deletePostNotDeleted() {
+    public void deletePostByIncorrectId() {
         List<Post> posts = postDao.getAllPosts();
         assertNotNull(posts);
         int initialSize = posts.size();
@@ -254,6 +254,21 @@ public class PostDaoImplTest {
         assertNotNull(post);
 
         assertFalse(postDao.deletePost(INCORRECT_POST_ID));
+
+        posts = postDao.getAllPosts();
+        assertNotNull(posts);
+        assertEquals(initialSize, posts.size());
+    }
+
+    @Test
+    public void deletePostByNullId() {
+        List<Post> posts = postDao.getAllPosts();
+        assertNotNull(posts);
+        int initialSize = posts.size();
+
+        Post post = postDao.getPostById(CORRECT_POST_ID);
+        assertNotNull(post);
+
         assertFalse(postDao.deletePost(null));
 
         posts = postDao.getAllPosts();
@@ -276,7 +291,7 @@ public class PostDaoImplTest {
     }
 
     @Test
-    public void deleteTagInPostNotDeleted() {
+    public void deleteIncorrectTagInPost() {
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
         post.setTimeOfCreation(LocalDateTime.now());
@@ -285,6 +300,20 @@ public class PostDaoImplTest {
         int initialSize = posts.size();
 
         assertFalse(postDao.deleteTagInPost(post.getId(), INCORRECT_NEGATIVE_ID));
+
+        posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID_2);
+        assertEquals(initialSize, posts.size());
+    }
+
+    @Test
+    public void deleteNullTagInPost() {
+        Post post = postDao.getPostById(CORRECT_POST_ID);
+        assertNotNull(post);
+        post.setTimeOfCreation(LocalDateTime.now());
+
+        List<Post> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID_2);
+        int initialSize = posts.size();
+
         assertFalse(postDao.deleteTagInPost(post.getId(), null));
 
         posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID_2);
@@ -292,77 +321,77 @@ public class PostDaoImplTest {
     }
 
     @Test
-    public void checkTagInPostByIdReturnedTrue() {
+    public void checkTagInPostByCorrectId() {
         assertTrue(postDao.checkTagInPostById(CORRECT_POST_CHECK_ID, CORRECT_TAG_ID));
     }
 
     @Test
-    public void checkTagInPostByIdReturnedFalse1() {
+    public void checkTagInPostByNotExistTagIdInPost() {
         assertFalse(postDao.checkTagInPostById(CORRECT_POST_CHECK_ID, CORRECT_TAG_ID_2));
     }
 
     @Test
-    public void checkTagInPostByIdReturnedFalse2() {
+    public void checkIncorrectTagInPostById() {
         assertFalse(postDao.checkTagInPostById(CORRECT_POST_CHECK_ID, INCORRECT_TAG_ID));
     }
 
     @Test
-    public void checkTagInPostByIdReturnedFalse3() {
+    public void checkIncorrectNegativeTagInPostById() {
         assertFalse(postDao.checkTagInPostById(CORRECT_POST_CHECK_ID, INCORRECT_NEGATIVE_ID));
     }
 
     @Test
-    public void checkTagInPostByIdReturnedFalse4() {
+    public void checkNullTagInPostById() {
         assertFalse(postDao.checkTagInPostById(CORRECT_POST_CHECK_ID, null));
     }
 
     @Test
-    public void checkTagInPostByIdReturnedFalse5() {
+    public void checkTagInNullPostById() {
         assertFalse(postDao.checkTagInPostById(null, CORRECT_TAG_ID));
     }
 
     @Test
-    public void checkTagInPostByIdReturnedFalse6() {
+    public void checkTagInIncorrectPostById() {
         assertFalse(postDao.checkTagInPostById(INCORRECT_POST_ID, CORRECT_TAG_ID));
     }
 
     @Test
-    public void checkPostByIdReturnedTrue() {
+    public void checkPostByCorrectId() {
         assertTrue(postDao.checkPostById(CORRECT_POST_ID));
     }
 
     @Test
-    public void checkPostByIdReturnedFalse1() {
+    public void checkPostByIncorrectId() {
         assertFalse(postDao.checkPostById(INCORRECT_POST_ID));
     }
 
     @Test
-    public void checkPostByIdReturnedFalse2() {
+    public void checkPostByNullId() {
         assertFalse(postDao.checkPostById(null));
     }
 
     @Test
-    public void checkPostByIdReturnedFalse3() {
+    public void checkPostByIncorrectNegativeId() {
         assertFalse(postDao.checkPostById(INCORRECT_NEGATIVE_ID));
     }
 
     @Test
-    public void checkPostByAuthorIdReturnedTrue() {
+    public void checkPostByAuthorCorrectId() {
         assertTrue(postDao.checkPostByAuthorId(CORRECT_USER_ID));
     }
 
     @Test
-    public void checkPostByAuthorIdReturnedFalse1() {
+    public void checkPostByAuthorIncorrectId() {
         assertFalse(postDao.checkPostByAuthorId(INCORRECT_USER_ID));
     }
 
     @Test
-    public void checkPostByAuthorIdReturnedFalse2() {
+    public void checkPostByAuthorNullId() {
         assertFalse(postDao.checkPostByAuthorId(null));
     }
 
     @Test
-    public void checkPostByAuthorIdReturnedFalse3() {
+    public void checkPostByAuthorIncorrectNegativeId() {
         assertFalse(postDao.checkPostByAuthorId(INCORRECT_NEGATIVE_ID));
     }
 }

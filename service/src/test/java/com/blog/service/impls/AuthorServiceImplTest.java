@@ -62,7 +62,7 @@ public class AuthorServiceImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void getAuthorByIdWithValidateException1() {
+    public void getAuthorByIncorrectId() {
         doThrow(ValidationException.class).when(validator).validateAuthorId(anyLong());
         authorService.getAuthorById(anyLong());
         verify(authorDao, never()).getAuthorById(anyLong());
@@ -71,7 +71,7 @@ public class AuthorServiceImplTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void getAuthorByIdWithNotFoundException() {
+    public void getAuthorWithNotExistId() {
         doThrow(NotFoundException.class).when(validator).validateAuthorId(anyLong());
 
         authorService.getAuthorById(anyLong());
@@ -90,7 +90,7 @@ public class AuthorServiceImplTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void getAuthorByLoginWithNotFoundException() {
+    public void getAuthorWithNotExistLogin() {
         doThrow(NotFoundException.class).when(validator).validateAuthorLogin(anyString());
         authorService.getAuthorByLogin(anyString());
         verify(authorDao, never()).getAuthorByLogin(anyString());
@@ -98,7 +98,7 @@ public class AuthorServiceImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void getAuthorByLoginWithValidateException() {
+    public void getAuthorByIncorrectLogin() {
         doThrow(ValidationException.class).when(validator).validateAuthorLogin(anyString());
         authorService.getAuthorByLogin(anyString());
         verify(authorDao, never()).getAuthorByLogin(anyString());
@@ -114,7 +114,7 @@ public class AuthorServiceImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void addAuthorWithValidationException() {
+    public void addIncorrectAuthor() {
         doThrow(ValidationException.class).when(validator).checkAuthorExistence(any(Author.class));
         authorService.addAuthor(author);
         verify(authorDao, never()).addAuthor(any(Author.class));
@@ -127,11 +127,10 @@ public class AuthorServiceImplTest {
         authorService.updateAuthor(author);
         verify(authorDao, times(1)).updateAuthor(any(Author.class));
         verify(validator, times(1)).validateAuthorId(anyLong());
-
     }
 
     @Test(expected = ValidationException.class)
-    public void updateAuthorWithValidationException() {
+    public void updateIncorrectAuthor() {
         doThrow(ValidationException.class).when(validator).validateAuthorId(anyLong());
         authorService.updateAuthor(author);
         verify(authorDao, never()).updateAuthor(any(Author.class));
@@ -139,7 +138,7 @@ public class AuthorServiceImplTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void updateAuthorWithNotFoundException() {
+    public void updateNotExistAuthor() {
         doThrow(NotFoundException.class).when(validator).validateAuthorId(anyLong());
         authorService.updateAuthor(author);
         verify(authorDao, never()).updateAuthor(any(Author.class));
@@ -162,14 +161,14 @@ public class AuthorServiceImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void deleteAuthorWithValidationException() {
+    public void deleteAuthorByIncorrectId() {
         doThrow(ValidationException.class).when(validator).validateAuthorId(anyLong());
         authorService.deleteAuthor(anyLong());
         verify(authorDao, never()).deleteAuthor(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
-    public void deleteAuthorWithNotFoundException() {
+    public void deleteNotExistAuthor() {
         doThrow(NotFoundException.class).when(validator).validateAuthorId(anyLong());
         authorService.deleteAuthor(anyLong());
         verify(authorDao, never()).deleteAuthor(anyLong());

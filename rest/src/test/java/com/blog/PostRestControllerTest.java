@@ -80,7 +80,7 @@ public class PostRestControllerTest {
     }
 
     @Test
-    public void getPostByIdWithValidationException() throws Exception {
+    public void getPostByIncorrectId() throws Exception {
         post.setTimeOfCreation(null);
         given(postService.getPostById(anyLong())).willThrow(ValidationException.class);
         mockMvc.perform(get("/posts/{id}", anyLong()))
@@ -90,7 +90,7 @@ public class PostRestControllerTest {
     }
 
     @Test
-    public void getPostByIdWithNotFoundException() throws Exception {
+    public void getPostWithNotExistId() throws Exception {
         given(postService.getPostById(anyLong())).willThrow(NotFoundException.class);
         mockMvc.perform(get("/posts/{id}", anyLong()))
                 .andDo(print())
@@ -109,7 +109,7 @@ public class PostRestControllerTest {
     }
 
     @Test
-    public void getPostsByInitialIdAndQuantityWithValidationException() throws Exception {
+    public void getPostsByIncorrectInitialIdAndIncorrectQuantity() throws Exception {
         given(postService.getPostsByInitialIdAndQuantity(anyLong(), anyLong())).willThrow(ValidationException.class);
         mockMvc.perform(get("/posts?from={from}&quantity={quantity}", anyLong(), anyLong()))
                 .andDo(print())
@@ -128,7 +128,7 @@ public class PostRestControllerTest {
     }
 
     @Test
-    public void getAllPostsByTagIdWithValidationException() throws Exception {
+    public void getAllPostsByIncorrectTagId() throws Exception {
         given(postService.getAllPostsByTagId(anyLong())).willThrow(ValidationException.class);
         mockMvc.perform(get("/posts/tag/{id}", anyLong()))
                 .andDo(print())

@@ -63,14 +63,14 @@ public class TagServiceImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void getTagByIdWithValidationException() {
+    public void getTagByIncorrectId() {
         doThrow(ValidationException.class).when(validator).validateTagId(anyLong());
         tagService.getTagById(anyLong());
         verify(validator, times(1)).validateTagId(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
-    public void getTagByIdWithNotFoundException() {
+    public void getTagByNotExistId() {
         doThrow(NotFoundException.class).when(validator).validateTagId(anyLong());
         tagService.getTagById(anyLong());
         verify(validator, times(1)).validateTagId(anyLong());
@@ -83,11 +83,11 @@ public class TagServiceImplTest {
         verify(validator, times(1)).validatePostId(anyLong());
         verify(tagDao, times(1)).getAllTagsByPostId(anyLong());
         assertNotNull(tags);
-        assertEquals(tags.size(),testTags.size());
+        assertEquals(tags.size(), testTags.size());
     }
 
     @Test(expected = ValidationException.class)
-    public void getAllTagsByPostIdWithValidationException() {
+    public void getAllTagsByIncorrectPostId() {
         doThrow(ValidationException.class).when(validator).validatePostId(anyLong());
         tagService.getAllTagsByPostId(anyLong());
         verify(validator, times(1)).validatePostId(anyLong());
@@ -95,25 +95,23 @@ public class TagServiceImplTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void getAllTagsByPostIdWithNotFoundException() {
+    public void getAllTagsByNotExistPostId() {
         doThrow(NotFoundException.class).when(validator).validatePostId(anyLong());
         tagService.getAllTagsByPostId(anyLong());
         verify(validator, times(1)).validatePostId(anyLong());
         verify(tagDao, times(1)).getAllTagsByPostId(anyLong());
     }
 
-
-
     @Test
     public void addTagSuccess() {
         when(tagDao.addTag(any(Tag.class))).thenReturn(1L);
-        assertEquals((Long)1L,tagService.addTag(testTag));
+        assertEquals((Long) 1L, tagService.addTag(testTag));
         verify(tagDao, times(1)).addTag(any(Tag.class));
         verify(validator, times(1)).checkTagWithTitle(any(Tag.class));
     }
 
     @Test(expected = ValidationException.class)
-    public void addTagWithValidationException() {
+    public void addExistenceTag() {
         doThrow(ValidationException.class).when(validator).checkTagWithTitle(any(Tag.class));
         tagService.addTag(testTag);
         verify(validator, times(1)).checkTagWithTitle(any(Tag.class));
@@ -128,14 +126,14 @@ public class TagServiceImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void updateTagWithValidationException() {
+    public void updateTagWithIncorrectId() {
         doThrow(ValidationException.class).when(validator).validateTagId(anyLong());
         tagService.updateTag(testTag);
         verify(validator, times(1)).validateTagId(anyLong());
     }
 
     @Test(expected = InternalServerException.class)
-    public void updateTagWithInternalServerException() {
+    public void updateTagWithNotUpdatedInDao() {
         when(tagDao.updateTag(any(Tag.class))).thenReturn(false);
         tagService.updateTag(testTag);
         verify(tagDao, times(1)).updateTag(any(Tag.class));
@@ -143,7 +141,7 @@ public class TagServiceImplTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void updateTagWithNotFoundException() {
+    public void updateNotExistenceTag() {
         doThrow(NotFoundException.class).when(validator).validateTagId(anyLong());
         tagService.updateTag(testTag);
         verify(validator, times(1)).validateTagId(anyLong());
@@ -158,21 +156,21 @@ public class TagServiceImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void deleteTagWithValidationException() {
+    public void deleteTagByIncorrectId() {
         doThrow(ValidationException.class).when(validator).validateTagId(anyLong());
         tagService.deleteTag(anyLong());
         verify(validator, times(1)).validateTagId(anyLong());
     }
 
     @Test(expected = InternalServerException.class)
-    public void deleteTagWithInternalServerException() {
+    public void deleteTagWithNotDeletedInDao() {
         when(tagDao.deleteTag(anyLong())).thenReturn(false);
         tagService.deleteTag(anyLong());
         verify(validator, times(1)).validateTagId(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
-    public void deleteTagWithNotFoundException() {
+    public void deleteNotExistenceTag() {
         doThrow(NotFoundException.class).when(validator).validateTagId(anyLong());
         tagService.deleteTag(anyLong());
         verify(validator, times(1)).validateTagId(anyLong());

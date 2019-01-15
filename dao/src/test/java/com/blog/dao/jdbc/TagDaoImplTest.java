@@ -40,7 +40,7 @@ public class TagDaoImplTest {
     private TagDao tagDao;
 
     @Test
-    public void getAllTags() {
+    public void getAllTagsSuccess() {
         List<Tag> tags = tagDao.getAllTags();
 
         assertNotNull(tags);
@@ -48,20 +48,20 @@ public class TagDaoImplTest {
     }
 
     @Test
-    public void getAllTagsByPostId() {
+    public void getAllTagsByCorrectPostId() {
         List<Tag> tags = tagDao.getAllTagsByPostId(CORRECT_POST_ID);
         assertNotNull(tags);
         assertEquals(2, tags.size());
     }
 
     @Test
-    public void getTagById() {
+    public void getTagByCorrectId() {
         Tag tag = tagDao.getTagById(1L);
         assertEquals("life", tag.getTitle());
     }
 
     @Test(expected = DataAccessException.class)
-    public void getTagByIdWithException() {
+    public void getTagByIncorrectId() {
         assertNull(tagDao.getTagById(6L));
     }
 
@@ -115,25 +115,24 @@ public class TagDaoImplTest {
 
     }
 
-
     @Test
-    public void checkTagByIdReturnedTrue() {
+    public void checkTagByCorrectId() {
         assertTrue(tagDao.checkTagById(2L));
     }
 
     @Test
-    public void checkTagByIdReturnedFalse() {
+    public void checkTagByIncorrectId() {
         assertFalse(tagDao.checkTagById(6L));
     }
 
     @Test
-    public void checkTagByTitleReturnedTrue() {
+    public void checkTagByCorrectTitle() {
         assertTrue(tagDao.checkTagByTitle("cats"));
 
     }
 
     @Test
-    public void checkTagByTitleReturnedFalse() {
+    public void checkTagByIncorrectTitle() {
         assertFalse(tagDao.checkTagByTitle("not"));
 
     }

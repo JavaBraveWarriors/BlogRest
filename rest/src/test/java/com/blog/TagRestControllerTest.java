@@ -57,16 +57,6 @@ public class TagRestControllerTest {
     }
 
     @Test
-    public void getAllPostsReturnedEmptyList() throws Exception {
-        given(tagService.getAllTags()).willReturn(Collections.emptyList());
-        mockMvc.perform(get("/tags"))
-                .andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().json(JsonConverter.convertToJson(Collections.emptyList())));
-        verify(tagService, times(1)).getAllTags();
-    }
-
-    @Test
     public void getTagByIdSuccess() throws Exception {
         given(tagService.getTagById(anyLong())).willReturn(tag);
         mockMvc.perform(get("/tags/{id}", anyLong()))
@@ -77,7 +67,7 @@ public class TagRestControllerTest {
     }
 
     @Test
-    public void getTagByIdWithValidationException() throws Exception {
+    public void getTagByIncorrectId() throws Exception {
         given(tagService.getTagById(anyLong())).willThrow(ValidationException.class);
         mockMvc.perform(get("/tags/{id}", anyLong()))
                 .andDo(print())
@@ -86,7 +76,7 @@ public class TagRestControllerTest {
     }
 
     @Test
-    public void getTagByIdWithNotFoundException() throws Exception {
+    public void getTagWithNotExistId() throws Exception {
         given(tagService.getTagById(anyLong())).willThrow(NotFoundException.class);
         mockMvc.perform(get("/tags/{id}", anyLong()))
                 .andDo(print())
@@ -106,7 +96,7 @@ public class TagRestControllerTest {
     }
 
     @Test
-    public void addTagWithValidationException() throws Exception {
+    public void addIncorrectTag() throws Exception {
         given(tagService.addTag(any(Tag.class))).willThrow(ValidationException.class);
         mockMvc.perform(post("/tags")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -127,7 +117,7 @@ public class TagRestControllerTest {
     }
 
     @Test
-    public void updateTagWithValidationException() throws Exception {
+    public void updateIncorrectTag() throws Exception {
         doThrow(ValidationException.class).when(tagService).updateTag(any(Tag.class));
         mockMvc.perform(put("/tags")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -138,7 +128,7 @@ public class TagRestControllerTest {
     }
 
     @Test
-    public void updateTagWithNotFoundException() throws Exception {
+    public void updateNotExistTag() throws Exception {
         doThrow(NotFoundException.class).when(tagService).updateTag(any(Tag.class));
         mockMvc.perform(put("/tags")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -168,7 +158,7 @@ public class TagRestControllerTest {
     }
 
     @Test
-    public void deleteTagWithValidationException() throws Exception {
+    public void deleteTagByIncorrectId() throws Exception {
         doThrow(ValidationException.class).when(tagService).deleteTag(anyLong());
         mockMvc.perform(delete("/tags/{id}", anyLong()))
                 .andDo(print())
@@ -177,7 +167,7 @@ public class TagRestControllerTest {
     }
 
     @Test
-    public void deleteTagWithNotFoundException() throws Exception {
+    public void deleteNotExistTag() throws Exception {
         doThrow(NotFoundException.class).when(tagService).deleteTag(anyLong());
         mockMvc.perform(delete("/tags/{id}", anyLong()))
                 .andDo(print())
