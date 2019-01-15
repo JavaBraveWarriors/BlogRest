@@ -73,10 +73,11 @@ public class AuthorServiceImplTest {
     @Test(expected = NotFoundException.class)
     public void getAuthorByIdWithNotFoundException() {
         doThrow(NotFoundException.class).when(validator).validateAuthorId(anyLong());
+
         authorService.getAuthorById(anyLong());
+
         verify(authorDao, never()).getAuthorById(anyLong());
         verify(validator, times(1)).validateAuthorId(anyLong());
-
     }
 
     @Test

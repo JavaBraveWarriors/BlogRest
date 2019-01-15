@@ -214,6 +214,7 @@ public class PostServiceImplTest {
 
     @Test
     public void addTagToPostSuccess() {
+        when(postDao.addTagToPost(anyLong(),anyLong())).thenReturn(true);
         postService.addTagToPost(1L, 1L);
         verify(postDao, times(1)).addTagToPost(anyLong(), anyLong());
         verify(validator, times(1)).validateTagId(anyLong());

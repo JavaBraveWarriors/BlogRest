@@ -101,7 +101,7 @@ public class PostRestControllerTest {
     @Test
     public void getPostsByInitialIdAndQuantitySuccess() throws Exception {
         given(postService.getPostsByInitialIdAndQuantity(anyLong(), anyLong())).willReturn(Collections.singletonList(post));
-        mockMvc.perform(get("/posts/from{initial}/{quantity}", anyLong(), anyLong()))
+        mockMvc.perform(get("/posts?from={from}&quantity={quantity}", anyLong(), anyLong()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(convertToJson(Collections.singletonList(post))));
@@ -111,7 +111,7 @@ public class PostRestControllerTest {
     @Test
     public void getPostsByInitialIdAndQuantityWithValidationException() throws Exception {
         given(postService.getPostsByInitialIdAndQuantity(anyLong(), anyLong())).willThrow(ValidationException.class);
-        mockMvc.perform(get("/posts/from{initial}/{quantity}", anyLong(), anyLong()))
+        mockMvc.perform(get("/posts?from={from}&quantity={quantity}", anyLong(), anyLong()))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
         verify(postService, times(1)).getPostsByInitialIdAndQuantity(anyLong(), anyLong());

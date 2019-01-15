@@ -125,9 +125,15 @@ public class PostServiceImpl implements PostService {
         LOGGER.debug("Updates post = [{}].", post);
         validator.checkPost(post);
         validator.validateTags(post.getTags(), tagService);
-        List<Tag> tagsPost = tagService.getAllTagsByPostId(post.getId());
+        List<Tag> postTags = tagService.getAllTagsByPostId(post.getId());
+        updatePostTags(post, postTags);
+        if (!postDao.updatePost(post))
+            throw new InternalServerException(updateError);
+    }
+
+    private void updatePostTags(Post post, List<Tag> postTags) {
         //Remove tags that are in the database, but not in the list of tags
-        tagsPost.forEach(tag -> {
+        postTags.forEach(tag -> {
             if (!post.getTags().contains(tag)) {
                 if (!postDao.deleteTagInPost(post.getId(), tag.getId()))
                     throw new InternalServerException(deleteTagInPost);
@@ -140,8 +146,6 @@ public class PostServiceImpl implements PostService {
                     throw new InternalServerException(addTagToPost);
             }
         });
-        if (!postDao.updatePost(post))
-            throw new InternalServerException(updateError);
     }
 
     public void deletePost(Long postId) {

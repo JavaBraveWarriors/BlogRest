@@ -35,7 +35,6 @@ public class AuthorDaoImplTest {
     private static String NEW_AUTHOR_DESCRIPTION_4 = "description4";
     private static String NEW_AUTHOR_PhONE_4 = "8072123";
 
-
     private static String UPDATED_AUTHOR_PHONE_1 = "1232223";
     private static String UPDATED_AUTHOR_MAIL_1 = "testUpdateMail1";
     private static String UPDATED_AUTHOR_PASSWORD_1 = "testUpdatePsw1";
@@ -65,17 +64,16 @@ public class AuthorDaoImplTest {
     public void getAuthorByIdSuccess() {
         Author author = authorDao.getAuthorById(CORRECT_ID_1);
         assertNotNull(author);
-        System.out.println();
         assertEquals(CORRECT_ID_1, author.getId());
     }
 
     @Test(expected = DataAccessException.class)
-    public void getAuthorByIdWithDataAccessException1() {
+    public void getAuthorByIncorrectId() {
         assertNull(authorDao.getAuthorById(INCORRECT_ID_6));
     }
 
     @Test(expected = DataAccessException.class)
-    public void getAuthorByIdWithDataAccessException2() {
+    public void getAuthorById() {
         assertNull(authorDao.getAuthorById(null));
     }
 
