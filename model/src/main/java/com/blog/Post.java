@@ -129,7 +129,7 @@ public class Post {
                 ", timeOfCreation=" + timeOfCreation +
                 ", pathImage='" + pathImage + '\'' +
                 ", authorId=" + authorId +
-                ", tagsId=" + tags +
+                ", tags=" + tags +
                 '}';
     }
 }

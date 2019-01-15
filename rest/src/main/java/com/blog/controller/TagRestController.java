@@ -47,6 +47,4 @@ public class TagRestController {
     public void deleteTag(@PathVariable(value = "id") Long id) {
         tagService.deleteTag(id);
     }
-
-
 }

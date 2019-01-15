@@ -42,6 +42,9 @@ public class Validator {
     @Value("${tagService.exist}")
     private String existTag;
 
+    @Value("${postService.tagExistInPost}")
+    private String tagExistInPost;
+
     //Posts messages
     @Value("${postService.incorrectId}")
     private String incorrectPostId;
@@ -76,7 +79,6 @@ public class Validator {
         this.authorDao = authorDao;
     }
 
-
     public void validatePostId(Long id) {
         LOGGER.debug("Validates post id = [{}].", id);
         if (id == null || id < 0L)
@@ -97,10 +99,10 @@ public class Validator {
     public void checkPost(Post post) {
         LOGGER.debug("Check post = [{}].", post);
         validatePostId(post.getId());
-        validateAuthor(post.getAuthorId());
+        validateAuthorId(post.getAuthorId());
     }
 
-    public void validateAuthor(Long authorId) {
+    public void validateAuthorId(Long authorId) {
         LOGGER.debug("Validate author = [{}].", authorId);
         if (authorId == null || authorId < 0L)
             throw new ValidationException(incorrectAuthorId);
@@ -108,7 +110,7 @@ public class Validator {
             throw new NotFoundException(authorDoesNotExist);
     }
 
-    public void validateAuthor(String authorLogin) {
+    public void validateAuthorLogin(String authorLogin) {
         LOGGER.debug("Validate author = [{}].", authorLogin);
         if (authorLogin == null || authorLogin.isEmpty())
             throw new ValidationException(incorrectAuthorLogin);
@@ -124,8 +126,7 @@ public class Validator {
             throw new NotFoundException(notExistTag);
     }
 
-
-    public void checkTag(Tag tag) {
+    public void checkTagWithTitle(Tag tag) {
         LOGGER.debug("Check tag title = [{}].", tag.getTitle());
         if (tagDao.checkTagByTitle(tag.getTitle()))
             throw new ValidationException(existTag);
@@ -143,5 +144,10 @@ public class Validator {
         LOGGER.debug("Check author existence = [{}]", author);
         if (authorDao.checkAuthorByLogin(author.getLogin()))
             throw new ValidationException(authorExist);
+    }
+
+    public void validateTagInPost(Long postId, Long tagId) {
+        if (postDao.checkTagInPostById(postId, tagId))
+            throw new ValidationException(tagExistInPost);
     }
 }

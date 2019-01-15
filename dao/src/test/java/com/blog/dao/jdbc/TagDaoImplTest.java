@@ -24,7 +24,6 @@ public class TagDaoImplTest {
     private static Long INCORRECT_TAG_ID = 7L;
     private static Long CORRECT_POST_ID = 1L;
 
-
     private static Long NEW_TAG_ID_5 = 6L;
     private static String NEW_TAG_TITLE_5 = "newTitle4";
     private static String NEW_TAG_PATH_IMAGE_5 = "newPathImage4";
@@ -36,7 +35,6 @@ public class TagDaoImplTest {
             NEW_TAG_TITLE_5,
             NEW_TAG_PATH_IMAGE_5
     );
-
 
     @Autowired
     private TagDao tagDao;
@@ -130,7 +128,7 @@ public class TagDaoImplTest {
 
     @Test
     public void checkTagByTitleReturnedTrue() {
-        assert (tagDao.checkTagByTitle("cats"));
+        assertTrue(tagDao.checkTagByTitle("cats"));
 
     }
 

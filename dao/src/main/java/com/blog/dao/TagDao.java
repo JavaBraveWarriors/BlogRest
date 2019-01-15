@@ -84,5 +84,4 @@ public interface TagDao {
      * @return {boolean} value, if there is an tag with this identifier - returned true, if not - false
      */
     boolean checkTagByTitle(final String title);
-
 }

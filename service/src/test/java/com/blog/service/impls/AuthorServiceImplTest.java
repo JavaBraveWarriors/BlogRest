@@ -6,7 +6,6 @@ import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
 import com.blog.validator.Validator;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,6 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.util.Collections;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
@@ -45,12 +45,12 @@ public class AuthorServiceImplTest {
 
 
     @Test
-    public void getAllAuthors() {
+    public void getAllAuthorsSuccess() {
         when(authorDao.getAllAuthors()).thenReturn(testAuthors);
         List<Author> allAuthors = authorService.getAllAuthors();
         verify(authorDao, times(1)).getAllAuthors();
         assertNotNull(allAuthors);
-        Assert.assertEquals(allAuthors.size(), testAuthors.size());
+        assertEquals(allAuthors.size(), testAuthors.size());
     }
 
     @Test
@@ -58,24 +58,24 @@ public class AuthorServiceImplTest {
         when(authorDao.getAuthorById(anyLong())).thenReturn(author);
         assertNotNull(authorService.getAuthorById(anyLong()));
         verify(authorDao, times(1)).getAuthorById(anyLong());
-        verify(validator, times(1)).validateAuthor(anyLong());
+        verify(validator, times(1)).validateAuthorId(anyLong());
     }
 
     @Test(expected = ValidationException.class)
     public void getAuthorByIdWithValidateException1() {
-        doThrow(ValidationException.class).when(validator).validateAuthor(anyLong());
+        doThrow(ValidationException.class).when(validator).validateAuthorId(anyLong());
         authorService.getAuthorById(anyLong());
         verify(authorDao, never()).getAuthorById(anyLong());
-        verify(validator, times(1)).validateAuthor(anyLong());
+        verify(validator, times(1)).validateAuthorId(anyLong());
 
     }
 
     @Test(expected = NotFoundException.class)
     public void getAuthorByIdWithNotFoundException() {
-        doThrow(NotFoundException.class).when(validator).validateAuthor(anyLong());
+        doThrow(NotFoundException.class).when(validator).validateAuthorId(anyLong());
         authorService.getAuthorById(anyLong());
         verify(authorDao, never()).getAuthorById(anyLong());
-        verify(validator, times(1)).validateAuthor(anyLong());
+        verify(validator, times(1)).validateAuthorId(anyLong());
 
     }
 
@@ -85,23 +85,23 @@ public class AuthorServiceImplTest {
         assertNotNull(authorService.getAuthorByLogin(anyString()));
 
         verify(authorDao, times(1)).getAuthorByLogin(anyString());
-        verify(validator, times(1)).validateAuthor(anyString());
+        verify(validator, times(1)).validateAuthorLogin(anyString());
     }
 
     @Test(expected = NotFoundException.class)
     public void getAuthorByLoginWithNotFoundException() {
-        doThrow(NotFoundException.class).when(validator).validateAuthor(anyString());
+        doThrow(NotFoundException.class).when(validator).validateAuthorLogin(anyString());
         authorService.getAuthorByLogin(anyString());
         verify(authorDao, never()).getAuthorByLogin(anyString());
-        verify(validator, times(1)).validateAuthor(anyString());
+        verify(validator, times(1)).validateAuthorLogin(anyString());
     }
 
     @Test(expected = ValidationException.class)
     public void getAuthorByLoginWithValidateException() {
-        doThrow(ValidationException.class).when(validator).validateAuthor(anyString());
+        doThrow(ValidationException.class).when(validator).validateAuthorLogin(anyString());
         authorService.getAuthorByLogin(anyString());
         verify(authorDao, never()).getAuthorByLogin(anyString());
-        verify(validator, times(1)).validateAuthor(anyString());
+        verify(validator, times(1)).validateAuthorLogin(anyString());
     }
 
     @Test
@@ -125,24 +125,24 @@ public class AuthorServiceImplTest {
         when(authorDao.updateAuthor(any(Author.class))).thenReturn(true);
         authorService.updateAuthor(author);
         verify(authorDao, times(1)).updateAuthor(any(Author.class));
-        verify(validator, times(1)).validateAuthor(anyLong());
+        verify(validator, times(1)).validateAuthorId(anyLong());
 
     }
 
     @Test(expected = ValidationException.class)
     public void updateAuthorWithValidationException() {
-        doThrow(ValidationException.class).when(validator).validateAuthor(anyLong());
+        doThrow(ValidationException.class).when(validator).validateAuthorId(anyLong());
         authorService.updateAuthor(author);
         verify(authorDao, never()).updateAuthor(any(Author.class));
-        verify(validator, times(1)).validateAuthor(anyLong());
+        verify(validator, times(1)).validateAuthorId(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
     public void updateAuthorWithNotFoundException() {
-        doThrow(NotFoundException.class).when(validator).validateAuthor(anyLong());
+        doThrow(NotFoundException.class).when(validator).validateAuthorId(anyLong());
         authorService.updateAuthor(author);
         verify(authorDao, never()).updateAuthor(any(Author.class));
-        verify(validator, times(1)).validateAuthor(anyLong());
+        verify(validator, times(1)).validateAuthorId(anyLong());
     }
 
     @Test(expected = InternalServerException.class)
@@ -150,7 +150,7 @@ public class AuthorServiceImplTest {
         when(authorDao.updateAuthor(any(Author.class))).thenReturn(false);
         authorService.updateAuthor(author);
         verify(authorDao, never()).updateAuthor(any(Author.class));
-        verify(validator, times(1)).validateAuthor(anyLong());
+        verify(validator, times(1)).validateAuthorId(anyLong());
     }
 
     @Test
@@ -162,14 +162,14 @@ public class AuthorServiceImplTest {
 
     @Test(expected = ValidationException.class)
     public void deleteAuthorWithValidationException() {
-        doThrow(ValidationException.class).when(validator).validateAuthor(anyLong());
+        doThrow(ValidationException.class).when(validator).validateAuthorId(anyLong());
         authorService.deleteAuthor(anyLong());
         verify(authorDao, never()).deleteAuthor(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
     public void deleteAuthorWithNotFoundException() {
-        doThrow(NotFoundException.class).when(validator).validateAuthor(anyLong());
+        doThrow(NotFoundException.class).when(validator).validateAuthorId(anyLong());
         authorService.deleteAuthor(anyLong());
         verify(authorDao, never()).deleteAuthor(anyLong());
     }

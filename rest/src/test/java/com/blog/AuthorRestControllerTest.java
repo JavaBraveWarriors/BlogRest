@@ -64,7 +64,6 @@ public class AuthorRestControllerTest {
             1L
     );
 
-
     @Before
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(authorRestController)
@@ -189,6 +188,5 @@ public class AuthorRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isOk());
         verify(authorServiceMock, times(1)).deleteAuthor(anyLong());
-
     }
 }

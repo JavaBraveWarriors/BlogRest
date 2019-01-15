@@ -23,7 +23,14 @@ public class TagServiceImpl implements TagService {
      */
     private static final Logger LOGGER = LogManager.getLogger();
 
+    /**
+     * This field is used to communicate with the database.
+     */
     private TagDao tagDao;
+
+    /**
+     * This field is used for validate data.
+     */
     private Validator validator;
 
     @Value("${tagService.notUpdated}")
@@ -43,21 +50,21 @@ public class TagServiceImpl implements TagService {
         return tagDao.getAllTags();
     }
 
-    public Tag getTagById(Long id) {
-        LOGGER.debug("Gets tag by id = [{}].", id);
-        validator.validateTagId(id);
-        return tagDao.getTagById(id);
+    public Tag getTagById(Long tagId) {
+        LOGGER.debug("Gets tag by id = [{}].", tagId);
+        validator.validateTagId(tagId);
+        return tagDao.getTagById(tagId);
     }
 
-    public List<Tag> getAllTagsByPostId(Long id) {
-        LOGGER.debug("Gets list of tags by post id = [{}].", id);
-        validator.validatePostId(id);
-        return tagDao.getAllTagsByPostId(id);
+    public List<Tag> getAllTagsByPostId(Long postId) {
+        LOGGER.debug("Gets list of tags by post id = [{}].", postId);
+        validator.validatePostId(postId);
+        return tagDao.getAllTagsByPostId(postId);
     }
 
     public Long addTag(Tag tag) {
         LOGGER.debug("Adds new tag = [{}].", tag);
-        validator.checkTag(tag);
+        validator.checkTagWithTitle(tag);
         return tagDao.addTag(tag);
     }
 
@@ -66,15 +73,12 @@ public class TagServiceImpl implements TagService {
         validator.validateTagId(tag.getId());
         if (!tagDao.updateTag(tag))
             throw new InternalServerException(updateError);
-
     }
 
-    public void deleteTag(Long id) {
-        LOGGER.debug("Deletes tag by id = [{}].", id);
-        validator.validateTagId(id);
-        if (!tagDao.deleteTag(id))
+    public void deleteTag(Long tagId) {
+        LOGGER.debug("Deletes tag by id = [{}].", tagId);
+        validator.validateTagId(tagId);
+        if (!tagDao.deleteTag(tagId))
             throw new InternalServerException(deleteError);
     }
-
-
 }

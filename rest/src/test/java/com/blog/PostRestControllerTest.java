@@ -69,7 +69,6 @@ public class PostRestControllerTest {
         verify(postService, times(1)).getAllPosts();
     }
 
-
     @Test
     public void getPostByIdSuccess() throws Exception {
         given(postService.getPostById(anyLong())).willReturn(post);

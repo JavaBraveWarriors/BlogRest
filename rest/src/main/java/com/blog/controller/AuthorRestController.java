@@ -62,7 +62,6 @@ public class AuthorRestController {
         } else {
             authorService.updateAuthor(author);
         }
-
     }
 
     @DeleteMapping("/{id}")

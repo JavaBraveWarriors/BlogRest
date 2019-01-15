@@ -17,7 +17,7 @@ import java.util.List;
 public interface PostDao {
 
     /**
-     * Gets the list of objects of the all posts that belong to the author from data base.
+     * Gets the list of objects of the all posts that belong to the author from database.
      *
      * @return {List<Post>} is a list of all posts that belong to the author from the database.
      * @throws DataAccessException Will throw an error if the data is not access or the table post does not contain posts with this author ID.
@@ -131,5 +131,4 @@ public interface PostDao {
      * @return {boolean} value, if the post has a given tag - returns true, if not - false
      */
     boolean checkPostByAuthorId(Long authorId);
-
 }

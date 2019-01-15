@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
-
 @Component
 public class AuthorRowMapper implements RowMapper<Author> {
 

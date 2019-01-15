@@ -20,7 +20,6 @@ public class PostRowMapper implements RowMapper<Post> {
     public static final String AUTHOR_ID = "author_id";
     public static final String INITIAL = "initial";
     public static final String QUANTITY = "quantity";
-
     public static final String TAG_ID = "tag_id";
 
     public Post mapRow(ResultSet rs, int rowNum) throws SQLException {

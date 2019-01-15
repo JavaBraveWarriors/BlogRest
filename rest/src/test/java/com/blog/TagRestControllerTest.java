@@ -33,13 +33,11 @@ public class TagRestControllerTest {
     @Mock
     private TagService tagService;
 
-
     @InjectMocks
     private TagRestController tagRestController;
 
     private MockMvc mockMvc;
     private Tag tag = new Tag(1L, "testTitle", "testPath");
-
 
     @Before
     public void setUp() {
@@ -177,6 +175,7 @@ public class TagRestControllerTest {
                 .andExpect(status().isBadRequest());
         verify(tagService, times(1)).deleteTag(anyLong());
     }
+
     @Test
     public void deleteTagWithNotFoundException() throws Exception {
         doThrow(NotFoundException.class).when(tagService).deleteTag(anyLong());
@@ -185,6 +184,7 @@ public class TagRestControllerTest {
                 .andExpect(status().isNotFound());
         verify(tagService, times(1)).deleteTag(anyLong());
     }
+
     @Test
     public void deleteTagWithInternalServerException() throws Exception {
         doThrow(InternalServerException.class).when(tagService).deleteTag(anyLong());

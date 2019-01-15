@@ -22,11 +22,18 @@ import java.util.List;
 public class AuthorServiceImpl implements AuthorService {
 
     /**
-     * This field used for logging events
+     * This field used for logging events.
      */
     private static final Logger LOGGER = LogManager.getLogger();
 
+    /**
+     * This field is used to communicate with the database.
+     */
     private AuthorDao authorDao;
+
+    /**
+     * This field is used for validate data.
+     */
     private Validator validator;
 
     @Value("${authorService.notUpdated}")
@@ -48,13 +55,13 @@ public class AuthorServiceImpl implements AuthorService {
 
     public Author getAuthorById(Long authorId) throws ValidationException, NotFoundException {
         LOGGER.debug("Search author by id = [{}]", authorId);
-        validator.validateAuthor(authorId);
+        validator.validateAuthorId(authorId);
         return authorDao.getAuthorById(authorId);
     }
 
     public Author getAuthorByLogin(String login) throws ValidationException, NotFoundException {
         LOGGER.debug("Search author by login = [{}]", login);
-        validator.validateAuthor(login);
+        validator.validateAuthorLogin(login);
         return authorDao.getAuthorByLogin(login);
     }
 
@@ -67,17 +74,15 @@ public class AuthorServiceImpl implements AuthorService {
 
     public void updateAuthor(Author author) throws NotFoundException, InternalServerException {
         LOGGER.debug("Updates author where id = [{}]", author.getId());
-        validator.validateAuthor(author.getId());
+        validator.validateAuthorId(author.getId());
         if (!authorDao.updateAuthor(author))
             throw new InternalServerException(authorNotUpdated);
     }
 
     public void deleteAuthor(Long authorId) throws ValidationException, NotFoundException, InternalServerException {
         LOGGER.debug("Deletes author by id = [{}]", authorId);
-        validator.validateAuthor(authorId);
+        validator.validateAuthorId(authorId);
         if (!authorDao.deleteAuthor(authorId))
             throw new InternalServerException(authorNotDeleted);
     }
-
-
 }

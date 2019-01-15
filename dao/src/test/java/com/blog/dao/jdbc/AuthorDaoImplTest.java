@@ -41,7 +41,6 @@ public class AuthorDaoImplTest {
     private static String UPDATED_AUTHOR_PASSWORD_1 = "testUpdatePsw1";
     private static String UPDATED_AUTHOR_LAST_NAME_1 = "testUpdateLast1";
 
-
     private static Author author = new Author(
             null,
             NEW_AUTHOR_MAIL_4,
@@ -54,7 +53,6 @@ public class AuthorDaoImplTest {
 
     @Autowired
     private AuthorDao authorDao;
-
 
     @Test
     public void getAllAuthorsSuccess() {
@@ -96,7 +94,6 @@ public class AuthorDaoImplTest {
     @Test(expected = DataAccessException.class)
     public void getAuthorByLoginWithException2() {
         assertNull(authorDao.getAuthorByLogin(null));
-
     }
 
     @Test

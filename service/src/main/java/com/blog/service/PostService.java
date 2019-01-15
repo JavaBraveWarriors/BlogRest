@@ -1,27 +1,118 @@
 package com.blog.service;
 
 import com.blog.Post;
+import com.blog.dao.jdbc.PostDaoImpl;
+import com.blog.exception.InternalServerException;
+import com.blog.exception.NotFoundException;
+import com.blog.exception.ValidationException;
 
 import java.util.List;
 
+/**
+ * This interface defines various ways to manage object post with the correct business model.
+ *
+ * @author Aliaksandr Yeutushenka
+ * @see PostDaoImpl
+ * @see Post
+ */
 public interface PostService {
 
-    List<Post> getAllPostsByAuthorId(Long userId);
+    /**
+     * Gets all posts by author id.
+     *
+     * @param authorId the user id
+     * @return {List<Post>} is a list of all posts that belong to the author from the database.
+     * @throws ValidationException Will throw an error if authorId is not valid.
+     * @throws NotFoundException   Will throw an error if not found author with this authorId in database.
+     */
+    List<Post> getAllPostsByAuthorId(Long authorId) throws ValidationException, NotFoundException;
 
+    /**
+     * Gets the list of objects of the all posts.
+     *
+     * @return {List<Post>} is a list of all posts.
+     */
     List<Post> getAllPosts();
 
-    List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity);
+    /**
+     * Gets a list of post objects from a specific item, a specific amount.
+     *
+     * @param initial  is {Long} value ID of the post from which you want to get objects.
+     * @param quantity is {Long} value the number of required objects.
+     * @return {List<Post>} is a list of posts.
+     * @throws ValidationException Will throw an error if initial or quantity is not valid.
+     */
+    List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws ValidationException;
 
-    List<Post> getAllPostsByTagId(Long tagId);
+    /**
+     * Gets a list of post objects where is this tag.
+     *
+     * @param tagId is {Long} value tag ID
+     * @return {List<Post>} is a list of posts.
+     * @throws ValidationException Will throw an error if tagId is not valid.
+     * @throws NotFoundException   Will throw an error if not found tag with this Id in database.
+     */
+    List<Post> getAllPostsByTagId(Long tagId) throws ValidationException, NotFoundException;
 
-    Post getPostById(Long id);
+    /**
+     * Gets a {Post} object where id is equal to argument parameter.
+     *
+     * @param postId {Long} value the ID of the post you want to get.
+     * @return {Post} is a object which has this ID.
+     * @throws ValidationException Will throw an error if postId is not valid.
+     * @throws NotFoundException   Will throw an error if not found post with this postId in database.
+     */
+    Post getPostById(Long postId) throws ValidationException, NotFoundException;
 
-    Long addPost(Post post);
+    /**
+     * Add new post.
+     *
+     * @param post {Post} to be added.
+     * @return {Long} is the value that is the id of the new post.
+     * @throws ValidationException Will throw an error if authorId or list of tags is not valid.
+     * @throws NotFoundException   Will throw an error if not found author or one of the tag list items in database.
+     */
+    Long addPost(Post post) throws ValidationException, NotFoundException;
 
-    void addTagToPost(Long postId, Long tagId);
+    /**
+     * Add tag to post.
+     *
+     * @param postId is {Long} the value of post ID.
+     * @param tagId  id is {Long} the value of tag ID.
+     * @throws ValidationException     Will throw an error if postId or tagId is not valid.
+     * @throws NotFoundException       Will throw an error if not found post or tag in database.
+     * @throws InternalServerException Will throw an error if tag is not added to post.
+     */
+    void addTagToPost(Long postId, Long tagId) throws ValidationException, NotFoundException, InternalServerException;
 
-    void updatePost(Post post);
+    /**
+     * Update post.
+     *
+     * @param post {Post} to be updated.
+     * @throws ValidationException     Will throw an error if authorId or list of tags is not valid.
+     * @throws NotFoundException       Will throw an error if not found post or one of the tag list items in database.
+     * @throws InternalServerException Will throw an error if post or tags in post is not updated.
+     */
+    void updatePost(Post post) throws ValidationException, NotFoundException, InternalServerException;
 
-    void deletePost(Long id);
+    /**
+     * Deletes post using post ID.
+     *
+     * @param postId is {Long} value which identifies the post ID.
+     * @throws ValidationException     Will throw an error if postId is not valid.
+     * @throws NotFoundException       Will throw an error if not found post with this id in database.
+     * @throws InternalServerException Will throw an error if post is not deleted.
+     */
+    void deletePost(Long postId) throws ValidationException, NotFoundException, InternalServerException;
 
+    /**
+     * Delete tag in post using post ID and tag ID.
+     *
+     * @param postId is {Long} the value of post ID.
+     * @param tagId  id is {Long} the value of tag ID.
+     * @throws ValidationException     Will throw an error if postId or tagId is not valid.
+     * @throws NotFoundException       Will throw an error if not found post or tag in database.
+     * @throws InternalServerException Will throw an error if tag is not deleted in post.
+     */
+    void deleteTagInPost(Long postId, Long tagId) throws ValidationException, NotFoundException, InternalServerException;
 }

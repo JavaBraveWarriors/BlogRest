@@ -15,7 +15,6 @@ INSERT INTO post (title, description, text, author_id) VALUES ('title3','testDes
 INSERT INTO post (title, description, text, author_id) VALUES ('title4','testDescription4','testText4', 2)
 INSERT INTO post (title, description, text, author_id) VALUES ('title5','testDescription5','testText5', 4)
 
-
 INSERT INTO post_has_tag (post_id, tag_id) VALUES (1,1)
 INSERT INTO post_has_tag (post_id, tag_id) VALUES (1,2)
 INSERT INTO post_has_tag (post_id, tag_id) VALUES (2,3)

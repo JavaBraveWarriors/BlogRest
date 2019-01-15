@@ -5,6 +5,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Objects;
 
 @Entity
 public class Tag {
@@ -50,6 +51,20 @@ public class Tag {
 
     public void setPathImage(String pathImage) {
         this.pathImage = pathImage;
+    }
+
+    // Override, because I use the "contains" method in the list.
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tag)) return false;
+        Tag tag = (Tag) o;
+        return Objects.equals(getId(), tag.getId()) &&
+                Objects.equals(getTitle(), tag.getTitle()) &&
+                Objects.equals(getPathImage(), tag.getPathImage());
+    }
+
+    public int hashCode() {
+        return Objects.hash(getId(), getTitle(), getPathImage());
     }
 
     public String toString() {

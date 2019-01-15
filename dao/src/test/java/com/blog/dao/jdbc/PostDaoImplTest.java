@@ -55,7 +55,6 @@ public class PostDaoImplTest {
     @Autowired
     private PostDao postDao;
 
-
     @Test
     public void getAllPostsSuccess() {
         List<Post> posts = postDao.getAllPosts();
@@ -103,7 +102,6 @@ public class PostDaoImplTest {
 
     @Test
     public void getPostsByInitialIdAndQuantitySuccess() {
-
         List<Post> posts = postDao.getPostsByInitialIdAndQuantity(2L, 3L);
         assertNotNull(posts);
         assertEquals(3, posts.size());
@@ -262,7 +260,6 @@ public class PostDaoImplTest {
         assertNotNull(posts);
         assertEquals(initialSize, posts.size());
     }
-
 
     @Test
     public void deleteTagInPostSuccess() {

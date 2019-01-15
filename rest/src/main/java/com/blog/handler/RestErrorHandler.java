@@ -36,7 +36,6 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
     ResponseEntity<ExceptionResponse> handleNotFoundException(NotFoundException ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
                 request.getDescription(false));
-
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
 
@@ -44,7 +43,7 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
     public final @ResponseBody
     ResponseEntity<ExceptionResponse> handleValidationException(ValidationException ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
-                request.getDescription(true));
+                request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
@@ -52,16 +51,16 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
     public final @ResponseBody
     ResponseEntity<ExceptionResponse> handleInternalServerException(InternalServerException ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
-                request.getDescription(true));
+                request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    // if it is wrong to add links to the database (tag_id or post_id does not exist)
+    // If it is wrong to add links to the database (tag_id or post_id does not exist)
     @ExceptionHandler(DataIntegrityViolationException.class)
     public final @ResponseBody
     ResponseEntity<ExceptionResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
-                request.getDescription(true));
+                request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

@@ -36,7 +36,6 @@ public class AuthorDaoImpl implements AuthorDao {
      */
     private static final Logger LOGGER = LogManager.getLogger();
 
-
     @Value("${author.select}")
     private String getAllAuthorsSql;
 

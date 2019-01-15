@@ -9,6 +9,9 @@
         <File name="FileService" fileName="log/service.log">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </File>
+        <File name="FileValidator" fileName="log/validator.log">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+        </File>
     </Appenders>
     <Loggers>
         <Root level="ERROR">
@@ -24,5 +27,11 @@
         </Root>
         <Logger name="com.blog.service" level="DEBUG"/>
     </Loggers>
-
+    <Loggers>
+        <Root level="ERROR">
+            <appender-ref ref="Console"/>
+            <appender-ref ref="FileValidator"/>
+        </Root>
+        <Logger name="com.blog.validator" level="DEBUG"/>
+    </Loggers>
 </Configuration>

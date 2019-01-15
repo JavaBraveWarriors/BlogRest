@@ -52,6 +52,14 @@ public class PostRestController {
         postService.addTagToPost(postId, tagId);
     }
 
+    @DeleteMapping("{postId}/tag/{tagId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteTagInPost(
+            @PathVariable(value = "postId") Long postId,
+            @PathVariable(value = "tagId") Long tagId) {
+        postService.deleteTagInPost(postId, tagId);
+    }
+
     @PostMapping("")
     @ResponseStatus(value = HttpStatus.CREATED)
     public Long addPost(@RequestBody Post post) {

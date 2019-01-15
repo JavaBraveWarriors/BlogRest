@@ -4,7 +4,6 @@ import com.blog.Post;
 import com.blog.Tag;
 import com.blog.dao.PostDao;
 import com.blog.exception.InternalServerException;
-import com.blog.exception.ValidationException;
 import com.blog.service.PostService;
 import com.blog.service.TagService;
 import com.blog.validator.Validator;
@@ -27,8 +26,19 @@ public class PostServiceImpl implements PostService {
      */
     private static final Logger LOGGER = LogManager.getLogger();
 
+    /**
+     * This field is used to management {Post} in database.
+     */
     private PostDao postDao;
+
+    /**
+     * This field is used for validate data.
+     */
     private Validator validator;
+
+    /**
+     * This field is used to management {Tag}.
+     */
     private TagService tagService;
 
     @Value("${postService.errorOfUpdating}")
@@ -37,8 +47,12 @@ public class PostServiceImpl implements PostService {
     @Value("${postService.errorOfDeleting}")
     private String deleteError;
 
-    @Value("${postService.tagExistInPost}")
-    private String tagExistInPost;
+    @Value("${postService.errorOfAddingTag}")
+    private String addTagToPost;
+
+    @Value("${postService.errorOfDeletingTag}")
+    private String deleteTagInPost;
+
 
     @Autowired
     public PostServiceImpl(PostDao postDao, Validator validator, TagService tagService) {
@@ -56,7 +70,7 @@ public class PostServiceImpl implements PostService {
 
     public List<Post> getAllPostsByAuthorId(Long authorId) {
         LOGGER.debug("Gets all posts by author id = [{}].", authorId);
-        validator.validateAuthor(authorId);
+        validator.validateAuthorId(authorId);
         List<Post> posts = postDao.getAllPostsByAuthorId(authorId);
         posts.forEach(post -> post.setTags(tagService.getAllTagsByPostId(post.getId())));
         return posts;
@@ -78,17 +92,17 @@ public class PostServiceImpl implements PostService {
         return posts;
     }
 
-    public Post getPostById(Long id) {
-        LOGGER.debug("Gets list of posts by id = [{}].", id);
-        validator.validatePostId(id);
-        Post post = postDao.getPostById(id);
+    public Post getPostById(Long postId) {
+        LOGGER.debug("Gets list of posts by id = [{}].", postId);
+        validator.validatePostId(postId);
+        Post post = postDao.getPostById(postId);
         post.setTags(tagService.getAllTagsByPostId(post.getId()));
         return post;
     }
 
     public Long addPost(Post post) {
         LOGGER.debug("Adds new post = [{}].", post);
-        validator.validateAuthor(post.getAuthorId());
+        validator.validateAuthorId(post.getAuthorId());
         post.setTimeOfCreation(LocalDateTime.now());
         Long key = postDao.addPost(post);
         post.getTags().forEach(tag -> {
@@ -99,12 +113,12 @@ public class PostServiceImpl implements PostService {
     }
 
     public void addTagToPost(Long postId, Long tagId) {
-        LOGGER.debug("Adds tag id  = [{}] to post id = [{}].", tagId, postId);
+        LOGGER.debug("Adds tag id = [{}] to post id = [{}].", tagId, postId);
         validator.validatePostId(postId);
         validator.validateTagId(tagId);
-        if (postDao.checkTagInPostById(postId, tagId))
-            throw new ValidationException(tagExistInPost);
-        postDao.addTagToPost(postId, tagId);
+        validator.validateTagInPost(postId, tagId);
+        if (!postDao.addTagToPost(postId, tagId))
+            throw new InternalServerException(addTagToPost);
     }
 
     public void updatePost(Post post) {
@@ -112,26 +126,37 @@ public class PostServiceImpl implements PostService {
         validator.checkPost(post);
         validator.validateTags(post.getTags(), tagService);
         List<Tag> tagsPost = tagService.getAllTagsByPostId(post.getId());
+        //Remove tags that are in the database, but not in the list of tags
         tagsPost.forEach(tag -> {
-            if (!post.getTags().contains(tag))
-                postDao.deleteTagInPost(post.getId(), tag.getId());
+            if (!post.getTags().contains(tag)) {
+                if (!postDao.deleteTagInPost(post.getId(), tag.getId()))
+                    throw new InternalServerException(deleteTagInPost);
+            }
         });
+        // Add new tags to the post, which was not
         post.getTags().forEach(tag -> {
-            if (!postDao.checkTagInPostById(post.getId(), tag.getId()))
-                postDao.addTagToPost(post.getId(), tag.getId());
+            if (!postDao.checkTagInPostById(post.getId(), tag.getId())) {
+                if (!postDao.addTagToPost(post.getId(), tag.getId()))
+                    throw new InternalServerException(addTagToPost);
+            }
         });
         if (!postDao.updatePost(post))
             throw new InternalServerException(updateError);
     }
 
-    public void deletePost(Long id) {
-        LOGGER.debug("Deletes post by id = [{}].", id);
-        validator.validatePostId(id);
-        List<Tag> tags = tagService.getAllTagsByPostId(id);
-        tags.forEach(tag -> postDao.deleteTagInPost(id, tag.getId()));
-        if (!postDao.deletePost(id))
+    public void deletePost(Long postId) {
+        LOGGER.debug("Deletes post by id = [{}].", postId);
+        validator.validatePostId(postId);
+        if (!postDao.deletePost(postId))
             throw new InternalServerException(deleteError);
     }
 
-
+    public void deleteTagInPost(Long postId, Long tagId) {
+        LOGGER.debug("Deletes tag id = [{}] in post id = [{}].", tagId, postId);
+        validator.validatePostId(postId);
+        validator.validateTagId(tagId);
+        validator.validateTagInPost(postId, tagId);
+        if (!postDao.deleteTagInPost(postId, tagId))
+            throw new InternalServerException(deleteTagInPost);
+    }
 }

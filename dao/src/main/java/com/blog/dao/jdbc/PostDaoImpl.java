@@ -114,7 +114,6 @@ public class PostDaoImpl implements PostDao {
         return jdbcTemplate.query(getAllPostsByAuthorIdSql, parameterSource, (resultSet, i) -> new PostRowMapper().mapRow(resultSet, i));
     }
 
-    /*TODO: refactor "initial - 1L"*/
     public List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws DataAccessException {
         LOGGER.debug("Get list of posts by initial = [{}] and quantity = [{}] from database.", initial, quantity);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
@@ -167,14 +166,12 @@ public class PostDaoImpl implements PostDao {
 
     public boolean checkPostById(Long id) {
         LOGGER.debug("Check post by id = [{}]  in database.", id);
-
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.queryForObject(checkPostByIdSql, parameterSource, boolean.class);
     }
 
     public boolean checkTagInPostById(Long id, Long tagId) {
         LOGGER.debug("Check tag by id = [{}] in post id = [{}] from database.", tagId, id);
-
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue(ID, id);
         parameterSource.addValue(TAG_ID, tagId);
@@ -198,6 +195,4 @@ public class PostDaoImpl implements PostDao {
         parameterSource.addValue(AUTHOR_ID, post.getAuthorId());
         return parameterSource;
     }
-
-
 }

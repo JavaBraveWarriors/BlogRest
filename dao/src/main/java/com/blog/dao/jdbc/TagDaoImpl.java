@@ -138,5 +138,4 @@ public class TagDaoImpl implements TagDao {
         parameterSource.addValue(PATH_IMAGE, tag.getPathImage());
         return parameterSource;
     }
-
 }
