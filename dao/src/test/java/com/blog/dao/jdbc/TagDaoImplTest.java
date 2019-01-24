@@ -24,16 +24,16 @@ public class TagDaoImplTest {
     private static Long INCORRECT_TAG_ID = 7L;
     private static Long CORRECT_POST_ID = 1L;
 
-    private static Long NEW_TAG_ID_5 = 6L;
-    private static String NEW_TAG_TITLE_5 = "newTitle4";
-    private static String NEW_TAG_PATH_IMAGE_5 = "newPathImage4";
+    private static Long NEW_TAG_ID = 6L;
+    private static String NEW_TAG_TITLE = "newTitle4";
+    private static String NEW_TAG_PATH_IMAGE = "newPathImage4";
 
-    private static String UPDATED_TAG_TITLE_1 = "updatedTestTitle1";
+    private static String UPDATED_TAG_TITLE = "updatedTestTitle1";
 
     private static Tag tag = new Tag(
             null,
-            NEW_TAG_TITLE_5,
-            NEW_TAG_PATH_IMAGE_5
+            NEW_TAG_TITLE,
+            NEW_TAG_PATH_IMAGE
     );
 
     @Autowired
@@ -74,9 +74,9 @@ public class TagDaoImplTest {
         Long newTagId = tagDao.addTag(tag);
         assertNotNull(newTagId);
         Tag newTag = tagDao.getTagById(newTagId);
-        assertEquals(NEW_TAG_ID_5, newTag.getId());
-        assertEquals(NEW_TAG_TITLE_5, newTag.getTitle());
-        assertEquals(NEW_TAG_PATH_IMAGE_5, newTag.getPathImage());
+        assertEquals(NEW_TAG_ID, newTag.getId());
+        assertEquals(NEW_TAG_TITLE, newTag.getTitle());
+        assertEquals(NEW_TAG_PATH_IMAGE, newTag.getPathImage());
 
 
         tags = tagDao.getAllTags();
@@ -88,7 +88,7 @@ public class TagDaoImplTest {
     public void updateTag() {
         Tag tag = tagDao.getTagById(CORRECT_TAG_UPDATED_ID);
         assertNotNull(tag);
-        tag.setTitle(UPDATED_TAG_TITLE_1);
+        tag.setTitle(UPDATED_TAG_TITLE);
 
         assertTrue(tagDao.updateTag(tag));
 

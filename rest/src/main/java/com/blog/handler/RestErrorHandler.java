@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDate;
 import java.util.Collections;
 
 @ControllerAdvice("com.blog")
@@ -26,7 +25,8 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DataAccessException.class)
     public final @ResponseBody
     ResponseEntity<Object> handleAllExceptions(DataAccessException ex, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                Collections.singletonList(ex.getMessage()),
                 request.getDescription(true));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -34,7 +34,8 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(NotFoundException.class)
     public final @ResponseBody
     ResponseEntity<ExceptionResponse> handleNotFoundException(NotFoundException ex, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                Collections.singletonList(ex.getMessage()),
                 request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
     }
@@ -42,7 +43,18 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ValidationException.class)
     public final @ResponseBody
     ResponseEntity<ExceptionResponse> handleValidationException(ValidationException ex, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                Collections.singletonList(ex.getMessage()),
+                request.getDescription(false));
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    }
+
+
+    @ExceptionHandler(javax.validation.ValidationException.class)
+    public final @ResponseBody
+    ResponseEntity<ExceptionResponse> handleValidationExceptionObjects(javax.validation.ValidationException ex, WebRequest request) {
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                Collections.singletonList(ex.getMessage()),
                 request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
@@ -50,7 +62,8 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(InternalServerException.class)
     public final @ResponseBody
     ResponseEntity<ExceptionResponse> handleInternalServerException(InternalServerException ex, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                Collections.singletonList(ex.getMessage()),
                 request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -59,18 +72,15 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public final @ResponseBody
     ResponseEntity<ExceptionResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(LocalDate.now(), Collections.singletonList(ex.getMessage()),
+        ExceptionResponse exceptionResponse = new ExceptionResponse(
+                Collections.singletonList(ex.getMessage()),
                 request.getDescription(false));
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
-            MethodArgumentNotValidException ex,
-            HttpHeaders headers,
-            HttpStatus status,
-            WebRequest request) {
+            MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         ExceptionResponse errorDetails = new ExceptionResponse(
-                LocalDate.now(),
                 Collections.singletonList(ex.getMessage()),
                 ex.getBindingResult().toString());
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);

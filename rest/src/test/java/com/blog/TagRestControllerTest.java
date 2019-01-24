@@ -47,7 +47,7 @@ public class TagRestControllerTest {
     }
 
     @Test
-    public void getAllPostsSuccess() throws Exception {
+    public void getAllTagsSuccess() throws Exception {
         given(tagService.getAllTags()).willReturn(Collections.singletonList(tag));
         mockMvc.perform(get("/tags"))
                 .andDo(print())

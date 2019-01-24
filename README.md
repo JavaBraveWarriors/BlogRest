@@ -31,7 +31,4 @@ time it would be necessary to read the number from the table).
 all pictures, links, etc.).
 * Additionally details:
 1. The user can view a list of their likes and comments.
-2. The comment may respond to other comments [here][1].
-
-
-[1]: docs/TZ.readme
+2. The comment may respond to other comments.

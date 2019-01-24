@@ -131,22 +131,6 @@ public class PostServiceImpl implements PostService {
             throw new InternalServerException(updateError);
     }
 
-    private void updatePostTags(Post post, List<Tag> postTags) {
-        //Remove tags that are in the database, but not in the list of tags
-        postTags.forEach(tag -> {
-            if (!post.getTags().contains(tag)) {
-                if (!postDao.deleteTagInPost(post.getId(), tag.getId()))
-                    throw new InternalServerException(deleteTagInPost);
-            }
-        });
-        // Add new tags to the post, which was not
-        post.getTags().forEach(tag -> {
-            if (!postDao.checkTagInPostById(post.getId(), tag.getId())) {
-                if (!postDao.addTagToPost(post.getId(), tag.getId()))
-                    throw new InternalServerException(addTagToPost);
-            }
-        });
-    }
 
     public void deletePost(Long postId) {
         LOGGER.debug("Deletes post by id = [{}].", postId);
@@ -162,5 +146,28 @@ public class PostServiceImpl implements PostService {
         validator.validateTagInPost(postId, tagId);
         if (!postDao.deleteTagInPost(postId, tagId))
             throw new InternalServerException(deleteTagInPost);
+    }
+
+    private void updatePostTags(Post post, List<Tag> postTags) {
+        removeTagInPost(post, postTags);
+        addTagsToPost(post);
+    }
+
+    private void removeTagInPost(Post post, List<Tag> postTags) {
+        postTags.forEach(tag -> {
+            if (!post.getTags().contains(tag)) {
+                if (!postDao.deleteTagInPost(post.getId(), tag.getId()))
+                    throw new InternalServerException(deleteTagInPost);
+            }
+        });
+    }
+
+    private void addTagsToPost(Post post) {
+        post.getTags().forEach(tag -> {
+            if (!postDao.checkTagInPostById(post.getId(), tag.getId())) {
+                if (!postDao.addTagToPost(post.getId(), tag.getId()))
+                    throw new InternalServerException(addTagToPost);
+            }
+        });
     }
 }

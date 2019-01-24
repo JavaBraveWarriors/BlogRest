@@ -6,6 +6,7 @@ import com.blog.exception.ValidationException;
 import com.blog.handler.RestErrorHandler;
 import com.blog.service.PostService;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import static com.blog.JsonConverter.convertToJson;
@@ -49,6 +51,13 @@ public class PostRestControllerTest {
             "",
             1L
     );
+
+    @BeforeClass
+    public static void setData() {
+        ArrayList<Tag> tags = new ArrayList<>();
+        tags.add(new Tag(1L, "testTitle", "asd"));
+        post.setTags(tags);
+    }
 
     @Before
     public void setUp() {

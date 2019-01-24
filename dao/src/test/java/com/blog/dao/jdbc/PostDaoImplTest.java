@@ -33,24 +33,24 @@ public class PostDaoImplTest {
     private static Long INCORRECT_TAG_ID = 5L;
     private static Long INCORRECT_NEGATIVE_ID = -3L;
 
-    private static Long NEW_POST_ID_4 = 6L;
-    private static String NEW_POST_TITLE_4 = "newTitle4";
-    private static String NEW_POST_DESCRIPTION_4 = "newDescription4";
-    private static String NEW_POST_TEXT_4 = "newText4";
-    private static String NEW_POST_PATH_IMAGE_4 = "newPathImage4";
-    private static Long NEW_POST_AUTHOR_ID_4 = 2L;
+    private static Long NEW_POST_ID = 6L;
+    private static String NEW_POST_TITLE = "newTitle4";
+    private static String NEW_POST_DESCRIPTION = "newDescription4";
+    private static String NEW_POST_TEXT = "newText4";
+    private static String NEW_POST_PATH_IMAGE = "newPathImage4";
+    private static Long NEW_POST_AUTHOR_ID = 2L;
 
-    private static String UPDATED_POST_TITLE_1 = "updatedTestTitle1";
-    private static String UPDATED_POST_TEXT_1 = "updatedTestText1";
-    private static String UPDATED_POST_DESCRIPTION1 = "updatedTestDescription1";
+    private static String UPDATED_POST_TITLE = "updatedTestTitle1";
+    private static String UPDATED_POST_TEXT = "updatedTestText1";
+    private static String UPDATED_POST_DESCRIPTION = "updatedTestDescription1";
 
     private static Post post = new Post(
             null,
-            NEW_POST_TITLE_4,
-            NEW_POST_DESCRIPTION_4,
-            NEW_POST_TEXT_4,
-            NEW_POST_PATH_IMAGE_4,
-            NEW_POST_AUTHOR_ID_4
+            NEW_POST_TITLE,
+            NEW_POST_DESCRIPTION,
+            NEW_POST_TEXT,
+            NEW_POST_PATH_IMAGE,
+            NEW_POST_AUTHOR_ID
     );
     @Autowired
     private PostDao postDao;
@@ -145,12 +145,12 @@ public class PostDaoImplTest {
         Long newPostId = postDao.addPost(post);
         assertNotNull(newPostId);
         Post newPost = postDao.getPostById(newPostId);
-        assertEquals(NEW_POST_ID_4, newPost.getId());
-        assertEquals(NEW_POST_TITLE_4, newPost.getTitle());
-        assertEquals(NEW_POST_DESCRIPTION_4, newPost.getDescription());
-        assertEquals(NEW_POST_TEXT_4, newPost.getText());
-        assertEquals(NEW_POST_PATH_IMAGE_4, newPost.getPathImage());
-        assertEquals(NEW_POST_AUTHOR_ID_4, newPost.getAuthorId());
+        assertEquals(NEW_POST_ID, newPost.getId());
+        assertEquals(NEW_POST_TITLE, newPost.getTitle());
+        assertEquals(NEW_POST_DESCRIPTION, newPost.getDescription());
+        assertEquals(NEW_POST_TEXT, newPost.getText());
+        assertEquals(NEW_POST_PATH_IMAGE, newPost.getPathImage());
+        assertEquals(NEW_POST_AUTHOR_ID, newPost.getAuthorId());
 
         posts = postDao.getAllPosts();
         assertNotNull(posts);
@@ -199,9 +199,9 @@ public class PostDaoImplTest {
         assertNotNull(post);
         post.setTimeOfCreation(LocalDateTime.now());
 
-        post.setTitle(UPDATED_POST_TITLE_1);
-        post.setText(UPDATED_POST_TEXT_1);
-        post.setDescription(UPDATED_POST_DESCRIPTION1);
+        post.setTitle(UPDATED_POST_TITLE);
+        post.setText(UPDATED_POST_TEXT);
+        post.setDescription(UPDATED_POST_DESCRIPTION);
 
         assertTrue(postDao.updatePost(post));
 
@@ -221,9 +221,9 @@ public class PostDaoImplTest {
         assertNotNull(post);
         post.setTimeOfCreation(LocalDateTime.now());
         post.setId(INCORRECT_POST_ID);
-        post.setTitle(UPDATED_POST_TITLE_1);
-        post.setText(UPDATED_POST_TEXT_1);
-        post.setDescription(UPDATED_POST_DESCRIPTION1);
+        post.setTitle(UPDATED_POST_TITLE);
+        post.setText(UPDATED_POST_TEXT);
+        post.setDescription(UPDATED_POST_DESCRIPTION);
 
         assertFalse(postDao.updatePost(post));
     }

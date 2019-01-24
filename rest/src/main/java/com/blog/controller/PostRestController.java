@@ -14,7 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/posts")
 public class PostRestController {
-    private static final Long DEFAULT_RETURNED_NUMBER = 10L;
+    private static final Long DEFAULT_RESPONSE_POST_SIZE = 10L;
     private PostService postService;
 
     @Autowired
@@ -37,7 +37,7 @@ public class PostRestController {
         if (initial == null) {
             return postService.getAllPosts();
         } else if (quantity == null) {
-            return postService.getPostsByInitialIdAndQuantity(initial, DEFAULT_RETURNED_NUMBER);
+            return postService.getPostsByInitialIdAndQuantity(initial, DEFAULT_RESPONSE_POST_SIZE);
         }
         return postService.getPostsByInitialIdAndQuantity(initial, quantity);
     }
