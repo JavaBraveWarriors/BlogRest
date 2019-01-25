@@ -243,7 +243,7 @@ public class PostRestIT extends AbstractTestIT {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
-    @Test(expected = HttpClientErrorException.BadRequest.class)
+    @Test(expected = HttpClientErrorException.NotFound.class)
     public void updatePostWithIncorrectTags() {
         existPost.setTags(incorrectTags);
         HttpEntity<String> entity = new HttpEntity<>(convertToJson(existPost), headers);
@@ -267,7 +267,7 @@ public class PostRestIT extends AbstractTestIT {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
-    @Test
+    @Test(expected = HttpClientErrorException.BadRequest.class)
     public void deleteIncorrectPost() {
         existPost.setTags(tags);
         HttpEntity<String> entity = new HttpEntity<>(convertToJson(existPost), headers);
