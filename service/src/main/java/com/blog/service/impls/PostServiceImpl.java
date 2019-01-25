@@ -125,24 +125,12 @@ public class PostServiceImpl implements PostService {
         LOGGER.debug("Updates post = [{}].", post);
         validator.checkPost(post);
         validator.validateTags(post.getTags(), tagService);
-        List<Tag> tagsPost = tagService.getAllTagsByPostId(post.getId());
-        //Remove tags that are in the database, but not in the list of tags
-        tagsPost.forEach(tag -> {
-            if (!post.getTags().contains(tag)) {
-                if (!postDao.deleteTagInPost(post.getId(), tag.getId()))
-                    throw new InternalServerException(deleteTagInPost);
-            }
-        });
-        // Add new tags to the post, which was not
-        post.getTags().forEach(tag -> {
-            if (!postDao.checkTagInPostById(post.getId(), tag.getId())) {
-                if (!postDao.addTagToPost(post.getId(), tag.getId()))
-                    throw new InternalServerException(addTagToPost);
-            }
-        });
+        List<Tag> postTags = tagService.getAllTagsByPostId(post.getId());
+        updatePostTags(post, postTags);
         if (!postDao.updatePost(post))
             throw new InternalServerException(updateError);
     }
+
 
     public void deletePost(Long postId) {
         LOGGER.debug("Deletes post by id = [{}].", postId);
@@ -158,5 +146,28 @@ public class PostServiceImpl implements PostService {
         validator.validateTagInPost(postId, tagId);
         if (!postDao.deleteTagInPost(postId, tagId))
             throw new InternalServerException(deleteTagInPost);
+    }
+
+    private void updatePostTags(Post post, List<Tag> postTags) {
+        removeTagInPost(post, postTags);
+        addTagsToPost(post);
+    }
+
+    private void removeTagInPost(Post post, List<Tag> postTags) {
+        postTags.forEach(tag -> {
+            if (!post.getTags().contains(tag)) {
+                if (!postDao.deleteTagInPost(post.getId(), tag.getId()))
+                    throw new InternalServerException(deleteTagInPost);
+            }
+        });
+    }
+
+    private void addTagsToPost(Post post) {
+        post.getTags().forEach(tag -> {
+            if (!postDao.checkTagInPostById(post.getId(), tag.getId())) {
+                if (!postDao.addTagToPost(post.getId(), tag.getId()))
+                    throw new InternalServerException(addTagToPost);
+            }
+        });
     }
 }

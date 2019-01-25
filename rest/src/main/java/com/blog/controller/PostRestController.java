@@ -4,13 +4,17 @@ import com.blog.Post;
 import com.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.List;
 
 @RestController
 @RequestMapping("/posts")
 public class PostRestController {
+    private static final Long DEFAULT_RESPONSE_POST_SIZE = 10L;
     private PostService postService;
 
     @Autowired
@@ -18,11 +22,6 @@ public class PostRestController {
         this.postService = postService;
     }
 
-    @GetMapping("")
-    @ResponseStatus(value = HttpStatus.OK)
-    public List<Post> getAllPosts() {
-        return postService.getAllPosts();
-    }
 
     @GetMapping("/{id}")
     @ResponseStatus(value = HttpStatus.OK)
@@ -30,11 +29,16 @@ public class PostRestController {
         return postService.getPostById(id);
     }
 
-    @GetMapping("from{initial}/{quantity}")
+    @GetMapping("")
     @ResponseStatus(value = HttpStatus.OK)
     public List<Post> getPostsByInitialIdAndQuantity(
-            @PathVariable(value = "initial") Long initial,
-            @PathVariable(value = "quantity") Long quantity) {
+            @RequestParam(value = "from", required = false) Long initial,
+            @RequestParam(value = "quantity", required = false) Long quantity) {
+        if (initial == null) {
+            return postService.getAllPosts();
+        } else if (quantity == null) {
+            return postService.getPostsByInitialIdAndQuantity(initial, DEFAULT_RESPONSE_POST_SIZE);
+        }
         return postService.getPostsByInitialIdAndQuantity(initial, quantity);
     }
 
@@ -46,9 +50,8 @@ public class PostRestController {
 
     @PutMapping("{postId}/tag/{tagId}")
     @ResponseStatus(value = HttpStatus.OK)
-    public void addTagToPost(
-            @PathVariable(value = "postId") Long postId,
-            @PathVariable(value = "tagId") Long tagId) {
+    public void addTagToPost(@PathVariable(value = "postId") Long postId,
+                             @PathVariable(value = "tagId") Long tagId) {
         postService.addTagToPost(postId, tagId);
     }
 
@@ -62,14 +65,22 @@ public class PostRestController {
 
     @PostMapping("")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public Long addPost(@RequestBody Post post) {
-        return postService.addPost(post);
+    public Long addPost(@Valid @RequestBody Post post, BindingResult validationResults) {
+        if (validationResults.hasErrors()) {
+            throw new ValidationException(validationResults.getFieldErrors().toString());
+        } else {
+            return postService.addPost(post);
+        }
     }
 
     @PutMapping("")
     @ResponseStatus(value = HttpStatus.OK)
-    public void updatePost(@RequestBody Post post) {
-        postService.updatePost(post);
+    public void updatePost(@Valid @RequestBody Post post, BindingResult validationResults) {
+        if (validationResults.hasErrors()) {
+            throw new ValidationException(validationResults.getFieldErrors().toString());
+        } else {
+            postService.updatePost(post);
+        }
     }
 
     @DeleteMapping("/{id}")

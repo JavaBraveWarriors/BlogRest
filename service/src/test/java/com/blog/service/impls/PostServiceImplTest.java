@@ -2,7 +2,6 @@ package com.blog.service.impls;
 
 import com.blog.Post;
 import com.blog.Tag;
-import com.blog.dao.AuthorDao;
 import com.blog.dao.PostDao;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
@@ -26,9 +25,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PostServiceImplTest {
-
-    @Mock
-    private AuthorDao authorDao;
 
     @Mock
     private TagService tagService;
@@ -95,18 +91,17 @@ public class PostServiceImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void getAllPostsByAuthorIdWithValidationException() {
+    public void getAllPostsByAuthorIncorrectId() {
         doThrow(ValidationException.class).when(validator).validateAuthorId(anyLong());
         postService.getAllPostsByAuthorId(anyLong());
         verify(validator, times(1)).validateAuthorId(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
-    public void getAllPostsByAuthorIdWithNotFoundException() {
+    public void getAllPostsByNotExistAuthorId() {
         doThrow(NotFoundException.class).when(validator).validateAuthorId(anyLong());
         postService.getAllPostsByAuthorId(anyLong());
         verify(validator, times(1)).validateAuthorId(anyLong());
-
     }
 
     @Test
@@ -119,12 +114,11 @@ public class PostServiceImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void getPostsByInitialIdAndQuantityWithValidationException() {
+    public void getPostsByIncorrectInitialIdAndIncorrectQuantity() {
         doThrow(ValidationException.class).when(validator).validateInitialAndQuantity(anyLong(), anyLong());
         postService.getPostsByInitialIdAndQuantity(anyLong(), anyLong());
         verify(validator, times(1)).validateInitialAndQuantity(anyLong(), anyLong());
     }
-
 
     @Test
     public void getAllPostsByTagIdSuccess() {
@@ -138,14 +132,14 @@ public class PostServiceImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void getAllPostsByTagIdWithValidationException() {
+    public void getAllPostsByIncorrectTagId() {
         doThrow(ValidationException.class).when(validator).validateTagId(anyLong());
         postService.getAllPostsByTagId(anyLong());
         verify(validator, times(1)).validateTagId(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
-    public void getAllPostsByTagIdWithNotFoundException() {
+    public void getAllPostsByNotExistTagId() {
         doThrow(NotFoundException.class).when(validator).validateTagId(anyLong());
         postService.getAllPostsByTagId(anyLong());
         verify(validator, times(1)).validateTagId(anyLong());
@@ -164,19 +158,18 @@ public class PostServiceImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void getPostByIdWithValidationException() {
+    public void getPostByIncorrectId() {
         doThrow(ValidationException.class).when(validator).validatePostId(anyLong());
         postService.getPostById(anyLong());
         verify(validator, times(1)).validatePostId(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
-    public void getPostByIdWithNotFoundException() {
+    public void getPostByNotExistId() {
         doThrow(NotFoundException.class).when(validator).validatePostId(anyLong());
         postService.getPostById(anyLong());
         verify(validator, times(1)).validatePostId(anyLong());
     }
-
 
     @Test
     public void addPostSuccess() {
@@ -189,14 +182,14 @@ public class PostServiceImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void addPostWithValidationException1() {
+    public void addPostWithIncorrectAuthorId() {
         doThrow(ValidationException.class).when(validator).validateAuthorId(anyLong());
         postService.addPost(testPost);
         verify(validator, times(1)).validateAuthorId(anyLong());
     }
 
     @Test(expected = ValidationException.class)
-    public void addPostWithValidationException2() {
+    public void addPostWithIncorrectTag() {
         doThrow(ValidationException.class).when(validator).validateTagId(anyLong());
         when(postDao.addPost(any(Post.class))).thenReturn(anyLong());
         postService.addPost(testPost);
@@ -206,7 +199,7 @@ public class PostServiceImplTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void addPostWithNotFoundException() {
+    public void addPostWithNotExistAuthor() {
         doThrow(NotFoundException.class).when(validator).validateAuthorId(anyLong());
         postService.addPost(testPost);
         verify(validator, times(1)).validateAuthorId(anyLong());
@@ -214,6 +207,7 @@ public class PostServiceImplTest {
 
     @Test
     public void addTagToPostSuccess() {
+        when(postDao.addTagToPost(anyLong(), anyLong())).thenReturn(true);
         postService.addTagToPost(1L, 1L);
         verify(postDao, times(1)).addTagToPost(anyLong(), anyLong());
         verify(validator, times(1)).validateTagId(anyLong());
@@ -222,14 +216,14 @@ public class PostServiceImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void addTagToPostValidationException1() {
+    public void addTagToIncorrectPost() {
         doThrow(ValidationException.class).when(validator).validatePostId(anyLong());
         postService.addTagToPost(1L, 1L);
         verify(validator, times(1)).validatePostId(anyLong());
     }
 
     @Test(expected = ValidationException.class)
-    public void addTagToPostValidationException2() {
+    public void addIncorrectTagToPost() {
         doThrow(ValidationException.class).when(validator).validateTagId(anyLong());
         postService.addTagToPost(1L, 1L);
         verify(validator, times(1)).validatePostId(anyLong());
@@ -237,7 +231,7 @@ public class PostServiceImplTest {
     }
 
     @Test(expected = ValidationException.class)
-    public void addTagToPostValidationException3() {
+    public void addExistenceInPostTagToPost() {
         doThrow(ValidationException.class).when(validator).validateTagInPost(anyLong(), anyLong());
         postService.addTagToPost(1L, 1L);
         verify(validator, times(1)).validatePostId(anyLong());
@@ -246,20 +240,19 @@ public class PostServiceImplTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void addTagToPostNotFoundException1() {
+    public void addTagToNotExistPost() {
         doThrow(NotFoundException.class).when(validator).validatePostId(anyLong());
         postService.addTagToPost(1L, 1L);
         verify(validator, times(1)).validatePostId(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
-    public void addTagToPostNotFoundException2() {
+    public void addNotExistTagToPost() {
         doThrow(NotFoundException.class).when(validator).validateTagId(anyLong());
         postService.addTagToPost(1L, 1L);
         verify(validator, times(1)).validatePostId(anyLong());
         verify(validator, times(1)).validateTagId(anyLong());
     }
-
 
     @Test
     public void updatePostSuccess() {
@@ -282,7 +275,7 @@ public class PostServiceImplTest {
     }
 
     @Test(expected = InternalServerException.class)
-    public void updatePostWithInternalServerException1() {
+    public void updatePostWithNotUpdatedInDao() {
         testPost.setTags(tagUpdated);
         when(postDao.updatePost(any(Post.class))).thenReturn(false);
         when(postDao.checkTagInPostById(anyLong(), eq(2L))).thenReturn(true);
@@ -302,10 +295,14 @@ public class PostServiceImplTest {
     }
 
     @Test(expected = InternalServerException.class)
-    public void updatePostWithInternalServerException2() {
+    public void updatePostWithNotAddedTagToPost() {
         testPost.setTags(tagUpdated);
         when(tagService.getAllTagsByPostId(anyLong())).thenReturn(tags);
+        when(postDao.deleteTagInPost(anyLong(), anyLong())).thenReturn(true);
+        when(postDao.addTagToPost(anyLong(), anyLong())).thenReturn(false);
+
         postService.updatePost(testPost);
+
         verify(postDao, times(1)).updatePost(any(Post.class));
         verify(validator, times(1)).checkPost(any(Post.class));
         verify(tagService, times(1)).getAllTagsByPostId(anyLong());
@@ -315,7 +312,7 @@ public class PostServiceImplTest {
     }
 
     @Test(expected = InternalServerException.class)
-    public void updatePostWithInternalServerException3() {
+    public void updatePostWithNotDeletedTagFromPost() {
         testPost.setTags(tagUpdated);
         when(postDao.deleteTagInPost(anyLong(), anyLong())).thenReturn(false);
         when(tagService.getAllTagsByPostId(anyLong())).thenReturn(tags);

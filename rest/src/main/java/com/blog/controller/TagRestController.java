@@ -4,8 +4,11 @@ import com.blog.Tag;
 import com.blog.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.List;
 
 @RestController
@@ -32,14 +35,22 @@ public class TagRestController {
 
     @PostMapping("")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public Long addTag(@RequestBody Tag tag) {
-        return tagService.addTag(tag);
+    public Long addTag(@Valid @RequestBody Tag tag, BindingResult validationResults) {
+        if (validationResults.hasErrors()) {
+            throw new ValidationException(validationResults.getFieldErrors().toString());
+        } else {
+            return tagService.addTag(tag);
+        }
     }
 
     @PutMapping("")
     @ResponseStatus(value = HttpStatus.OK)
-    public void updateTag(@RequestBody Tag tag) {
-        tagService.updateTag(tag);
+    public void updateTag(@Valid @RequestBody Tag tag, BindingResult validationResults) {
+        if (validationResults.hasErrors()) {
+            throw new ValidationException(validationResults.getFieldErrors().toString());
+        } else {
+            tagService.updateTag(tag);
+        }
     }
 
     @DeleteMapping("/{id}")

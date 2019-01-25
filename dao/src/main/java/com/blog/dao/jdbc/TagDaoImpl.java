@@ -30,9 +30,6 @@ import static com.blog.dao.jdbc.mapper.TagRowMapper.*;
 @Repository
 public class TagDaoImpl implements TagDao {
 
-    /**
-     * This field used for logging events
-     */
     private static final Logger LOGGER = LogManager.getLogger();
 
     @Value("${tag.select}")
@@ -63,6 +60,7 @@ public class TagDaoImpl implements TagDao {
      * Allows to make a mapping for an {Tag} object from database.
      */
     private TagRowMapper tagRowMapper;
+
     /**
      * The JdbcTemplate which uses named parameters.
      */

@@ -46,9 +46,9 @@ public class AuthorRestController {
 
     @PostMapping("")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public Long addAuthor(@Valid @RequestBody Author author, BindingResult result) {
-        if (result.hasErrors()) {
-            throw new ValidationException(result.getFieldErrors().toString());
+    public Long addAuthor(@Valid @RequestBody Author author, BindingResult validationResults) {
+        if (validationResults.hasErrors()) {
+            throw new ValidationException(validationResults.getFieldErrors().toString());
         } else {
             return authorService.addAuthor(author);
         }
@@ -56,9 +56,9 @@ public class AuthorRestController {
 
     @PutMapping("")
     @ResponseStatus(value = HttpStatus.OK)
-    public void updateAuthor(@Valid @RequestBody Author author, BindingResult result) {
-        if (result.hasErrors()) {
-            throw new ValidationException(result.getFieldErrors().toString());
+    public void updateAuthor(@Valid @RequestBody Author author, BindingResult validationResults) {
+        if (validationResults.hasErrors()) {
+            throw new ValidationException(validationResults.getFieldErrors().toString());
         } else {
             authorService.updateAuthor(author);
         }

@@ -30,11 +30,7 @@ import static com.blog.dao.jdbc.mapper.PostRowMapper.*;
  */
 @Repository
 public class PostDaoImpl implements PostDao {
-
-    /**
-     * This field used for logging events
-     */
-    private static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger(PostDaoImpl.class);
 
     @Value("${post.select}")
     private String getAllPostsSql;

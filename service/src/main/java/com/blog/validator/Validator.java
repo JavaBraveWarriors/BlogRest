@@ -91,7 +91,7 @@ public class Validator {
         LOGGER.debug("Validates list of tags [{}].", tagsValidation);
         tagsValidation.forEach(tag -> {
             validateTagId(tag.getId());
-            if (tag != tagService.getTagById(tag.getId()))
+            if (!tag.equals( tagService.getTagById(tag.getId())))
                 throw new ValidationException(incorrectTag);
         });
     }

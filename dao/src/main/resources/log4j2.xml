@@ -3,35 +3,15 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-        <File name="FileDao" fileName="log/dao.log">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-        </File>
-        <File name="FileService" fileName="log/service.log">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
-        </File>
-        <File name="FileValidator" fileName="log/validator.log">
+        <File name="File" fileName="log/log.log">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </File>
     </Appenders>
     <Loggers>
         <Root level="ERROR">
             <appender-ref ref="Console"/>
-            <appender-ref ref="FileDao"/>
+            <appender-ref ref="File"/>
         </Root>
-        <Logger name="com.blog.dao" level="DEBUG"/>
-    </Loggers>
-    <Loggers>
-        <Root level="ERROR">
-            <appender-ref ref="Console"/>
-            <appender-ref ref="FileService"/>
-        </Root>
-        <Logger name="com.blog.service" level="DEBUG"/>
-    </Loggers>
-    <Loggers>
-        <Root level="ERROR">
-            <appender-ref ref="Console"/>
-            <appender-ref ref="FileValidator"/>
-        </Root>
-        <Logger name="com.blog.validator" level="DEBUG"/>
+        <Logger name="com.blog" level="DEBUG"/>
     </Loggers>
 </Configuration>

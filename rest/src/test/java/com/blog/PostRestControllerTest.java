@@ -6,6 +6,7 @@ import com.blog.exception.ValidationException;
 import com.blog.handler.RestErrorHandler;
 import com.blog.service.PostService;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 
 import static com.blog.JsonConverter.convertToJson;
@@ -50,6 +52,13 @@ public class PostRestControllerTest {
             1L
     );
 
+    @BeforeClass
+    public static void setData() {
+        ArrayList<Tag> tags = new ArrayList<>();
+        tags.add(new Tag(1L, "testTitle", "asd"));
+        post.setTags(tags);
+    }
+
     @Before
     public void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(postRestController)
@@ -80,7 +89,7 @@ public class PostRestControllerTest {
     }
 
     @Test
-    public void getPostByIdWithValidationException() throws Exception {
+    public void getPostByIncorrectId() throws Exception {
         post.setTimeOfCreation(null);
         given(postService.getPostById(anyLong())).willThrow(ValidationException.class);
         mockMvc.perform(get("/posts/{id}", anyLong()))
@@ -90,7 +99,7 @@ public class PostRestControllerTest {
     }
 
     @Test
-    public void getPostByIdWithNotFoundException() throws Exception {
+    public void getPostWithNotExistId() throws Exception {
         given(postService.getPostById(anyLong())).willThrow(NotFoundException.class);
         mockMvc.perform(get("/posts/{id}", anyLong()))
                 .andDo(print())
@@ -101,7 +110,7 @@ public class PostRestControllerTest {
     @Test
     public void getPostsByInitialIdAndQuantitySuccess() throws Exception {
         given(postService.getPostsByInitialIdAndQuantity(anyLong(), anyLong())).willReturn(Collections.singletonList(post));
-        mockMvc.perform(get("/posts/from{initial}/{quantity}", anyLong(), anyLong()))
+        mockMvc.perform(get("/posts?from={from}&quantity={quantity}", anyLong(), anyLong()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(convertToJson(Collections.singletonList(post))));
@@ -109,9 +118,9 @@ public class PostRestControllerTest {
     }
 
     @Test
-    public void getPostsByInitialIdAndQuantityWithValidationException() throws Exception {
+    public void getPostsByIncorrectInitialIdAndIncorrectQuantity() throws Exception {
         given(postService.getPostsByInitialIdAndQuantity(anyLong(), anyLong())).willThrow(ValidationException.class);
-        mockMvc.perform(get("/posts/from{initial}/{quantity}", anyLong(), anyLong()))
+        mockMvc.perform(get("/posts?from={from}&quantity={quantity}", anyLong(), anyLong()))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
         verify(postService, times(1)).getPostsByInitialIdAndQuantity(anyLong(), anyLong());
@@ -128,7 +137,7 @@ public class PostRestControllerTest {
     }
 
     @Test
-    public void getAllPostsByTagIdWithValidationException() throws Exception {
+    public void getAllPostsByIncorrectTagId() throws Exception {
         given(postService.getAllPostsByTagId(anyLong())).willThrow(ValidationException.class);
         mockMvc.perform(get("/posts/tag/{id}", anyLong()))
                 .andDo(print())

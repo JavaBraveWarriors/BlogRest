@@ -84,7 +84,7 @@ public class AuthorRestControllerTest {
     }
 
     @Test
-    public void getAuthorByIdWithValidationException() throws Exception {
+    public void getAuthorByIncorrectId() throws Exception {
         given(authorServiceMock.getAuthorById(anyLong())).willThrow(ValidationException.class);
         mockMvc.perform(get("/authors/{id}", anyLong()))
                 .andDo(print())
@@ -93,7 +93,7 @@ public class AuthorRestControllerTest {
     }
 
     @Test
-    public void getAuthorByIdWithNotFoundException() throws Exception {
+    public void getAuthorWithNotExistId() throws Exception {
         given(authorServiceMock.getAuthorById(anyLong())).willThrow(NotFoundException.class);
         mockMvc.perform(get("/authors/{id}", anyLong()))
                 .andDo(print())
@@ -112,7 +112,7 @@ public class AuthorRestControllerTest {
     }
 
     @Test
-    public void getAllPostsByAuthorIdWithValidationException() throws Exception {
+    public void getAllPostsByAuthorIncorrectId() throws Exception {
         given(postService.getAllPostsByAuthorId(anyLong())).willThrow(ValidationException.class);
         mockMvc.perform(get("/authors/{id}/posts", anyLong()))
                 .andDo(print())
@@ -121,7 +121,7 @@ public class AuthorRestControllerTest {
     }
 
     @Test
-    public void getAllPostsByAuthorIdWithNotFoundException() throws Exception {
+    public void getAllPostsWithAuthorNotExistId() throws Exception {
         given(postService.getAllPostsByAuthorId(anyLong())).willThrow(NotFoundException.class);
         mockMvc.perform(get("/authors/{id}/posts", anyLong()))
                 .andDo(print())
@@ -141,17 +141,16 @@ public class AuthorRestControllerTest {
     }
 
     @Test
-    public void getAuthorByLoginWithValidationException() throws Exception {
+    public void getAuthorByIncorrectLogin() throws Exception {
         given(authorServiceMock.getAuthorByLogin(anyString())).willThrow(ValidationException.class);
         mockMvc.perform(MockMvcRequestBuilders.get("/authors/login/{login}", "testLogin"))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest());
         verify(authorServiceMock, times(1)).getAuthorByLogin(anyString());
-
     }
 
     @Test
-    public void getAuthorByLoginWithNotFoundException() throws Exception {
+    public void getAuthorWithNotExistLogin() throws Exception {
         given(authorServiceMock.getAuthorByLogin(anyString())).willThrow(NotFoundException.class);
         mockMvc.perform(MockMvcRequestBuilders.get("/authors/login/{login}", "testLogin"))
                 .andDo(MockMvcResultHandlers.print())
