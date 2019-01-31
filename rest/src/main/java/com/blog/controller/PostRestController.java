@@ -21,6 +21,7 @@ import java.util.List;
 @RequestMapping("/posts")
 public class PostRestController {
     private static final Long DEFAULT_RESPONSE_POST_SIZE = 10L;
+    private static final Long DEFAULT_RESPONSE_POST_PAGE = 1L;
     private PostService postService;
 
     /**
@@ -47,24 +48,25 @@ public class PostRestController {
     }
 
     /**
-     * Gets a list of post objects from a specific item, a specific amount. If initial is null will be returned all posts.
-     * If initial is not null and quantity is null - 10 items will be returned by default.
+     * Gets a list of post objects from a specific page, a specific size. If page is null will be returned first page by default.
+     * If page is not null and size is null - 10 items will be returned by default.
      *
-     * @param initial  is {Long} value ID of the post from which you want to get objects.
-     * @param quantity is {Long} value the number of required objects.
+     * @param page is {Long} value ID of the post from which you want to get objects.
+     * @param size is {Long} value the number of required objects.
      * @return {List<Post>} is a list of posts.
      */
     @GetMapping("")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<Post> getPostsByInitialIdAndQuantity(
-            @RequestParam(value = "from", required = false) Long initial,
-            @RequestParam(value = "quantity", required = false) Long quantity) {
-        if (initial == null) {
-            return postService.getAllPosts();
-        } else if (quantity == null) {
-            return postService.getPostsByInitialIdAndQuantity(initial, DEFAULT_RESPONSE_POST_SIZE);
+    public List<Post> getPostsWithPagination(
+            @RequestParam(value = "page", required = false) Long page,
+            @RequestParam(value = "size", required = false) Long size) {
+        if (page == null) {
+            page = DEFAULT_RESPONSE_POST_PAGE;
         }
-        return postService.getPostsByInitialIdAndQuantity(initial, quantity);
+        if (size == null) {
+            size = DEFAULT_RESPONSE_POST_SIZE;
+        }
+        return postService.getPostsWithPagination(page, size);
     }
 
     /**

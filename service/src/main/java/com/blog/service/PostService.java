@@ -37,12 +37,12 @@ public interface PostService {
     /**
      * Gets a list of post objects from a specific item, a specific amount.
      *
-     * @param initial  is {Long} value ID of the post from which you want to get objects.
-     * @param quantity is {Long} value the number of required objects.
+     * @param page  is {Long} value ID of the page from which you want to get objects.
+     * @param size is {Long} value the number of required objects.
      * @return {List<Post>} is a list of posts.
      * @throws ValidationException Will throw an error if initial or quantity is not valid.
      */
-    List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws ValidationException;
+    List<Post> getPostsWithPagination(Long page, Long size) throws ValidationException;
 
     /**
      * Gets a list of post objects where is this tag.

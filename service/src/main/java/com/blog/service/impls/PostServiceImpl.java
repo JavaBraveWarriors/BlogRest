@@ -76,10 +76,11 @@ public class PostServiceImpl implements PostService {
         return posts;
     }
 
-    public List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity) {
-        LOGGER.debug("Gets list of posts by initial id = [{}] and size = [{}].", initial, quantity);
-        validator.validateInitialAndQuantity(initial, quantity);
-        List<Post> posts = postDao.getPostsByInitialIdAndQuantity(initial, quantity);
+    public List<Post> getPostsWithPagination(Long page, Long size) {
+        LOGGER.debug("Gets list of posts by initial id = [{}] and size = [{}].", page, size);
+        validator.validateInitialAndQuantity(page, size);
+        Long startItem = page * size;
+        List<Post> posts = postDao.getPostsByInitialIdAndQuantity(startItem, size);
         posts.forEach(post -> post.setTags(tagService.getAllTagsByPostId(post.getId())));
         return posts;
     }
@@ -93,7 +94,7 @@ public class PostServiceImpl implements PostService {
     }
 
     public Post getPostById(Long postId) {
-        LOGGER.debug("Gets list of posts by id = [{}].", postId);
+        LOGGER.debug("Gets post by id = [{}].", postId);
         validator.validatePostId(postId);
         Post post = postDao.getPostById(postId);
         post.setTags(tagService.getAllTagsByPostId(post.getId()));
