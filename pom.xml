@@ -16,6 +16,25 @@
         <module>rest</module>
     </modules>
 
+
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
     <properties>
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -25,7 +44,7 @@
         <junit.version>4.12</junit.version>
         <log4j2.version>2.8</log4j2.version>
         <servlet-api.version>3.1.0</servlet-api.version>
-        <jackson-databind.version>2.9.8</jackson-databind.version>
+        <jackson-databind.version>2.9.4</jackson-databind.version>
         <mockito-all.version>2.0.2-beta</mockito-all.version>
         <mysql-connector-java.version>8.0.12</mysql-connector-java.version>
         <jetty-maven-plugin.version>9.4.10.v20180503</jetty-maven-plugin.version>
@@ -36,8 +55,11 @@
         <validation-api.version>2.0.1.Final</validation-api.version>
         <persistence-api.version>2.2</persistence-api.version>
         <jetty.version>9.4.14.v20181114</jetty.version>
+        <tomcat-maven-plugin.version>2.2</tomcat-maven-plugin.version>
         <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
         <jersey.version>2.27</jersey.version>
+        <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
+        <maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -202,10 +224,17 @@
                 <artifactId>javax.persistence-api</artifactId>
                 <version>${persistence-api.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-digester3</artifactId>
+                <version>3.2</version>
+                <classifier>with-deps</classifier>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <build>
+        <finalName>rest-api</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -223,7 +252,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>${maven-failsafe-plugin.version}</version>
                 <configuration>
                     <includes>
                         <include>**/*RestIT</include>
@@ -247,7 +276,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>${maven-checkstyle-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>validate</id>
@@ -263,6 +292,17 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>${tomcat-maven-plugin.version}</version>
+                <configuration>
+                    <url>http://localhost:8888/manager/text</url>
+                    <server>apache-tomcat</server>
+                    <path>/${project.build.finalName}</path>
+                    <update>true</update>
+                </configuration>
             </plugin>
         </plugins>
     </build>

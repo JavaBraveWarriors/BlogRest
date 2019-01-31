@@ -3,14 +3,14 @@
         <Console name="Console" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </Console>
-        <File name="File" fileName="log/log.log">
+        <File name="File" fileName="logs/rest-api.log">
             <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
         </File>
     </Appenders>
     <Loggers>
-        <Root level="ERROR">
-            <appender-ref ref="Console"/>
+        <Root name="com.blog" level="DEBUG">
             <appender-ref ref="File"/>
+            <appender-ref ref="Console"/>
         </Root>
         <Logger name="com.blog" level="DEBUG"/>
     </Loggers>
