@@ -1,34 +1,50 @@
 # BlogRest
+This application is used to create and manage a blog.
+The technical task is described in [Technical Task][1]
 
-## Technical task
-* Main functionality:
-1. User registration.
-2. Authorization.
-3. Adding an article.
-4. Editing an article.
-5. Deleting an article.
-6. Editing user.
+##Necessary tools
+* [Maven][2]
 
-* Additional functionality:
-1. Adding / removing a article like.
-2. Adding / removing comments on the article.
-3. Add user to subscriptions.
-4. Search.
+##Getting started
+Clone this repo to your local machine using:
+```
+git clone https://github.com/JavaBraveWarriors/BlogRest.git
+```
+To run the application on the embedded Jetty server, go to the project root and execute the following commands:
+```
+mvn -Pdev clean install 
+cd rest/
+mvn -Pdev jetty:tun
+```
+##Deploy to server
+* In the *settings.xml* file ($M2_HOME/conf/settings.xml) write the settings for access to the server. Example:
+```
+ <server>
+    <id>apache-tomcat</id>
+    <username>tomcat-manager</username>
+    <password>password</password>
+  </server>
+```
+> *Node*: server identifier in the settings.xml file must match the identifier in pom.xml in the root of the plugin project "tomcat7-maven-plugin".
+* When the settings are completed, run the following commands:
+```
+mvn -Pprod clean install
+mvn -Pprod tomcat7:deploy
+```
+* If you want to redeploy the project:
+```
+mvn -Pprod clean install
+mvn -Pprod tomcat7:redeploy
+```
 
-* Details:
-1. During registration, the login is checked (it must be unique).
+##Technology stack
+* Spring Framework
+* Maven
+* Docker
 
-2. An article may have one author, several tags (article categories).
-In article can be: lines of code, embedded video (When added, you can click on youtube or another),
-text, quotes, links, headings, paragraphs, pictures. The title of the article does not have to be unique.
-For storing likes and comments, make the database denormalize (storing the number of likes and comments in each article)
-in order to increase performance (when requesting multiple articles, the system would be subject to high load since each
-time it would be necessary to read the number from the table).
+###Links
+* How setup deploy a real environment [Docker Containers Setup][3]
 
-3. Only the author of the article can edit.
-
-4. Only an author can delete an article - after it all its resources are deleted (comments, likes, viewing statistics,
-all pictures, links, etc.).
-* Additionally details:
-1. The user can view a list of their likes and comments.
-2. The comment may respond to other comments.
+[1]: docs/TechnicalTask.md
+[2]: https://maven.apache.org/install.html
+[3]: docs/DockerContainersSetup.md

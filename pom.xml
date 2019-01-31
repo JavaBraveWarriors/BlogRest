@@ -16,6 +16,27 @@
         <module>rest</module>
     </modules>
 
+
+
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <!-- The development profile is active by default -->
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <spring.profiles.active>dev</spring.profiles.active>
+            </properties>
+        </profile>
+        <!-- The configuration of the production profile -->
+        <profile>
+            <id>prod</id>
+            <properties>
+                <spring.profiles.active>prod</spring.profiles.active>
+            </properties>
+        </profile>
+    </profiles>
     <properties>
         <java.version>1.8</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
@@ -25,7 +46,7 @@
         <junit.version>4.12</junit.version>
         <log4j2.version>2.8</log4j2.version>
         <servlet-api.version>3.1.0</servlet-api.version>
-        <jackson-databind.version>2.9.8</jackson-databind.version>
+        <jackson-databind.version>2.9.4</jackson-databind.version>
         <mockito-all.version>2.0.2-beta</mockito-all.version>
         <mysql-connector-java.version>8.0.12</mysql-connector-java.version>
         <jetty-maven-plugin.version>9.4.10.v20180503</jetty-maven-plugin.version>
@@ -202,10 +223,17 @@
                 <artifactId>javax.persistence-api</artifactId>
                 <version>${persistence-api.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-digester3</artifactId>
+                <version>3.2</version>
+                <classifier>with-deps</classifier>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <build>
+        <finalName>rest-api</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>
@@ -220,6 +248,7 @@
             </plugins>
         </pluginManagement>
         <plugins>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
@@ -263,6 +292,18 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.tomcat.maven</groupId>
+                <artifactId>tomcat7-maven-plugin</artifactId>
+                <version>2.2</version>
+                <configuration>
+                    <url>http://localhost:8888/manager/text</url>
+                    <server>apache-tomcat</server>
+                    <path>/${project.build.finalName}</path>
+                    <update>true</update>
+                </configuration>
             </plugin>
         </plugins>
     </build>
