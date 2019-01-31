@@ -4,19 +4,30 @@ The technical task is described in [Technical Task][1]
 
 ## Necessary tools
 * [Maven][2]
+* [Java][4]
 
 ## Getting started
 Clone this repo to your local machine using:
 ```
 git clone https://github.com/JavaBraveWarriors/BlogRest.git
 ```
+>This project uses two profiles. Profiles determine what the connection to the database will be.
+If you don't specify a profile, the dev profile will be activated by default.
+ * dev is used for development
+ * prod is used for production server
+ Example:
+ ```
+ mvn -Pdev <comands>
+ mvn -Pprod <comands>
+ ```
+ 
 To run the application on the embedded Jetty server, go to the project root and execute the following commands:
 ```
 mvn -Pdev clean install 
 cd rest/
 mvn -Pdev jetty:tun
 ```
-## Deploy to server
+## Production deployment
 * In the *settings.xml* file ($M2_HOME/conf/settings.xml) write the settings for access to the server. Example:
 ```
  <server>
@@ -38,9 +49,9 @@ mvn -Pprod tomcat7:redeploy
 ```
 
 ## Technology stack
-* Spring Framework
-* Maven
-* Docker
+* [Spring Framework(5.1.3.RELEASE)][5]
+* [Maven][6]
+* [Docker][7]
 
 ### Links
 * How setup deploy a real environment [Docker Containers Setup][3]
@@ -48,3 +59,7 @@ mvn -Pprod tomcat7:redeploy
 [1]: docs/TechnicalTask.md
 [2]: https://maven.apache.org/install.html
 [3]: docs/DockerContainersSetup.md
+[4]: https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html
+[5]: https://docs.spring.io/spring-framework/docs/5.1.3.RELEASE/spring-framework-reference/
+[6]: https://maven.apache.org/guides/
+[7]: https://docs.docker.com/

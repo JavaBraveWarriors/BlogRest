@@ -21,7 +21,6 @@
     <profiles>
         <profile>
             <id>dev</id>
-            <!-- The development profile is active by default -->
             <activation>
                 <activeByDefault>true</activeByDefault>
             </activation>
@@ -29,7 +28,6 @@
                 <spring.profiles.active>dev</spring.profiles.active>
             </properties>
         </profile>
-        <!-- The configuration of the production profile -->
         <profile>
             <id>prod</id>
             <properties>
@@ -57,8 +55,11 @@
         <validation-api.version>2.0.1.Final</validation-api.version>
         <persistence-api.version>2.2</persistence-api.version>
         <jetty.version>9.4.14.v20181114</jetty.version>
+        <tomcat-maven-plugin.version>2.2</tomcat-maven-plugin.version>
         <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
         <jersey.version>2.27</jersey.version>
+        <maven-checkstyle-plugin.version>3.0.0</maven-checkstyle-plugin.version>
+        <maven-failsafe-plugin.version>3.0.0-M3</maven-failsafe-plugin.version>
     </properties>
 
     <dependencyManagement>
@@ -248,11 +249,10 @@
             </plugins>
         </pluginManagement>
         <plugins>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
-                <version>3.0.0-M3</version>
+                <version>${maven-failsafe-plugin.version}</version>
                 <configuration>
                     <includes>
                         <include>**/*RestIT</include>
@@ -276,7 +276,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.0.0</version>
+                <version>${maven-checkstyle-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>validate</id>
@@ -293,11 +293,10 @@
                     </execution>
                 </executions>
             </plugin>
-
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
-                <version>2.2</version>
+                <version>${tomcat-maven-plugin.version}</version>
                 <configuration>
                     <url>http://localhost:8888/manager/text</url>
                     <server>apache-tomcat</server>

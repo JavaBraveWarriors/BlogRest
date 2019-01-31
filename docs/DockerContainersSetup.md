@@ -24,10 +24,9 @@ If you want to break the environment, run the following commands:
 >**Note**: when you close the environment, all data will be deleted!
 ```
  docker-compose rm -vf
- docker ps
 ```
-You will see a list of working containers with identifiers
 Using the command you can turn off the containers:
 ```
-docker kill <id>
+docker kill yam_tomcat
+docker kill yam_mysql
 ```
