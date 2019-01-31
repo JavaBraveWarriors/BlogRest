@@ -2,10 +2,10 @@
 This application is used to create and manage a blog.
 The technical task is described in [Technical Task][1]
 
-##Necessary tools
+## Necessary tools
 * [Maven][2]
 
-##Getting started
+## Getting started
 Clone this repo to your local machine using:
 ```
 git clone https://github.com/JavaBraveWarriors/BlogRest.git
@@ -16,7 +16,7 @@ mvn -Pdev clean install
 cd rest/
 mvn -Pdev jetty:tun
 ```
-##Deploy to server
+## Deploy to server
 * In the *settings.xml* file ($M2_HOME/conf/settings.xml) write the settings for access to the server. Example:
 ```
  <server>
@@ -37,12 +37,12 @@ mvn -Pprod clean install
 mvn -Pprod tomcat7:redeploy
 ```
 
-##Technology stack
+## Technology stack
 * Spring Framework
 * Maven
 * Docker
 
-###Links
+### Links
 * How setup deploy a real environment [Docker Containers Setup][3]
 
 [1]: docs/TechnicalTask.md
