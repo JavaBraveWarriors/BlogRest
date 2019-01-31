@@ -105,18 +105,18 @@ public class PostServiceImplTest {
     }
 
     @Test
-    public void getPostsByInitialIdAndQuantitySuccess() {
+    public void getPostsWithPaginationSuccess() {
         when(postDao.getPostsByInitialIdAndQuantity(anyLong(), anyLong())).thenReturn(testPosts);
-        postService.getPostsByInitialIdAndQuantity(anyLong(), anyLong());
+        postService.getPostsWithPagination(anyLong(), anyLong());
         verify(postDao, times(1)).getPostsByInitialIdAndQuantity(anyLong(), anyLong());
         verify(tagService, times(testPosts.size())).getAllTagsByPostId(anyLong());
         verify(validator, times(1)).validateInitialAndQuantity(anyLong(), anyLong());
     }
 
     @Test(expected = ValidationException.class)
-    public void getPostsByIncorrectInitialIdAndIncorrectQuantity() {
+    public void getPostsWithPaginationByIncorrectSize() {
         doThrow(ValidationException.class).when(validator).validateInitialAndQuantity(anyLong(), anyLong());
-        postService.getPostsByInitialIdAndQuantity(anyLong(), anyLong());
+        postService.getPostsWithPagination(anyLong(), anyLong());
         verify(validator, times(1)).validateInitialAndQuantity(anyLong(), anyLong());
     }
 

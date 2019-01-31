@@ -132,7 +132,7 @@ public class PostRestIT extends AbstractTestIT {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<List> response = restTemplate.exchange(
-                createURLWithPort("?from=".concat(CORRECT_INITIAL_NUMBER).concat("&quantity=".concat(CORRECT_QUANTITY_NUMBER))),
+                createURLWithPort("?page=".concat(CORRECT_INITIAL_NUMBER).concat("&size=".concat(CORRECT_QUANTITY_NUMBER))),
                 HttpMethod.GET, entity, List.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -144,7 +144,7 @@ public class PostRestIT extends AbstractTestIT {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<List> response = restTemplate.exchange(
-                createURLWithPort("?from=".concat(INCORRECT_INITIAL_NUMBER).concat("&quantity=".concat(INCORRECT_QUANTITY_NUMBER))),
+                createURLWithPort("?page=".concat(INCORRECT_INITIAL_NUMBER).concat("&size=".concat(INCORRECT_QUANTITY_NUMBER))),
                 HttpMethod.GET, entity, List.class);
     }
 
