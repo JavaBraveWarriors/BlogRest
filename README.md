@@ -1,10 +1,10 @@
 # BlogRest
 This application is used to create and manage a blog.
-The technical task is described in [Technical Task][1]
+The technical task is described in [Technical Task][1]. You can see the specification [here][8]
 
 ## Necessary tools
-* [Maven][2]
-* [Java][4]
+* [Maven 3][2]
+* [Java 8 or latest version][4]
 
 ## Getting started
 Clone this repo to your local machine using:
@@ -49,9 +49,10 @@ mvn -Pprod tomcat7:redeploy
 ```
 
 ## Technology stack
-* [Spring Framework(5.1.3.RELEASE)][5]
-* [Maven][6]
-* [Docker][7]
+* [Spring Framework 5.1.3.RELEASE][5]
+* [Maven 3][6]
+* [Docker 17.05.0-ce][7]
+* [Java 8][4]
 
 ### Links
 * How setup deploy a real environment [Docker Containers Setup][3]
@@ -63,3 +64,4 @@ mvn -Pprod tomcat7:redeploy
 [5]: https://docs.spring.io/spring-framework/docs/5.1.3.RELEASE/spring-framework-reference/
 [6]: https://maven.apache.org/guides/
 [7]: https://docs.docker.com/
+[8]: docs/Specification.md
