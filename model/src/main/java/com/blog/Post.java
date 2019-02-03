@@ -37,6 +37,10 @@ public class Post {
     @NotNull
     private Long authorId;
 
+    private String authorName;
+
+    private String authorLastName;
+
     @NotNull
     private List<Tag> tags;
 
@@ -114,6 +118,22 @@ public class Post {
 
     public void setAuthorId(Long authorId) {
         this.authorId = authorId;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
+
+    public String getAuthorLastName() {
+        return authorLastName;
+    }
+
+    public void setAuthorLastName(String authorLastName) {
+        this.authorLastName = authorLastName;
     }
 
     public String toString() {

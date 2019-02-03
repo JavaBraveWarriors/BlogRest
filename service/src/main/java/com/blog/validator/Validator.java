@@ -150,4 +150,9 @@ public class Validator {
         if (postDao.checkTagInPostById(postId, tagId))
             throw new ValidationException(tagExistInPost);
     }
+
+    public void validateSize(Long size) {
+        if (size == null || size < 0L)
+            throw new ValidationException(incorrectQuantityNumber);
+    }
 }

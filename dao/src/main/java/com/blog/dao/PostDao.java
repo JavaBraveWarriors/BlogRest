@@ -131,4 +131,6 @@ public interface PostDao {
      * @return {boolean} value, if the post has a given tag - returns true, if not - false
      */
     boolean checkPostByAuthorId(Long authorId);
+
+    Long getCountOfPosts();
 }

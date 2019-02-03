@@ -69,6 +69,14 @@ public class PostRestController {
         return postService.getPostsWithPagination(page, size);
     }
 
+    @GetMapping("/count")
+    @ResponseStatus(value = HttpStatus.OK)
+    public Long getCountOfPages(
+            @RequestParam(value = "size") Long size) {
+        return postService.getCountOfPagesWithPagination( size);
+    }
+
+
     /**
      * Gets a list of post objects where is this tag.
      *

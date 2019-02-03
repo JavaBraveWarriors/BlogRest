@@ -1,7 +1,9 @@
 package com.blog.service.impls;
 
+import com.blog.Author;
 import com.blog.Post;
 import com.blog.Tag;
+import com.blog.dao.AuthorDao;
 import com.blog.dao.PostDao;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
@@ -35,6 +37,9 @@ public class PostServiceImplTest {
     @Mock
     private PostDao postDao;
 
+    @Mock
+    private AuthorDao authorDao;
+
     @InjectMocks
     private PostServiceImpl postService;
 
@@ -51,6 +56,15 @@ public class PostServiceImplTest {
             "",
             1L
     );
+    private static Author author = new Author(
+            1L,
+            "test@mail.ru",
+            "testLogin",
+            "testPsw",
+            "testFirstName",
+            "testLastName",
+            "testDescription",
+            "testPhone");
 
     @BeforeClass
     public static void setUp() {
@@ -59,6 +73,7 @@ public class PostServiceImplTest {
         testPosts.add(new Post());
         testPosts.add(new Post());
         testPosts.forEach(post -> post.setId(1L));
+        testPosts.forEach(post -> post.setAuthorId(1L));
         tagUpdated.add(new Tag(2L, "2", "2"));
         tagUpdated.add(new Tag(3L, "3", "3"));
         tagUpdated.add(new Tag(5L, "5", "5"));
@@ -70,18 +85,9 @@ public class PostServiceImplTest {
     }
 
     @Test
-    public void getAllPosts() {
-        when(postDao.getAllPosts()).thenReturn(testPosts);
-        List<Post> posts = postService.getAllPosts();
-        verify(postDao, times(1)).getAllPosts();
-        verify(tagService, times(3)).getAllTagsByPostId(anyLong());
-        assertNotNull(posts);
-        assertEquals(posts.size(), testPosts.size());
-    }
-
-    @Test
     public void getAllPostsByAuthorIdSuccess() {
         when(postDao.getAllPostsByAuthorId(anyLong())).thenReturn(testPosts);
+        when(authorDao.getAuthorById(anyLong())).thenReturn(author);
         List<Post> posts = postService.getAllPostsByAuthorId(anyLong());
         assertNotNull(posts);
         assertEquals(posts.size(), testPosts.size());
@@ -107,6 +113,7 @@ public class PostServiceImplTest {
     @Test
     public void getPostsWithPaginationSuccess() {
         when(postDao.getPostsByInitialIdAndQuantity(anyLong(), anyLong())).thenReturn(testPosts);
+        when(authorDao.getAuthorById(anyLong())).thenReturn(author);
         postService.getPostsWithPagination(anyLong(), anyLong());
         verify(postDao, times(1)).getPostsByInitialIdAndQuantity(anyLong(), anyLong());
         verify(tagService, times(testPosts.size())).getAllTagsByPostId(anyLong());
@@ -123,6 +130,7 @@ public class PostServiceImplTest {
     @Test
     public void getAllPostsByTagIdSuccess() {
         when(postDao.getAllPostsByTagId(anyLong())).thenReturn(testPosts);
+        when(authorDao.getAuthorById(anyLong())).thenReturn(author);
         List<Post> posts = postService.getAllPostsByTagId(anyLong());
         assertNotNull(posts);
         assertEquals(posts.size(), testPosts.size());
@@ -149,6 +157,7 @@ public class PostServiceImplTest {
     @Test
     public void getPostByIdSuccess() {
         when(postDao.getPostById(anyLong())).thenReturn(testPost);
+        when(authorDao.getAuthorById(anyLong())).thenReturn(author);
         Post post = postService.getPostById(anyLong());
         assertNotNull(post);
         assertEquals(post.getTitle(), testPost.getTitle());

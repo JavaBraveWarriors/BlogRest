@@ -28,13 +28,6 @@ public interface PostService {
     List<Post> getAllPostsByAuthorId(Long authorId) throws ValidationException, NotFoundException;
 
     /**
-     * Gets the list of objects of the all posts.
-     *
-     * @return {List<Post>} is a list of all posts.
-     */
-    List<Post> getAllPosts();
-
-    /**
      * Gets a list of post objects from a specific item, a specific amount.
      *
      * @param page  is {Long} value ID of the page from which you want to get objects.
@@ -115,4 +108,6 @@ public interface PostService {
      * @throws InternalServerException Will throw an error if tag is not deleted in post.
      */
     void deleteTagInPost(Long postId, Long tagId) throws ValidationException, NotFoundException, InternalServerException;
+
+    Long getCountOfPagesWithPagination(Long size);
 }

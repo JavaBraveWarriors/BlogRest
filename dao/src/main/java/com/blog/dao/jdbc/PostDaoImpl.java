@@ -3,6 +3,7 @@ package com.blog.dao.jdbc;
 import com.blog.Post;
 import com.blog.dao.PostDao;
 import com.blog.dao.jdbc.mapper.PostRowMapper;
+import com.blog.dao.jdbc.mapper.PostShortRowMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +72,9 @@ public class PostDaoImpl implements PostDao {
     @Value("${post.checkPostByUserId}")
     private String checkPostByUserIdSql;
 
+    @Value("${post.getCountWithPages}")
+    private String getCountOfPages;
+
     /**
      * Allows to make a mapping for an {Post} object from database.
      */
@@ -107,7 +111,7 @@ public class PostDaoImpl implements PostDao {
     public List<Post> getAllPostsByAuthorId(Long authorId) throws DataAccessException {
         LOGGER.debug("Get list of posts by author id = [{}] from database.", authorId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(AUTHOR_ID, authorId);
-        return jdbcTemplate.query(getAllPostsByAuthorIdSql, parameterSource, (resultSet, i) -> new PostRowMapper().mapRow(resultSet, i));
+        return jdbcTemplate.query(getAllPostsByAuthorIdSql, parameterSource, (resultSet, i) -> new PostShortRowMapper().mapRow(resultSet, i));
     }
 
     public List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws DataAccessException {
@@ -115,13 +119,13 @@ public class PostDaoImpl implements PostDao {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue(INITIAL, initial - 1L);
         parameterSource.addValue(QUANTITY, quantity);
-        return jdbcTemplate.query(getAllPostsByInitialIdAndQuantitySql, parameterSource, (resultSet, i) -> new PostRowMapper().mapRow(resultSet, i));
+        return jdbcTemplate.query(getAllPostsByInitialIdAndQuantitySql, parameterSource, (resultSet, i) -> new PostShortRowMapper().mapRow(resultSet, i));
     }
 
     public List<Post> getAllPostsByTagId(Long tagId) throws DataAccessException {
         LOGGER.debug("Get list of posts by tag id = [{}] from database.", tagId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(TAG_ID, tagId);
-        return jdbcTemplate.query(getAllPostsByTagSql, parameterSource, (resultSet, i) -> new PostRowMapper().mapRow(resultSet, i));
+        return jdbcTemplate.query(getAllPostsByTagSql, parameterSource, (resultSet, i) -> new PostShortRowMapper().mapRow(resultSet, i));
     }
 
     public Long addPost(final Post post) throws DataAccessException {
@@ -178,6 +182,12 @@ public class PostDaoImpl implements PostDao {
         LOGGER.debug("Check post by author id = [{}]  in database.", authorId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(AUTHOR_ID, authorId);
         return jdbcTemplate.queryForObject(checkPostByUserIdSql, parameterSource, boolean.class);
+    }
+
+    public Long getCountOfPosts() {
+        LOGGER.debug("Get count posts in database.");
+        SqlParameterSource parameterSource = new MapSqlParameterSource();
+        return jdbcTemplate.queryForObject(getCountOfPages, parameterSource, Long.class);
     }
 
     private MapSqlParameterSource getParameterSourcePost(Post post) {

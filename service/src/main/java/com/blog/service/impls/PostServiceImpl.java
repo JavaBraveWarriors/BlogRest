@@ -1,7 +1,9 @@
 package com.blog.service.impls;
 
+import com.blog.Author;
 import com.blog.Post;
 import com.blog.Tag;
+import com.blog.dao.AuthorDao;
 import com.blog.dao.PostDao;
 import com.blog.exception.InternalServerException;
 import com.blog.service.PostService;
@@ -41,6 +43,8 @@ public class PostServiceImpl implements PostService {
      */
     private TagService tagService;
 
+    private AuthorDao authorDao;
+
     @Value("${postService.errorOfUpdating}")
     private String updateError;
 
@@ -55,41 +59,52 @@ public class PostServiceImpl implements PostService {
 
 
     @Autowired
-    public PostServiceImpl(PostDao postDao, Validator validator, TagService tagService) {
+    public PostServiceImpl(PostDao postDao, Validator validator, TagService tagService, AuthorDao authorDao) {
+        this.authorDao = authorDao;
         this.postDao = postDao;
         this.validator = validator;
         this.tagService = tagService;
     }
 
-    public List<Post> getAllPosts() {
-        LOGGER.debug("Gets all posts.");
-        List<Post> posts = postDao.getAllPosts();
-        posts.forEach(post -> post.setTags(tagService.getAllTagsByPostId(post.getId())));
-        return posts;
-    }
-
+    // refactored with pagination
     public List<Post> getAllPostsByAuthorId(Long authorId) {
         LOGGER.debug("Gets all posts by author id = [{}].", authorId);
         validator.validateAuthorId(authorId);
         List<Post> posts = postDao.getAllPostsByAuthorId(authorId);
+
+        Author author = authorDao.getAuthorById(authorId);
+
+        posts.forEach(post -> post.setAuthorName(author.getFirstName()));
+        posts.forEach(post -> post.setAuthorLastName(author.getLastName()));
         posts.forEach(post -> post.setTags(tagService.getAllTagsByPostId(post.getId())));
         return posts;
     }
 
     public List<Post> getPostsWithPagination(Long page, Long size) {
-        LOGGER.debug("Gets list of posts by initial id = [{}] and size = [{}].", page, size);
+        LOGGER.debug("Gets list of posts by page id = [{}] and size = [{}].", page, size);
         validator.validateInitialAndQuantity(page, size);
-        Long startItem = page * size;
+        Long startItem = (page - 1) * size + 1;
         List<Post> posts = postDao.getPostsByInitialIdAndQuantity(startItem, size);
-        posts.forEach(post -> post.setTags(tagService.getAllTagsByPostId(post.getId())));
+        addDataInPosts(posts);
         return posts;
+    }
+
+    public Long getCountOfPagesWithPagination(Long size) {
+        LOGGER.debug("Gets count of pages by size = [{}].", size);
+        validator.validateSize(size);
+        Long countOfPosts = postDao.getCountOfPosts();
+        Long countOfPages = countOfPosts / size;
+        if(countOfPosts % size != 0){
+            countOfPages++;
+        }
+        return countOfPages;
     }
 
     public List<Post> getAllPostsByTagId(Long tagId) {
         LOGGER.debug("Gets list of posts by tag id = [{}].", tagId);
         validator.validateTagId(tagId);
         List<Post> posts = postDao.getAllPostsByTagId(tagId);
-        posts.forEach(post -> post.setTags(tagService.getAllTagsByPostId(post.getId())));
+        addDataInPosts(posts);
         return posts;
     }
 
@@ -98,6 +113,9 @@ public class PostServiceImpl implements PostService {
         validator.validatePostId(postId);
         Post post = postDao.getPostById(postId);
         post.setTags(tagService.getAllTagsByPostId(post.getId()));
+        Author author = authorDao.getAuthorById(post.getAuthorId());
+        post.setAuthorName(author.getFirstName());
+        post.setAuthorLastName(author.getLastName());
         return post;
     }
 
@@ -169,6 +187,15 @@ public class PostServiceImpl implements PostService {
                 if (!postDao.addTagToPost(post.getId(), tag.getId()))
                     throw new InternalServerException(addTagToPost);
             }
+        });
+    }
+
+    private void addDataInPosts(List<Post> posts) {
+        posts.forEach(post -> {
+            Author author = authorDao.getAuthorById(post.getAuthorId());
+            post.setAuthorName(author.getFirstName());
+            post.setAuthorLastName(author.getLastName());
+            post.setTags(tagService.getAllTagsByPostId(post.getId()));
         });
     }
 }
