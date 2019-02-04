@@ -80,11 +80,11 @@ public class PostServiceImpl implements PostService {
         return posts;
     }
 
-    public List<Post> getPostsWithPagination(Long page, Long size) {
+    public List<Post> getPostsWithPaginationAndSorting(Long page, Long size, String sort) {
         LOGGER.debug("Gets list of posts by page id = [{}] and size = [{}].", page, size);
         validator.validateInitialAndQuantity(page, size);
         Long startItem = (page - 1) * size + 1;
-        List<Post> posts = postDao.getPostsByInitialIdAndQuantity(startItem, size);
+        List<Post> posts = postDao.getPostsByInitialIdAndQuantity(startItem, size, sort);
         addDataInPosts(posts);
         return posts;
     }

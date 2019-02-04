@@ -35,7 +35,7 @@ public interface PostService {
      * @return {List<Post>} is a list of posts.
      * @throws ValidationException Will throw an error if initial or quantity is not valid.
      */
-    List<Post> getPostsWithPagination(Long page, Long size) throws ValidationException;
+    List<Post> getPostsWithPaginationAndSorting(Long page, Long size, String sort) throws ValidationException;
 
     /**
      * Gets a list of post objects where is this tag.

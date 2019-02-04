@@ -22,6 +22,7 @@ import java.util.List;
 public class PostRestController {
     private static final Long DEFAULT_RESPONSE_POST_SIZE = 10L;
     private static final Long DEFAULT_RESPONSE_POST_PAGE = 1L;
+    private static final String DEFAULT_RESPONSE_POST_SORT = "created_date";
     private PostService postService;
 
     /**
@@ -59,14 +60,19 @@ public class PostRestController {
     @ResponseStatus(value = HttpStatus.OK)
     public List<Post> getPostsWithPagination(
             @RequestParam(value = "page", required = false) Long page,
-            @RequestParam(value = "size", required = false) Long size) {
+            @RequestParam(value = "size", required = false) Long size,
+            @RequestParam(value = "sort", required = false) String sort
+            ) {
         if (page == null) {
             page = DEFAULT_RESPONSE_POST_PAGE;
         }
         if (size == null) {
             size = DEFAULT_RESPONSE_POST_SIZE;
         }
-        return postService.getPostsWithPagination(page, size);
+        if (sort == null) {
+            sort = DEFAULT_RESPONSE_POST_SORT;
+        }
+        return postService.getPostsWithPaginationAndSorting(page, size, sort);
     }
 
     @GetMapping("/count")

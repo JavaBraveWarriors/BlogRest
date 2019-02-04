@@ -33,6 +33,8 @@ import static com.blog.dao.jdbc.mapper.PostRowMapper.*;
 public class PostDaoImpl implements PostDao {
     private static final Logger LOGGER = LogManager.getLogger(PostDaoImpl.class);
 
+    private static String SORT = "sort";
+
     @Value("${post.select}")
     private String getAllPostsSql;
 
@@ -44,6 +46,9 @@ public class PostDaoImpl implements PostDao {
 
     @Value("${post.selectByInitialIdAndQuantity}")
     private String getAllPostsByInitialIdAndQuantitySql;
+
+    @Value("${post.selectByInitialIdQuantityAndSort}")
+    private String getAllPostsByInitialIdQuantityAndSortSql;
 
     @Value("${post.selectByTag}")
     private String getAllPostsByTagSql;
@@ -116,11 +121,16 @@ public class PostDaoImpl implements PostDao {
 
     public List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws DataAccessException {
         LOGGER.debug("Get list of posts by initial = [{}] and quantity = [{}] from database.", initial, quantity);
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue(INITIAL, initial - 1L);
-        parameterSource.addValue(QUANTITY, quantity);
+        MapSqlParameterSource parameterSource = getParameterSourceForItintalAndQuantity(initial, quantity);
         return jdbcTemplate.query(getAllPostsByInitialIdAndQuantitySql, parameterSource, (resultSet, i) -> new PostShortRowMapper().mapRow(resultSet, i));
     }
+
+    @Override
+    public List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity, String sort) throws DataAccessException {
+        LOGGER.debug("Get list of posts by initial = [{}], quantity = [{}] and sort = [{}] from database.", initial, quantity, sort);
+        MapSqlParameterSource parameterSource = getParameterSourceForItintalAndQuantity(initial, quantity);
+        parameterSource.addValue(SORT, sort);
+        return jdbcTemplate.query(getAllPostsByInitialIdAndQuantitySql, parameterSource, (resultSet, i) -> new PostShortRowMapper().mapRow(resultSet, i));    }
 
     public List<Post> getAllPostsByTagId(Long tagId) throws DataAccessException {
         LOGGER.debug("Get list of posts by tag id = [{}] from database.", tagId);
@@ -199,6 +209,12 @@ public class PostDaoImpl implements PostDao {
         parameterSource.addValue(CREATED_DATE, post.getTimeOfCreation());
         parameterSource.addValue(PATH_IMAGE, post.getPathImage());
         parameterSource.addValue(AUTHOR_ID, post.getAuthorId());
+        return parameterSource;
+    }
+    private MapSqlParameterSource getParameterSourceForItintalAndQuantity(Long initial, Long quantity){
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue(INITIAL, initial - 1L);
+        parameterSource.addValue(QUANTITY, quantity);
         return parameterSource;
     }
 }

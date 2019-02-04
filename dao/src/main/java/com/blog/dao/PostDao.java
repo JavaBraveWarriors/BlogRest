@@ -43,6 +43,17 @@ public interface PostDao {
     List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws DataAccessException;
 
     /**
+     * Gets a list of post objects from a specific item, a specific amount from the database.
+     *
+     * @param initial  is {Long} value ID of the post from which you want to get objects.
+     * @param quantity is {Long} value the number of required objects.
+     * @param sort is {String} value the sort field.
+     * @return {List<Post>} is a list of posts from the database.
+     * @throws DataAccessException Will throw an error if the data is not access.
+     */
+    List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity,String sort) throws DataAccessException;
+
+    /**
      * Gets a list of post objects where is this tag from the database.
      *
      * @param tagId is {Long} value tag ID

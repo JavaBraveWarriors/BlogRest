@@ -69,13 +69,13 @@ public class PostRestControllerTest {
 
     @Test
     public void getAllPosts() throws Exception {
-        given(postService.getPostsWithPagination(anyLong(), anyLong())).willReturn(Collections.singletonList(post));
+        given(postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class))).willReturn(Collections.singletonList(post));
         mockMvc.perform(get("/posts"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(content().json(convertToJson(Collections.singletonList(post))));
-        verify(postService, times(1)).getPostsWithPagination(anyLong(), anyLong());
+        verify(postService, times(1)).getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class));
     }
 
     @Test
@@ -109,21 +109,21 @@ public class PostRestControllerTest {
 
     @Test
     public void getPostsByInitialIdAndQuantitySuccess() throws Exception {
-        given(postService.getPostsWithPagination(anyLong(), anyLong())).willReturn(Collections.singletonList(post));
-        mockMvc.perform(get("/posts?page={page}&size={size}", anyLong(), anyLong()))
+        given(postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class))).willReturn(Collections.singletonList(post));
+        mockMvc.perform(get("/posts?page={page}&size={size}&sort={sort}", anyLong(), anyLong(), any(String.class)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().json(convertToJson(Collections.singletonList(post))));
-        verify(postService, times(1)).getPostsWithPagination(anyLong(), anyLong());
+        verify(postService, times(1)).getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class));
     }
 
     @Test
     public void getPostsByIncorrectInitialIdAndIncorrectQuantity() throws Exception {
-        given(postService.getPostsWithPagination(anyLong(), anyLong())).willThrow(ValidationException.class);
-        mockMvc.perform(get("/posts?page={page}&size={size}", anyLong(), anyLong()))
+        given(postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class))).willThrow(ValidationException.class);
+        mockMvc.perform(get("/posts?page={page}&size={size}&sort={sort}", anyLong(), anyLong(), any(String.class)))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
-        verify(postService, times(1)).getPostsWithPagination(anyLong(), anyLong());
+        verify(postService, times(1)).getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class));
     }
 
     @Test
