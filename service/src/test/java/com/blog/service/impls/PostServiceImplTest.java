@@ -115,16 +115,16 @@ public class PostServiceImplTest {
         when(postDao.getPostsByInitialIdAndQuantity(anyLong(), anyLong(), anyString())).thenReturn(testPosts);
         when(authorDao.getAuthorById(anyLong())).thenReturn(author);
         postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), "created_date");
-        verify(postDao, times(1)).getPostsByInitialIdAndQuantity(anyLong(), anyLong(),  anyString());
+        verify(postDao, times(1)).getPostsByInitialIdAndQuantity(anyLong(), anyLong(), anyString());
         verify(tagService, times(testPosts.size())).getAllTagsByPostId(anyLong());
-        verify(validator, times(1)).validateInitialAndQuantity(anyLong(), anyLong());
+        verify(validator, times(1)).validatePageAndSize(anyLong(), anyLong());
     }
 
     @Test(expected = ValidationException.class)
     public void getPostsWithPaginationByIncorrectSize() {
-        doThrow(ValidationException.class).when(validator).validateInitialAndQuantity(anyLong(), anyLong());
+        doThrow(ValidationException.class).when(validator).validatePageAndSize(anyLong(), anyLong());
         postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), "created_date");
-        verify(validator, times(1)).validateInitialAndQuantity(anyLong(), anyLong());
+        verify(validator, times(1)).validatePageAndSize(anyLong(), anyLong());
     }
 
     @Test
@@ -152,7 +152,6 @@ public class PostServiceImplTest {
         postService.getAllPostsByTagId(anyLong());
         verify(validator, times(1)).validateTagId(anyLong());
     }
-
 
     @Test
     public void getPostByIdSuccess() {

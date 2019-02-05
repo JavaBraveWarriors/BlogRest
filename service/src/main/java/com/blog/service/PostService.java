@@ -1,5 +1,6 @@
 package com.blog.service;
 
+import com.blog.Comment;
 import com.blog.Post;
 import com.blog.dao.jdbc.PostDaoImpl;
 import com.blog.exception.InternalServerException;
@@ -30,7 +31,7 @@ public interface PostService {
     /**
      * Gets a list of post objects from a specific item, a specific amount.
      *
-     * @param page  is {Long} value ID of the page from which you want to get objects.
+     * @param page is {Long} value ID of the page from which you want to get objects.
      * @param size is {Long} value the number of required objects.
      * @return {List<Post>} is a list of posts.
      * @throws ValidationException Will throw an error if initial or quantity is not valid.
@@ -109,5 +110,9 @@ public interface PostService {
      */
     void deleteTagInPost(Long postId, Long tagId) throws ValidationException, NotFoundException, InternalServerException;
 
-    Long getCountOfPagesWithPagination(Long size);
+    Long getCountOfPagesWithPagination(Long size) throws ValidationException, NotFoundException;
+
+    void addCommentToPost(Comment comment);
+
+    void deleteCommentInPost(Long postId, Long commentId);
 }

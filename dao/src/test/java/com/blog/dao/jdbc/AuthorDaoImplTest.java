@@ -25,7 +25,7 @@ public class AuthorDaoImplTest {
     private static Long INCORRECT_NEGATIVE_ID = -111L;
     private static String CORRECT_AUTHOR_LOGIN = "testLogin2";
     private static String INCORRECT_AUTHOR_LOGIN = "testLogin7";
-
+    private static Long CORRECT_DELETE_ID = 5L;
     private static String UPDATED_AUTHOR_PHONE = "1232223";
     private static String UPDATED_AUTHOR_MAIL = "testUpdateMail1";
     private static String UPDATED_AUTHOR_PASSWORD = "testUpdatePsw1";
@@ -48,7 +48,7 @@ public class AuthorDaoImplTest {
     public void getAllAuthorsSuccess() {
         List<Author> authors = authorDao.getAllAuthors();
         assertNotNull(authors);
-        assertEquals(4, authors.size());
+        assertEquals(5, authors.size());
     }
 
     @Test
@@ -154,7 +154,7 @@ public class AuthorDaoImplTest {
         assertNotNull(authors);
         int initialSize = authors.size();
 
-        assertTrue(authorDao.deleteAuthor(CORRECT_ID));
+        assertTrue(authorDao.deleteAuthor(CORRECT_DELETE_ID));
 
         authors = authorDao.getAllAuthors();
         assertNotNull(authors);

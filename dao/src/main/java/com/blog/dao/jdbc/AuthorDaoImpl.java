@@ -82,7 +82,6 @@ public class AuthorDaoImpl implements AuthorDao {
     public List<Author> getAllAuthors() throws DataAccessException {
         LOGGER.debug("Get all authors from database.");
         return jdbcTemplate.query(getAllAuthorsSql, authorRowMapper);
-
     }
 
     public Author getAuthorById(Long id) throws DataAccessException {
@@ -102,7 +101,7 @@ public class AuthorDaoImpl implements AuthorDao {
         LOGGER.debug("Add new author [{}] in database.", author);
         KeyHolder keyHolder = new GeneratedKeyHolder();
         MapSqlParameterSource parameterSource = getParameterSourceAuthor(author);
-        jdbcTemplate.update(addAuthorSql, parameterSource, keyHolder);
+        jdbcTemplate.update(addAuthorSql, parameterSource, keyHolder, new String[]{ID});
         return keyHolder.getKey().longValue();
     }
 
@@ -143,5 +142,4 @@ public class AuthorDaoImpl implements AuthorDao {
         parameterSource.addValue(DESCRIPTION, author.getDescription());
         return parameterSource;
     }
-
 }

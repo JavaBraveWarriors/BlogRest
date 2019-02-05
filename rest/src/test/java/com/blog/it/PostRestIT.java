@@ -84,19 +84,6 @@ public class PostRestIT extends AbstractTestIT {
         incorrectTags.add(new Tag(21L, "notExist", "path_1212"));
     }
 
-
-    @Test
-    public void getAllPosts() {
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-
-        ResponseEntity<List> response = restTemplate.exchange(
-                createURLWithPort(NULL),
-                HttpMethod.GET, entity, List.class);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
-    }
-
     @Test
     public void getPostByIdSuccess() {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);

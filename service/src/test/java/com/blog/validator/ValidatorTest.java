@@ -1,9 +1,11 @@
 package com.blog.validator;
 
 import com.blog.Author;
+import com.blog.Comment;
 import com.blog.Post;
 import com.blog.Tag;
 import com.blog.dao.AuthorDao;
+import com.blog.dao.CommentDao;
 import com.blog.dao.PostDao;
 import com.blog.dao.TagDao;
 import com.blog.exception.NotFoundException;
@@ -36,6 +38,9 @@ public class ValidatorTest {
     @Mock
     private PostDao postDao;
 
+    @Mock
+    private CommentDao commentDao;
+
     @InjectMocks
     private Validator validator;
 
@@ -50,6 +55,9 @@ public class ValidatorTest {
 
     private static Long CORRECT_TAG_ID = 1L;
     private static Long INCORRECT_TAG_ID = -1L;
+
+    private static Long CORRECT_COMMENT_ID = 1L;
+    private static Long INCORRECT_COMMENT_ID = -1L;
 
     private static Long CORRECT_INITIAL_NUMBER = 1L;
     private static Long INCORRECT_INITIAL_NUMBER = -3L;
@@ -95,6 +103,12 @@ public class ValidatorTest {
             "testDescription",
             "testPhone");
 
+    private static Comment comment = new Comment(
+            "text",
+            2L,
+            CORRECT_POST_ID
+    );
+
     @Test
     public void validatePostIdSuccess() {
         when(postDao.checkPostById(anyLong())).thenReturn(true);
@@ -117,6 +131,58 @@ public class ValidatorTest {
         when(postDao.checkPostById(anyLong())).thenReturn(false);
         validator.validatePostId(CORRECT_POST_ID);
         verify(postDao, times(1)).checkPostById(anyLong());
+    }
+
+    @Test
+    public void validateUpdatedCommentSuccess() {
+        when(commentDao.checkCommentInPostById(anyLong(), anyLong())).thenReturn(true);
+        when(commentDao.getAuthorIdByCommentId(anyLong())).thenReturn(comment.getAuthorId());
+        comment.setId(CORRECT_COMMENT_ID);
+        validator.validateUpdatedComment(comment);
+        verify(commentDao, times(1)).checkCommentInPostById(anyLong(), anyLong());
+        verify(commentDao, times(1)).getAuthorIdByCommentId(anyLong());
+    }
+
+    @Test(expected = ValidationException.class)
+    public void validateUpdatedCommentByIncorrectAuthorId() {
+        when(commentDao.checkCommentInPostById(anyLong(), anyLong())).thenReturn(true);
+        when(commentDao.getAuthorIdByCommentId(anyLong())).thenReturn(CORRECT_AUTHOR_ID);
+        comment.setId(CORRECT_COMMENT_ID);
+        validator.validateUpdatedComment(comment);
+        verify(commentDao, times(1)).checkCommentInPostById(anyLong(), anyLong());
+        verify(commentDao, times(1)).getAuthorIdByCommentId(anyLong());
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void validateUpdatedCommentByIncorrectCommentId() {
+        when(commentDao.checkCommentInPostById(anyLong(), anyLong())).thenReturn(false);
+        comment.setId(CORRECT_COMMENT_ID);
+        validator.validateUpdatedComment(comment);
+        verify(commentDao, times(1)).checkCommentInPostById(anyLong(), anyLong());
+    }
+
+    @Test
+    public void validateCommentId() {
+        when(commentDao.checkCommentById(anyLong())).thenReturn(true);
+        validator.validateCommentId(CORRECT_COMMENT_ID);
+        verify(commentDao, times(1)).checkCommentById(anyLong());
+    }
+
+    @Test(expected = ValidationException.class)
+    public void validateNullCommentId() {
+        validator.validateCommentId(null);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void validateIncorrectCommentId() {
+        validator.validateCommentId(INCORRECT_COMMENT_ID);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void validateNotExistCommentId() {
+        when(commentDao.checkCommentById(anyLong())).thenReturn(false);
+        validator.validateCommentId(CORRECT_COMMENT_ID);
+        verify(commentDao, times(1)).checkCommentById(anyLong());
     }
 
     @Test
@@ -282,38 +348,38 @@ public class ValidatorTest {
 
     @Test
     public void validateInitialAndQuantitySuccess() {
-        validator.validateInitialAndQuantity(CORRECT_INITIAL_NUMBER, CORRECT_QUANTITY_NUMBER);
+        validator.validatePageAndSize(CORRECT_INITIAL_NUMBER, CORRECT_QUANTITY_NUMBER);
     }
 
     @Test(expected = ValidationException.class)
     public void validateIncorrectInitialAndQuantity() {
-        validator.validateInitialAndQuantity(INCORRECT_INITIAL_NUMBER, CORRECT_QUANTITY_NUMBER);
+        validator.validatePageAndSize(INCORRECT_INITIAL_NUMBER, CORRECT_QUANTITY_NUMBER);
     }
 
     @Test(expected = ValidationException.class)
     public void validateInitialAndIncorrectQuantity() {
-        validator.validateInitialAndQuantity(CORRECT_INITIAL_NUMBER, INCORRECT_QUANTITY_NUMBER);
+        validator.validatePageAndSize(CORRECT_INITIAL_NUMBER, INCORRECT_QUANTITY_NUMBER);
     }
 
     @Test(expected = ValidationException.class)
     public void validateIncorrectInitialAndIncorrectQuantity() {
-        validator.validateInitialAndQuantity(INCORRECT_INITIAL_NUMBER, INCORRECT_QUANTITY_NUMBER);
+        validator.validatePageAndSize(INCORRECT_INITIAL_NUMBER, INCORRECT_QUANTITY_NUMBER);
     }
 
     @Test(expected = ValidationException.class)
     public void validateNullInitialAndQuantity() {
-        validator.validateInitialAndQuantity(NULL_LONG, CORRECT_QUANTITY_NUMBER);
+        validator.validatePageAndSize(NULL_LONG, CORRECT_QUANTITY_NUMBER);
     }
 
     @Test(expected = ValidationException.class)
     public void validateInitialAndNullQuantity() {
-        validator.validateInitialAndQuantity(CORRECT_INITIAL_NUMBER, NULL_LONG);
+        validator.validatePageAndSize(CORRECT_INITIAL_NUMBER, NULL_LONG);
     }
 
 
     @Test(expected = ValidationException.class)
     public void validateNullInitialAndNullQuantity() {
-        validator.validateInitialAndQuantity(NULL_LONG, NULL_LONG);
+        validator.validatePageAndSize(NULL_LONG, NULL_LONG);
     }
 
     @Test

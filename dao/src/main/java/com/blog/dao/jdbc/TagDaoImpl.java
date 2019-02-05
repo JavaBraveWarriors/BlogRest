@@ -99,7 +99,7 @@ public class TagDaoImpl implements TagDao {
         LOGGER.debug("Add new tag [{}] in database.", tag);
         KeyHolder keyHolder = new GeneratedKeyHolder();
         MapSqlParameterSource parameterSource = getParameterSourceTag(tag);
-        jdbcTemplate.update(addTagSql, parameterSource, keyHolder);
+        jdbcTemplate.update(addTagSql, parameterSource, keyHolder, new String[]{ID});
         return keyHolder.getKey().longValue();
     }
 

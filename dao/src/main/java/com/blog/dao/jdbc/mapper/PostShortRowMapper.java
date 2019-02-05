@@ -2,6 +2,7 @@ package com.blog.dao.jdbc.mapper;
 
 import com.blog.Post;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,6 +10,7 @@ import java.sql.Timestamp;
 
 import static com.blog.dao.jdbc.mapper.PostRowMapper.*;
 
+@Component
 public class PostShortRowMapper implements RowMapper<Post> {
     @Override
     public Post mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -21,6 +23,7 @@ public class PostShortRowMapper implements RowMapper<Post> {
         post.setTitle(rs.getString(TITLE));
         post.setDescription(rs.getString(DESCRIPTION));
         post.setPathImage(rs.getString(PATH_IMAGE));
+        post.setCommentsCount(rs.getLong(COMMENTS_COUNT));
         post.setAuthorId(rs.getLong(AUTHOR_ID));
         Timestamp date = rs.getTimestamp(CREATED_DATE);
         if (date != null) {

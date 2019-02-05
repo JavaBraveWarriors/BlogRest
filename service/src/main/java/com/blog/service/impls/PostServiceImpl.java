@@ -1,11 +1,13 @@
 package com.blog.service.impls;
 
 import com.blog.Author;
+import com.blog.Comment;
 import com.blog.Post;
 import com.blog.Tag;
 import com.blog.dao.AuthorDao;
 import com.blog.dao.PostDao;
 import com.blog.exception.InternalServerException;
+import com.blog.service.CommentService;
 import com.blog.service.PostService;
 import com.blog.service.TagService;
 import com.blog.validator.Validator;
@@ -43,6 +45,8 @@ public class PostServiceImpl implements PostService {
      */
     private TagService tagService;
 
+    private CommentService commentService;
+
     private AuthorDao authorDao;
 
     @Value("${postService.errorOfUpdating}")
@@ -57,13 +61,13 @@ public class PostServiceImpl implements PostService {
     @Value("${postService.errorOfDeletingTag}")
     private String deleteTagInPost;
 
-
     @Autowired
-    public PostServiceImpl(PostDao postDao, Validator validator, TagService tagService, AuthorDao authorDao) {
+    public PostServiceImpl(PostDao postDao, Validator validator, TagService tagService, AuthorDao authorDao, CommentService commentService) {
         this.authorDao = authorDao;
         this.postDao = postDao;
         this.validator = validator;
         this.tagService = tagService;
+        this.commentService = commentService;
     }
 
     // refactored with pagination
@@ -82,7 +86,7 @@ public class PostServiceImpl implements PostService {
 
     public List<Post> getPostsWithPaginationAndSorting(Long page, Long size, String sort) {
         LOGGER.debug("Gets list of posts by page id = [{}] and size = [{}].", page, size);
-        validator.validateInitialAndQuantity(page, size);
+        validator.validatePageAndSize(page, size);
         Long startItem = (page - 1) * size + 1;
         List<Post> posts = postDao.getPostsByInitialIdAndQuantity(startItem, size, sort);
         addDataInPosts(posts);
@@ -91,13 +95,26 @@ public class PostServiceImpl implements PostService {
 
     public Long getCountOfPagesWithPagination(Long size) {
         LOGGER.debug("Gets count of pages by size = [{}].", size);
-        validator.validateSize(size);
+        validator.validateSizeOfPages(size);
         Long countOfPosts = postDao.getCountOfPosts();
         Long countOfPages = countOfPosts / size;
-        if(countOfPosts % size != 0){
+        if (countOfPosts % size != 0) {
             countOfPages++;
         }
         return countOfPages;
+    }
+
+    public void addCommentToPost(Comment comment) {
+        LOGGER.debug("Add comment to post id = [{}], comment = [{}].", comment.getPostId(), comment);
+        commentService.addComment(comment);
+        postDao.addComment(comment.getPostId());
+    }
+
+    public void deleteCommentInPost(Long postId, Long commentId) {
+        LOGGER.debug("Delete comment in post id = [{}], comment id = [{}].", postId, commentId);
+        validator.validateCommentInPost(postId, commentId);
+        commentService.deleteComment(commentId);
+        postDao.deleteComment(postId);
     }
 
     public List<Post> getAllPostsByTagId(Long tagId) {
@@ -149,7 +166,6 @@ public class PostServiceImpl implements PostService {
         if (!postDao.updatePost(post))
             throw new InternalServerException(updateError);
     }
-
 
     public void deletePost(Long postId) {
         LOGGER.debug("Deletes post by id = [{}].", postId);

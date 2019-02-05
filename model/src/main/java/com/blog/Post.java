@@ -41,8 +41,16 @@ public class Post {
 
     private String authorLastName;
 
+    private Long viewsCount;
+
+    private Long commentsCount;
+
+    private Long likesCount;
+
     @NotNull
     private List<Tag> tags;
+
+    private List<Comment> comments;
 
     public Post() {
     }
@@ -124,6 +132,30 @@ public class Post {
         return authorName;
     }
 
+    public Long getViewsCount() {
+        return viewsCount;
+    }
+
+    public void setViewsCount(Long viewsCount) {
+        this.viewsCount = viewsCount;
+    }
+
+    public Long getCommentsCount() {
+        return commentsCount;
+    }
+
+    public void setCommentsCount(Long commentsCount) {
+        this.commentsCount = commentsCount;
+    }
+
+    public Long getLikesCount() {
+        return likesCount;
+    }
+
+    public void setLikesCount(Long likesCount) {
+        this.likesCount = likesCount;
+    }
+
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
     }
@@ -147,5 +179,13 @@ public class Post {
                 ", authorId=" + authorId +
                 ", tags=" + tags +
                 '}';
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }

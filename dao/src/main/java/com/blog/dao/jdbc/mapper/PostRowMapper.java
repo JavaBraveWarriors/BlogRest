@@ -20,6 +20,7 @@ public class PostRowMapper implements RowMapper<Post> {
     public static final String INITIAL = "initial";
     public static final String QUANTITY = "quantity";
     public static final String TAG_ID = "tag_id";
+    public static final String COMMENTS_COUNT = "comments_count";
 
     public Post mapRow(ResultSet rs, int rowNum) throws SQLException {
         Post post = PostShortRowMapper.rowFields(rs);
