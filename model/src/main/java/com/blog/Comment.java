@@ -29,7 +29,7 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(@NotNull @Size(max = 600, message = "Text should be less than 600 characters.") String text, @NotNull Long authorId, @NotNull Long postId) {
+    public Comment(String text, Long authorId, Long postId) {
         this.text = text;
         this.authorId = authorId;
         this.postId = postId;

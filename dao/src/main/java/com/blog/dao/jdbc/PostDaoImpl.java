@@ -126,7 +126,7 @@ public class PostDaoImpl implements PostDao {
     public List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity, String sort) throws DataAccessException {
         LOGGER.debug("Get list of posts by initial = [{}], quantity = [{}] and sort = [{}] from database.", initial, quantity, sort);
         MapSqlParameterSource parameterSource = getParameterSourceForInitialAndQuantity(initial, quantity);
-        return jdbcTemplate.query(getAllPostsByInitialIdQuantityAndSortSql + " " + sort + " DESC LIMIT :initial, :quantity", parameterSource, (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
+        return jdbcTemplate.query(String.format(getAllPostsByInitialIdQuantityAndSortSql, sort), parameterSource, (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
     }
 
     public List<Post> getAllPostsByTagId(Long tagId) throws DataAccessException {

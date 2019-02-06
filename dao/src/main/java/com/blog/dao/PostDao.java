@@ -145,7 +145,7 @@ public interface PostDao {
     Long getCountOfPosts() throws DataAccessException;
 
     /**
-     * Add comment - increment field comments_count in database.
+     * Add comment in this post to database.
      *
      * @param postId is {Long} value which identifies the post ID.
      * @return {boolean} value, if comment was added - returns true, if not - false
@@ -154,7 +154,7 @@ public interface PostDao {
     boolean addComment(Long postId) throws DataAccessException;
 
     /**
-     * Delete comment - decrement field comments_count in database.
+     * Delete comment in this post to database.
      *
      * @param postId is {Long} value which identifies the post ID.
      * @return {boolean} value, if comment was deleted - returns true, if not - false

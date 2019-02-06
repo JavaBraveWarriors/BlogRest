@@ -77,7 +77,7 @@ public interface CommentDao {
      *
      * @param commentId {Long} value the ID of the comment you want to check
      * @param postId    {Long} value the ID of the post where you want to check
-     * @return {boolean} value, if comment is exist in this postId- returned true, if not - false
+     * @return {boolean} value, if comment is exist in this postId - returned true, if not - false
      * @throws DataAccessException Will throw an error if the data is not access.
      */
     boolean checkCommentInPostById(Long commentId, Long postId) throws DataAccessException;

@@ -39,8 +39,8 @@ public class PostRestController {
     /**
      * Gets count of pages.
      *
-     * @param size the size
-     * @return the count of pages
+     * @param size is {Long} value which determines the size of one page.
+     * @return {Long} value is the count of pages.
      */
     @GetMapping("/count")
     @ResponseStatus(value = HttpStatus.OK)
@@ -67,7 +67,7 @@ public class PostRestController {
      *
      * @param page is {Long} value ID of the post from which you want to get objects.
      * @param size is {Long} value the number of required objects.
-     * @param sort the sort
+     * @param sort is {String} value which determines which field will be sorted, by default - by date.
      * @return {List<Post>} is a list of posts.
      */
     @GetMapping("")
