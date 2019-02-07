@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath*:test-spring-dao.xml"})
+@ContextConfiguration(locations = {"classpath:test-spring-dao.xml"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class PostDaoImplTest {
 
@@ -54,13 +54,6 @@ public class PostDaoImplTest {
     );
     @Autowired
     private PostDao postDao;
-
-    @Test
-    public void getAllPostsSuccess() {
-        List<Post> posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        assertEquals(5, posts.size());
-    }
 
     @Test
     public void getPostByIdSuccess() {
@@ -101,6 +94,28 @@ public class PostDaoImplTest {
     }
 
     @Test
+    public void addCommentSuccess() {
+        Post newPost = postDao.getPostById(CORRECT_POST_ID);
+        Long initialComments = newPost.getCommentsCount();
+
+        postDao.addComment(CORRECT_POST_ID);
+
+        newPost = postDao.getPostById(CORRECT_POST_ID);
+        assertEquals(initialComments + 1L, newPost.getCommentsCount().longValue());
+    }
+
+    @Test
+    public void deleteCommentSuccess() {
+        Post newPost = postDao.getPostById(CORRECT_POST_ID);
+        Long initialComments = newPost.getCommentsCount();
+
+        postDao.deleteComment(CORRECT_POST_ID);
+
+        newPost = postDao.getPostById(CORRECT_POST_ID);
+        assertEquals(initialComments - 1L, newPost.getCommentsCount().longValue());
+    }
+
+    @Test
     public void getPostsByInitialIdAndQuantitySuccess() {
         List<Post> posts = postDao.getPostsByInitialIdAndQuantity(2L, 3L);
         assertNotNull(posts);
@@ -138,9 +153,9 @@ public class PostDaoImplTest {
 
     @Test
     public void addPostSuccess() {
-        List<Post> posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        int initialSize = posts.size();
+        Long countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        Long initialSize = countOfPosts;
 
         Long newPostId = postDao.addPost(post);
         assertNotNull(newPostId);
@@ -152,9 +167,9 @@ public class PostDaoImplTest {
         assertEquals(NEW_POST_PATH_IMAGE, newPost.getPathImage());
         assertEquals(NEW_POST_AUTHOR_ID, newPost.getAuthorId());
 
-        posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        assertEquals(initialSize + 1, posts.size());
+        countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        assertEquals(initialSize + 1L, countOfPosts.longValue());
     }
 
     @Test(expected = NullPointerException.class)
@@ -230,50 +245,50 @@ public class PostDaoImplTest {
 
     @Test
     public void deletePostSuccess() {
-        List<Post> posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        int initialSize = posts.size();
+        Long countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        Long initialSize = countOfPosts;
 
         Post post = postDao.getPostById(CORRECT_POST_DELETE_ID);
         assertNotNull(post);
 
         assertTrue(postDao.deletePost(CORRECT_POST_DELETE_ID));
 
-        posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        assertEquals(initialSize - 1, posts.size());
+        countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        assertEquals(initialSize - 1L, countOfPosts.longValue());
     }
 
     @Test
     public void deletePostByIncorrectId() {
-        List<Post> posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        int initialSize = posts.size();
+        Long countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        Long initialSize = countOfPosts;
 
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
 
         assertFalse(postDao.deletePost(INCORRECT_POST_ID));
 
-        posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        assertEquals(initialSize, posts.size());
+        countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        assertEquals(initialSize, countOfPosts);
     }
 
     @Test
     public void deletePostByNullId() {
-        List<Post> posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        int initialSize = posts.size();
+        Long countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        Long initialSize = countOfPosts;
 
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
 
         assertFalse(postDao.deletePost(null));
 
-        posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        assertEquals(initialSize, posts.size());
+        countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        assertEquals(initialSize, countOfPosts);
     }
 
     @Test

@@ -11,9 +11,12 @@ The main scenario:
 * The user selects the "Tags" menu item.
 * A list of all tags is displayed.
 
+![image](images/showListOfTags.png)
+
 The list shows the following columns:
 * Tags - the name of the tag in the system;
 * The number of publications with this tag.
+
 
 #### 1.2 Adding tag.
 The main scenario:
@@ -81,7 +84,7 @@ In the list of posts the following columns:
 * Tags - post tags;
 * Date of adding - the date of adding the post to the system;
 * Number - the number of posts;
-
+![image](images/showListOfPosts.png)
 Filtration
 Data was added to view the list of posts. The start date of the filter should not be greater than the final one.
 
@@ -101,6 +104,7 @@ Cancellation scenario:
 * Display the form of adding goods;
 * The user enters data and presses the "Back" button;
 * Data not updated data in the database.
+![image](images/addPost.png)
 
 When adding a post, the following details are entered:
 
@@ -117,7 +121,6 @@ The main scenario:
 * If the post is successfully updated, a form for viewing the list of posts with updated data will open.
 Cancellation scenario:
 * The user clicks the "Edit" button in the selected post;
-
 * The user enters data and presses the "Back" button;
 * Data not updated data in the database.
 

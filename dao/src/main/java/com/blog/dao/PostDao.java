@@ -19,18 +19,11 @@ public interface PostDao {
     /**
      * Gets the list of objects of the all posts that belong to the author from database.
      *
+     * @param authorId the author id
      * @return {List<Post>} is a list of all posts that belong to the author from the database.
      * @throws DataAccessException Will throw an error if the data is not access or the table post does not contain posts with this author ID.
      */
     List<Post> getAllPostsByAuthorId(Long authorId) throws DataAccessException;
-
-    /**
-     * Gets the list of objects of the all posts from database.
-     *
-     * @return {List<Post>} is a list of all posts from the database.
-     * @throws DataAccessException Will throw an error if the data is not access.
-     */
-    List<Post> getAllPosts() throws DataAccessException;
 
     /**
      * Gets a list of post objects from a specific item, a specific amount from the database.
@@ -43,15 +36,15 @@ public interface PostDao {
     List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws DataAccessException;
 
     /**
-     * Gets a list of post objects from a specific item, a specific amount from the database.
+     * Gets a list of post objects from a specific item, a specific amount and sort from the database.
      *
      * @param initial  is {Long} value ID of the post from which you want to get objects.
      * @param quantity is {Long} value the number of required objects.
-     * @param sort is {String} value the sort field.
+     * @param sort     is {String} value the sort field.
      * @return {List<Post>} is a list of posts from the database.
      * @throws DataAccessException Will throw an error if the data is not access.
      */
-    List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity,String sort) throws DataAccessException;
+    List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity, String sort) throws DataAccessException;
 
     /**
      * Gets a list of post objects where is this tag from the database.
@@ -143,5 +136,29 @@ public interface PostDao {
      */
     boolean checkPostByAuthorId(Long authorId);
 
-    Long getCountOfPosts();
+    /**
+     * Gets count of posts.
+     *
+     * @return the count of posts
+     * @throws DataAccessException Will throw an error if the data is not access.
+     */
+    Long getCountOfPosts() throws DataAccessException;
+
+    /**
+     * Add comment in this post to database.
+     *
+     * @param postId is {Long} value which identifies the post ID.
+     * @return {boolean} value, if comment was added - returns true, if not - false
+     * @throws DataAccessException Will throw an error if the data is not access.
+     */
+    boolean addComment(Long postId) throws DataAccessException;
+
+    /**
+     * Delete comment in this post to database.
+     *
+     * @param postId is {Long} value which identifies the post ID.
+     * @return {boolean} value, if comment was deleted - returns true, if not - false
+     * @throws DataAccessException Will throw an error if the data is not access.
+     */
+    boolean deleteComment(Long postId) throws DataAccessException;
 }

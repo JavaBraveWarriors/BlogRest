@@ -8,6 +8,7 @@ INSERT INTO author (id, mail,  login, password, first_name, last_name) VALUES (1
 INSERT INTO author (id, mail,  login, password, first_name, last_name) VALUES (2,'testMail2@mail.ru','testLogin2','testPsw2','testFirst2', 'testLast2')
 INSERT INTO author (id, mail,  login, password, first_name, last_name) VALUES (3,'testMail3@mail.ru','testLogin3','testPsw3','testFirst3', 'testLast3')
 INSERT INTO author (id, mail,  login, password, first_name, last_name) VALUES (4,'testMail4@mail.ru','testLogin4','testPsw4','testFirst4', 'testLast4')
+INSERT INTO author (id, mail,  login, password, first_name, last_name) VALUES (5,'testMail5@mail.ru','testLogin5','testPsw5','testFirst5', 'testLast5')
 
 INSERT INTO post (title, description, text, author_id) VALUES ('title1','testDescription1','testText1', 1)
 INSERT INTO post (title, description, text, author_id) VALUES ('title2','testDescription2','testText2', 1)
@@ -23,3 +24,11 @@ INSERT INTO post_has_tag (post_id, tag_id) VALUES (3,3)
 INSERT INTO post_has_tag (post_id, tag_id) VALUES (3,1)
 INSERT INTO post_has_tag (post_id, tag_id) VALUES (3,4)
 INSERT INTO post_has_tag (post_id, tag_id) VALUES (4,3)
+
+INSERT INTO comment (comment_text, comment_post_id, comment_author_id) VALUES ('text1', 1, 4)
+INSERT INTO comment (comment_text, comment_post_id, comment_author_id) VALUES ('text2', 3, 4)
+INSERT INTO comment (comment_text, comment_post_id, comment_author_id) VALUES ('text3', 3, 4)
+INSERT INTO comment (comment_text, comment_post_id, comment_author_id) VALUES ('text4', 1, 4)
+INSERT INTO comment (comment_text, comment_post_id, comment_author_id) VALUES ('text5', 1, 2)
+INSERT INTO comment (comment_text, comment_post_id, comment_author_id) VALUES ('text6', 1, 3)
+

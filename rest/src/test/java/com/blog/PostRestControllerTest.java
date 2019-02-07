@@ -52,6 +52,12 @@ public class PostRestControllerTest {
             1L
     );
 
+    private static Comment comment = new Comment(
+            "text",
+            1L,
+            2L
+    );
+
     @BeforeClass
     public static void setData() {
         ArrayList<Tag> tags = new ArrayList<>();
@@ -105,6 +111,40 @@ public class PostRestControllerTest {
                 .andDo(print())
                 .andExpect(status().isNotFound());
         verify(postService, times(1)).getPostById(anyLong());
+    }
+
+    @Test
+    public void addTagToPost() throws Exception {
+        mockMvc.perform(put("/posts/{id}/tag/{tagId}", anyLong(), anyLong()))
+                .andDo(print())
+                .andExpect(status().isOk());
+        verify(postService, times(1)).addTagToPost(anyLong(), anyLong());
+    }
+
+    @Test
+    public void deleteTagInPost() throws Exception {
+        mockMvc.perform(delete("/posts/{id}/tag/{tagId}", anyLong(), anyLong()))
+                .andDo(print())
+                .andExpect(status().isOk());
+        verify(postService, times(1)).deleteTagInPost(anyLong(), anyLong());
+    }
+
+    @Test
+    public void addCommentToPost() throws Exception {
+        mockMvc.perform(post("/posts/comment")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(convertToJson(comment)))
+                .andDo(print())
+                .andExpect(status().isCreated());
+        verify(postService, times(1)).addCommentToPost(any(Comment.class));
+    }
+
+    @Test
+    public void deleteCommentInPost() throws Exception {
+        mockMvc.perform(delete("/posts/{id}/comment/{commentId}", anyLong(), anyLong()))
+                .andDo(print())
+                .andExpect(status().isOk());
+        verify(postService, times(1)).deleteCommentInPost(anyLong(), anyLong());
     }
 
     @Test

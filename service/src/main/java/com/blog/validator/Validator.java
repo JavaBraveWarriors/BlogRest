@@ -1,9 +1,11 @@
 package com.blog.validator;
 
 import com.blog.Author;
+import com.blog.Comment;
 import com.blog.Post;
 import com.blog.Tag;
 import com.blog.dao.AuthorDao;
+import com.blog.dao.CommentDao;
 import com.blog.dao.PostDao;
 import com.blog.dao.TagDao;
 import com.blog.exception.NotFoundException;
@@ -28,6 +30,7 @@ public class Validator {
     private PostDao postDao;
     private TagDao tagDao;
     private AuthorDao authorDao;
+    private CommentDao commentDao;
 
     //Tags messages
     @Value("${tagService.incorrectId}")
@@ -71,12 +74,54 @@ public class Validator {
     @Value("${authorService.exist}")
     private String authorExist;
 
+    //Comments messages
+    @Value("${commentService.notExist}")
+    private String commentDoesNotExist;
+
+    @Value("${commentService.incorrectUpdate}")
+    private String commentIncorrectUpdate;
+
+    @Value("${commentService.incorrectCommentId}")
+    private String incorrectCommentId;
+
+    @Value("${commentService.notExistCommentInPost}")
+    private String notExistCommentInPost;
+
 
     @Autowired
-    public Validator(PostDao postDao, TagDao tagDao, AuthorDao authorDao) {
+    public Validator(PostDao postDao, TagDao tagDao, AuthorDao authorDao, CommentDao commentDao) {
         this.postDao = postDao;
         this.tagDao = tagDao;
         this.authorDao = authorDao;
+        this.commentDao = commentDao;
+    }
+
+    public void validateTags(List<Tag> tagsValidation, TagService tagService) {
+        LOGGER.debug("Validates list of tags [{}].", tagsValidation);
+        tagsValidation.forEach(tag -> {
+            validateTagId(tag.getId());
+            if (!tag.equals(tagService.getTagById(tag.getId())))
+                throw new ValidationException(incorrectTag);
+        });
+    }
+
+    public void validateTagId(Long id) {
+        LOGGER.debug("Validates tag id = [{}].", id);
+        if (id == null || id < 0L)
+            throw new ValidationException(incorrectTagId);
+        if (!tagDao.checkTagById(id))
+            throw new NotFoundException(notExistTag);
+    }
+
+    public void checkTagWithTitle(Tag tag) {
+        LOGGER.debug("Check tag title = [{}].", tag.getTitle());
+        if (tagDao.checkTagByTitle(tag.getTitle()))
+            throw new ValidationException(existTag);
+    }
+
+    public void validateTagInPost(Long postId, Long tagId) {
+        if (postDao.checkTagInPostById(postId, tagId))
+            throw new ValidationException(tagExistInPost);
     }
 
     public void validatePostId(Long id) {
@@ -87,19 +132,45 @@ public class Validator {
             throw new NotFoundException(notExistPost);
     }
 
-    public void validateTags(List<Tag> tagsValidation, TagService tagService) {
-        LOGGER.debug("Validates list of tags [{}].", tagsValidation);
-        tagsValidation.forEach(tag -> {
-            validateTagId(tag.getId());
-            if (!tag.equals( tagService.getTagById(tag.getId())))
-                throw new ValidationException(incorrectTag);
-        });
-    }
-
     public void checkPost(Post post) {
         LOGGER.debug("Check post = [{}].", post);
         validatePostId(post.getId());
         validateAuthorId(post.getAuthorId());
+    }
+
+    public void validateSizeOfPages(Long size) {
+        if (size == null || size < 0L)
+            throw new ValidationException(incorrectQuantityNumber);
+    }
+
+    public void validatePageAndSize(Long page, Long size) {
+        LOGGER.debug("Validate numbers page = [{}], size = [{}]", page, size);
+        if (page == null || page < 0L)
+            throw new ValidationException(incorrectInitialNumber);
+        if (size == null || size < 0L)
+            throw new ValidationException(incorrectQuantityNumber);
+    }
+
+    public void validateUpdatedComment(Comment comment) {
+        LOGGER.debug("Validate comment = [{}].", comment);
+        if (!commentDao.checkCommentInPostById(comment.getId(), comment.getPostId()))
+            throw new NotFoundException(commentDoesNotExist);
+        if (!commentDao.getAuthorIdByCommentId(comment.getId()).equals(comment.getAuthorId()))
+            throw new ValidationException(commentIncorrectUpdate);
+    }
+
+    public void validateCommentId(Long commentId) {
+        LOGGER.debug("Validate commentId = [{}].", commentId);
+        if (commentId == null || commentId < 0L)
+            throw new ValidationException(incorrectCommentId);
+        if (!commentDao.checkCommentById(commentId))
+            throw new NotFoundException(commentDoesNotExist);
+    }
+
+    public void checkAuthorExistence(Author author) {
+        LOGGER.debug("Check author existence = [{}]", author);
+        if (authorDao.checkAuthorByLogin(author.getLogin()))
+            throw new ValidationException(authorExist);
     }
 
     public void validateAuthorId(Long authorId) {
@@ -118,41 +189,12 @@ public class Validator {
             throw new NotFoundException(authorDoesNotExist);
     }
 
-    public void validateTagId(Long id) {
-        LOGGER.debug("Validates tag id = [{}].", id);
-        if (id == null || id < 0L)
-            throw new ValidationException(incorrectTagId);
-        if (!tagDao.checkTagById(id))
-            throw new NotFoundException(notExistTag);
-    }
+    public void validateCommentInPost(Long postId, Long commentId) {
+        LOGGER.debug("Validate comment in post id = [{}], comment id = [{}].", postId, commentId);
+        validatePostId(postId);
+        validateCommentId(commentId);
+        if (!commentDao.checkCommentInPostById(commentId, postId))
+            throw new NotFoundException(notExistCommentInPost);
 
-    public void checkTagWithTitle(Tag tag) {
-        LOGGER.debug("Check tag title = [{}].", tag.getTitle());
-        if (tagDao.checkTagByTitle(tag.getTitle()))
-            throw new ValidationException(existTag);
-    }
-
-    public void validateInitialAndQuantity(Long initial, Long quantity) {
-        LOGGER.debug("Validate numbers initial = [{}], quantity = [{}]", initial, quantity);
-        if (initial == null || initial < 0L)
-            throw new ValidationException(incorrectInitialNumber);
-        if (quantity == null || quantity < 0L)
-            throw new ValidationException(incorrectQuantityNumber);
-    }
-
-    public void checkAuthorExistence(Author author) {
-        LOGGER.debug("Check author existence = [{}]", author);
-        if (authorDao.checkAuthorByLogin(author.getLogin()))
-            throw new ValidationException(authorExist);
-    }
-
-    public void validateTagInPost(Long postId, Long tagId) {
-        if (postDao.checkTagInPostById(postId, tagId))
-            throw new ValidationException(tagExistInPost);
-    }
-
-    public void validateSize(Long size) {
-        if (size == null || size < 0L)
-            throw new ValidationException(incorrectQuantityNumber);
     }
 }
