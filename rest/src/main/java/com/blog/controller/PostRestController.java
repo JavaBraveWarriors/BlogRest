@@ -2,6 +2,8 @@ package com.blog.controller;
 
 import com.blog.Comment;
 import com.blog.Post;
+import com.blog.PostForAdd;
+import com.blog.PostForGet;
 import com.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -72,7 +74,7 @@ public class PostRestController {
      */
     @GetMapping("")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<Post> getPostsWithPagination(
+    public List<PostForGet> getPostsWithPagination(
             @RequestParam(value = "page", required = false) Long page,
             @RequestParam(value = "size", required = false) Long size,
             @RequestParam(value = "sort", required = false) String sort
@@ -97,7 +99,7 @@ public class PostRestController {
      */
     @GetMapping("/tag/{id}")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<Post> getAllPostsByTagId(@PathVariable(value = "id") Long tagId) {
+    public List<PostForGet> getAllPostsByTagId(@PathVariable(value = "id") Long tagId) {
         return postService.getAllPostsByTagId(tagId);
     }
 
@@ -137,7 +139,7 @@ public class PostRestController {
      */
     @PostMapping("")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public Long addPost(@Valid @RequestBody Post post, BindingResult validationResults) {
+    public Long addPost(@Valid @RequestBody PostForAdd post, BindingResult validationResults) {
         if (validationResults.hasErrors()) {
             throw new ValidationException(validationResults.getFieldErrors().toString());
         } else {
@@ -169,7 +171,7 @@ public class PostRestController {
      */
     @PutMapping("")
     @ResponseStatus(value = HttpStatus.OK)
-    public void updatePost(@Valid @RequestBody Post post, BindingResult validationResults) {
+    public void updatePost(@Valid @RequestBody PostForAdd post, BindingResult validationResults) {
         if (validationResults.hasErrors()) {
             throw new ValidationException(validationResults.getFieldErrors().toString());
         } else {

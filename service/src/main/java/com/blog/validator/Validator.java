@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
+import java.util.Arrays;
 
 @Component
 public class Validator {
@@ -35,9 +35,6 @@ public class Validator {
     //Tags messages
     @Value("${tagService.incorrectId}")
     private String incorrectTagId;
-
-    @Value("${tagService.incorrect}")
-    private String incorrectTag;
 
     @Value("${tagService.notExist}")
     private String notExistTag;
@@ -87,7 +84,6 @@ public class Validator {
     @Value("${commentService.notExistCommentInPost}")
     private String notExistCommentInPost;
 
-
     @Autowired
     public Validator(PostDao postDao, TagDao tagDao, AuthorDao authorDao, CommentDao commentDao) {
         this.postDao = postDao;
@@ -96,13 +92,9 @@ public class Validator {
         this.commentDao = commentDao;
     }
 
-    public void validateTags(List<Tag> tagsValidation, TagService tagService) {
-        LOGGER.debug("Validates list of tags [{}].", tagsValidation);
-        tagsValidation.forEach(tag -> {
-            validateTagId(tag.getId());
-            if (!tag.equals(tagService.getTagById(tag.getId())))
-                throw new ValidationException(incorrectTag);
-        });
+    public void validateTags(Long[] tagsValidation, TagService tagService) {
+        LOGGER.debug("Validates list of tags [{}].", (Object) tagsValidation);
+        Arrays.stream(tagsValidation).forEach(this::validateTagId);
     }
 
     public void validateTagId(Long id) {

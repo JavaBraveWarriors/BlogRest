@@ -1,7 +1,7 @@
 package com.blog.controller;
 
 import com.blog.Author;
-import com.blog.Post;
+import com.blog.PostForGet;
 import com.blog.service.AuthorService;
 import com.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +59,7 @@ public class AuthorRestController {
      */
     @GetMapping("/{id}/posts")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<Post> getAllPostsByAuthorId(@PathVariable(value = "id") Long userId) {
+    public List<PostForGet> getAllPostsByAuthorId(@PathVariable(value = "id") Long userId) {
         return postService.getAllPostsByAuthorId(userId);
     }
 

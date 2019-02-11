@@ -1,13 +1,12 @@
 package com.blog.it;
 
 import com.blog.Post;
-import com.blog.Tag;
+import com.blog.PostForAdd;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.blog.JsonConverter.convertToJson;
@@ -16,12 +15,10 @@ import static org.junit.Assert.assertNotNull;
 
 public class PostRestIT extends AbstractTestIT {
 
-
     private static String CORRECT_INITIAL_NUMBER = "1";
     private static String INCORRECT_INITIAL_NUMBER = "-3";
     private static String CORRECT_QUANTITY_NUMBER = "1";
     private static String INCORRECT_QUANTITY_NUMBER = "-3";
-
 
     private static String CORRECT_POST_ID = "1";
     private static String DELETED_POST_ID = "4";
@@ -35,11 +32,10 @@ public class PostRestIT extends AbstractTestIT {
     private static String INCORRECT_TAG_ID = "-5";
     private static String NOT_EXIST_TAG_ID = "51";
 
-    private static List<Tag> tags = new ArrayList<>();
-    private static List<Tag> incorrectTags = new ArrayList<>();
+    private static Long[] tags = new Long[]{3L, 4L};
+    private static Long[] incorrectTags = new Long[]{21L};
 
-
-    private static Post correctPost = new Post(
+    private static PostForAdd correctPost = new PostForAdd(
             null,
             "testTitle",
             "testDescription",
@@ -48,7 +44,7 @@ public class PostRestIT extends AbstractTestIT {
             1L
     );
 
-    private static Post existPost = new Post(
+    private static PostForAdd existPost = new PostForAdd(
             1L,
             "title1",
             "testDescription1",
@@ -57,7 +53,7 @@ public class PostRestIT extends AbstractTestIT {
             1L
     );
 
-    private static Post authorIdIncorrectPost = new Post(
+    private static PostForAdd authorIdIncorrectPost = new PostForAdd(
             null,
             "testTitle",
             "testDescription",
@@ -66,7 +62,7 @@ public class PostRestIT extends AbstractTestIT {
             -2L
     );
 
-    private static Post authorNotExistIncorrectPost = new Post(
+    private static PostForAdd authorNotExistIncorrectPost = new PostForAdd(
             null,
             "testTitle",
             "testDescription",
@@ -79,9 +75,6 @@ public class PostRestIT extends AbstractTestIT {
     public static void setUp() {
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         endpoint = "posts";
-        tags.add(new Tag(2L, "dogs", "path_2"));
-        tags.add(new Tag(3L, "cats", "path_3"));
-        incorrectTags.add(new Tag(21L, "notExist", "path_1212"));
     }
 
     @Test
@@ -196,7 +189,6 @@ public class PostRestIT extends AbstractTestIT {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
     }
-
 
     @Test(expected = HttpClientErrorException.BadRequest.class)
     public void addPostWithIncorrectAuthorId() {

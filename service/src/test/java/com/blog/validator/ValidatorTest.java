@@ -17,11 +17,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Collections;
-
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
-
 
 @RunWith(MockitoJUnitRunner.class)
 public class ValidatorTest {
@@ -67,6 +64,8 @@ public class ValidatorTest {
 
     private static Tag correctTag = new Tag(4L, "test4", "test4");
     private static Tag incorrectTag = new Tag(-1L, "test1", "test1");
+    private static Long[] correctTagsId = new Long[]{4L, 5L};
+    private static Long[] incorrectTagsId = new Long[]{-4L, 0L};
 
     private static Post correctPost = new Post(
             1L,
@@ -187,45 +186,35 @@ public class ValidatorTest {
 
     @Test
     public void validateTagsSuccess() {
-        when(tagService.getTagById(anyLong())).thenReturn(correctTag);
         when(tagDao.checkTagById(anyLong())).thenReturn(true);
-        validator.validateTags(Collections.singletonList(correctTag), tagService);
-        verify(tagDao, times(1)).checkTagById(anyLong());
+        validator.validateTags(correctTagsId, tagService);
+        verify(tagDao, times(correctTagsId.length)).checkTagById(anyLong());
     }
 
-    @Test(expected = ValidationException.class)
+    @Test(expected = NotFoundException.class)
     public void validateNotExistTags() {
-        when(tagService.getTagById(anyLong())).thenReturn(null);
-        when(tagDao.checkTagById(anyLong())).thenReturn(true);
-        validator.validateTags(Collections.singletonList(correctTag), tagService);
-        verify(tagDao, times(1)).checkTagById(anyLong());
-    }
-
-    @Test(expected = ValidationException.class)
-    public void validateTagsWhereNotEqualsWithDataInDB() {
-        when(tagService.getTagById(anyLong())).thenReturn(new Tag(4L, "1", "1"));
-        when(tagDao.checkTagById(anyLong())).thenReturn(true);
-        validator.validateTags(Collections.singletonList(correctTag), tagService);
+        when(tagDao.checkTagById(anyLong())).thenReturn(false);
+        validator.validateTags(correctTagsId, tagService);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
     @Test(expected = ValidationException.class)
     public void validateIncorrectTags() {
-        validator.validateTags(Collections.singletonList(incorrectTag), tagService);
+        validator.validateTags(incorrectTagsId, tagService);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
     @Test(expected = ValidationException.class)
     public void validateTagsWhereTagHasIdEqualsNull() {
         incorrectTag.setId(NULL_LONG);
-        validator.validateTags(Collections.singletonList(incorrectTag), tagService);
+        validator.validateTags(incorrectTagsId, tagService);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
     public void validateTagsWhereTagNotExistInDB() {
         when(tagDao.checkTagById(anyLong())).thenReturn(false);
-        validator.validateTags(Collections.singletonList(correctTag), tagService);
+        validator.validateTags(correctTagsId, tagService);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
@@ -375,7 +364,6 @@ public class ValidatorTest {
     public void validateInitialAndNullQuantity() {
         validator.validatePageAndSize(CORRECT_INITIAL_NUMBER, NULL_LONG);
     }
-
 
     @Test(expected = ValidationException.class)
     public void validateNullInitialAndNullQuantity() {

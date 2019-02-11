@@ -171,7 +171,7 @@ public class CommentDaoImplTest {
 
     @Test
     public void getCountOfCommentsWithIncorrectPostId() {
-        assertEquals(new Long(0), commentDao.getCountOfCommentsByPostId(INCORRECT_POST_ID));
+        assertEquals(Long.valueOf(0), commentDao.getCountOfCommentsByPostId(INCORRECT_POST_ID));
     }
 
     @Test

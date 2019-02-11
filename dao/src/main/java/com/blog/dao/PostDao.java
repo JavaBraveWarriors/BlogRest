@@ -1,6 +1,7 @@
 package com.blog.dao;
 
 import com.blog.Post;
+import com.blog.PostForGet;
 import com.blog.dao.jdbc.PostDaoImpl;
 import org.springframework.dao.DataAccessException;
 
@@ -23,7 +24,7 @@ public interface PostDao {
      * @return {List<Post>} is a list of all posts that belong to the author from the database.
      * @throws DataAccessException Will throw an error if the data is not access or the table post does not contain posts with this author ID.
      */
-    List<Post> getAllPostsByAuthorId(Long authorId) throws DataAccessException;
+    List<PostForGet> getAllPostsByAuthorId(Long authorId) throws DataAccessException;
 
     /**
      * Gets a list of post objects from a specific item, a specific amount from the database.
@@ -33,7 +34,7 @@ public interface PostDao {
      * @return {List<Post>} is a list of posts from the database.
      * @throws DataAccessException Will throw an error if the data is not access.
      */
-    List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws DataAccessException;
+    List<PostForGet> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws DataAccessException;
 
     /**
      * Gets a list of post objects from a specific item, a specific amount and sort from the database.
@@ -44,7 +45,7 @@ public interface PostDao {
      * @return {List<Post>} is a list of posts from the database.
      * @throws DataAccessException Will throw an error if the data is not access.
      */
-    List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity, String sort) throws DataAccessException;
+    List<PostForGet> getPostsByInitialIdAndQuantity(Long initial, Long quantity, String sort) throws DataAccessException;
 
     /**
      * Gets a list of post objects where is this tag from the database.
@@ -53,7 +54,7 @@ public interface PostDao {
      * @return {List<Post>} is a list of posts from the database.
      * @throws DataAccessException Will throw an error if the data is not access.
      */
-    List<Post> getAllPostsByTagId(Long tagId) throws DataAccessException;
+    List<PostForGet> getAllPostsByTagId(Long tagId) throws DataAccessException;
 
     /**
      * Gets a {Post} object where id is equal to argument parameter
@@ -62,7 +63,7 @@ public interface PostDao {
      * @return {Post} is a object which has this ID.
      * @throws DataAccessException Will throw an error if the data is not access.
      */
-    Post getPostById(Long id) throws DataAccessException;
+    PostForGet getPostById(Long id) throws DataAccessException;
 
     /**
      * Adds new post in database.

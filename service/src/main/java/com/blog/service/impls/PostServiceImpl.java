@@ -1,10 +1,9 @@
 package com.blog.service.impls;
 
-import com.blog.Author;
 import com.blog.Comment;
-import com.blog.Post;
+import com.blog.PostForAdd;
+import com.blog.PostForGet;
 import com.blog.Tag;
-import com.blog.dao.AuthorDao;
 import com.blog.dao.PostDao;
 import com.blog.exception.InternalServerException;
 import com.blog.service.CommentService;
@@ -19,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -47,8 +47,6 @@ public class PostServiceImpl implements PostService {
 
     private CommentService commentService;
 
-    private AuthorDao authorDao;
-
     @Value("${postService.errorOfUpdating}")
     private String updateError;
 
@@ -62,8 +60,7 @@ public class PostServiceImpl implements PostService {
     private String deleteTagInPost;
 
     @Autowired
-    public PostServiceImpl(PostDao postDao, Validator validator, TagService tagService, AuthorDao authorDao, CommentService commentService) {
-        this.authorDao = authorDao;
+    public PostServiceImpl(PostDao postDao, Validator validator, TagService tagService, CommentService commentService) {
         this.postDao = postDao;
         this.validator = validator;
         this.tagService = tagService;
@@ -71,24 +68,20 @@ public class PostServiceImpl implements PostService {
     }
 
     // refactored with pagination
-    public List<Post> getAllPostsByAuthorId(Long authorId) {
+    public List<PostForGet> getAllPostsByAuthorId(Long authorId) {
         LOGGER.debug("Gets all posts by author id = [{}].", authorId);
         validator.validateAuthorId(authorId);
-        List<Post> posts = postDao.getAllPostsByAuthorId(authorId);
+        List<PostForGet> posts = postDao.getAllPostsByAuthorId(authorId);
 
-        Author author = authorDao.getAuthorById(authorId);
-
-        posts.forEach(post -> post.setAuthorName(author.getFirstName()));
-        posts.forEach(post -> post.setAuthorLastName(author.getLastName()));
         posts.forEach(post -> post.setTags(tagService.getAllTagsByPostId(post.getId())));
         return posts;
     }
 
-    public List<Post> getPostsWithPaginationAndSorting(Long page, Long size, String sort) {
+    public List<PostForGet> getPostsWithPaginationAndSorting(Long page, Long size, String sort) {
         LOGGER.debug("Gets list of posts by page id = [{}] and size = [{}].", page, size);
         validator.validatePageAndSize(page, size);
         Long startItem = (page - 1) * size + 1;
-        List<Post> posts = postDao.getPostsByInitialIdAndQuantity(startItem, size, sort);
+        List<PostForGet> posts = postDao.getPostsByInitialIdAndQuantity(startItem, size, sort);
         addDataInPosts(posts);
         return posts;
     }
@@ -117,33 +110,30 @@ public class PostServiceImpl implements PostService {
         postDao.deleteComment(postId);
     }
 
-    public List<Post> getAllPostsByTagId(Long tagId) {
+    public List<PostForGet> getAllPostsByTagId(Long tagId) {
         LOGGER.debug("Gets list of posts by tag id = [{}].", tagId);
         validator.validateTagId(tagId);
-        List<Post> posts = postDao.getAllPostsByTagId(tagId);
+        List<PostForGet> posts = postDao.getAllPostsByTagId(tagId);
         addDataInPosts(posts);
         return posts;
     }
 
-    public Post getPostById(Long postId) {
+    public PostForGet getPostById(Long postId) {
         LOGGER.debug("Gets post by id = [{}].", postId);
         validator.validatePostId(postId);
-        Post post = postDao.getPostById(postId);
+        PostForGet post = postDao.getPostById(postId);
         post.setTags(tagService.getAllTagsByPostId(post.getId()));
-        Author author = authorDao.getAuthorById(post.getAuthorId());
-        post.setAuthorName(author.getFirstName());
-        post.setAuthorLastName(author.getLastName());
         return post;
     }
 
-    public Long addPost(Post post) {
+    public Long addPost(PostForAdd post) {
         LOGGER.debug("Adds new post = [{}].", post);
         validator.validateAuthorId(post.getAuthorId());
         post.setTimeOfCreation(LocalDateTime.now());
         Long key = postDao.addPost(post);
-        post.getTags().forEach(tag -> {
-            validator.validateTagId(tag.getId());
-            postDao.addTagToPost(key, tag.getId());
+        Arrays.stream(post.getTags()).forEach(tag -> {
+            validator.validateTagId(tag);
+            postDao.addTagToPost(key, tag);
         });
         return key;
     }
@@ -157,7 +147,7 @@ public class PostServiceImpl implements PostService {
             throw new InternalServerException(addTagToPost);
     }
 
-    public void updatePost(Post post) {
+    public void updatePost(PostForAdd post) {
         LOGGER.debug("Updates post = [{}].", post);
         validator.checkPost(post);
         validator.validateTags(post.getTags(), tagService);
@@ -183,35 +173,30 @@ public class PostServiceImpl implements PostService {
             throw new InternalServerException(deleteTagInPost);
     }
 
-    private void updatePostTags(Post post, List<Tag> postTags) {
+    private void updatePostTags(PostForAdd post, List<Tag> postTags) {
         removeTagInPost(post, postTags);
         addTagsToPost(post);
     }
 
-    private void removeTagInPost(Post post, List<Tag> postTags) {
+    private void removeTagInPost(PostForAdd post, List<Tag> postTags) {
         postTags.forEach(tag -> {
-            if (!post.getTags().contains(tag)) {
+            if (Arrays.stream(post.getTags()).noneMatch(t -> t.equals(tag.getId()))) {
                 if (!postDao.deleteTagInPost(post.getId(), tag.getId()))
                     throw new InternalServerException(deleteTagInPost);
             }
         });
     }
 
-    private void addTagsToPost(Post post) {
-        post.getTags().forEach(tag -> {
-            if (!postDao.checkTagInPostById(post.getId(), tag.getId())) {
-                if (!postDao.addTagToPost(post.getId(), tag.getId()))
+    private void addTagsToPost(PostForAdd post) {
+        Arrays.stream(post.getTags()).forEach(tag -> {
+            if (!postDao.checkTagInPostById(post.getId(), tag)) {
+                if (!postDao.addTagToPost(post.getId(), tag))
                     throw new InternalServerException(addTagToPost);
             }
         });
     }
 
-    private void addDataInPosts(List<Post> posts) {
-        posts.forEach(post -> {
-            Author author = authorDao.getAuthorById(post.getAuthorId());
-            post.setAuthorName(author.getFirstName());
-            post.setAuthorLastName(author.getLastName());
-            post.setTags(tagService.getAllTagsByPostId(post.getId()));
-        });
+    private void addDataInPosts(List<PostForGet> posts) {
+        posts.forEach(post -> post.setTags(tagService.getAllTagsByPostId(post.getId())));
     }
 }

@@ -55,7 +55,7 @@ public class AuthorRestControllerTest {
             "testDescription",
             "testPhone");
 
-    private static Post post = new Post(
+    private static PostForGet post = new PostForGet(
             1L,
             "testTitle",
             "testDescription",
@@ -128,7 +128,6 @@ public class AuthorRestControllerTest {
                 .andExpect(status().isNotFound());
         verify(postService, times(1)).getAllPostsByAuthorId(anyLong());
     }
-
 
     @Test
     public void getAuthorByLoginSuccess() throws Exception {

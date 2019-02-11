@@ -31,7 +31,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-
 @RunWith(MockitoJUnitRunner.class)
 public class PostRestControllerTest {
 
@@ -43,8 +42,17 @@ public class PostRestControllerTest {
 
     private MockMvc mockMvc;
 
-    private static Post post = new Post(
+    private static PostForGet post = new PostForGet(
             1L,
+            "testTitle",
+            "testDescription",
+            "testText",
+            "",
+            1L
+    );
+
+    private static PostForAdd correctPostForAdding = new PostForAdd(
+            null,
             "testTitle",
             "testDescription",
             "testText",
@@ -188,13 +196,13 @@ public class PostRestControllerTest {
     @Test
     public void addPost() throws Exception {
         post.setTimeOfCreation(null);
-        given(postService.addPost(any(Post.class))).willReturn(anyLong());
+        given(postService.addPost(any(PostForAdd.class))).willReturn(anyLong());
         mockMvc.perform(post("/posts")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(convertToJson(post)))
+                .content(convertToJson(correctPostForAdding)))
                 .andDo(print())
                 .andExpect(status().isCreated());
-        verify(postService, times(1)).addPost(any(Post.class));
+        verify(postService, times(1)).addPost(any(PostForAdd.class));
     }
 
     @Test
@@ -202,10 +210,10 @@ public class PostRestControllerTest {
         post.setTimeOfCreation(null);
         mockMvc.perform(put("/posts")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(convertToJson(post)))
+                .content(convertToJson(correctPostForAdding)))
                 .andDo(print())
                 .andExpect(status().isOk());
-        verify(postService, times(1)).updatePost(any(Post.class));
+        verify(postService, times(1)).updatePost(any(PostForAdd.class));
     }
 
     @Test
