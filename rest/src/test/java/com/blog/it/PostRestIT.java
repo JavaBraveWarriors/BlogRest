@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.springframework.http.*;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.blog.JsonConverter.convertToJson;
@@ -32,8 +33,9 @@ public class PostRestIT extends AbstractTestIT {
     private static String INCORRECT_TAG_ID = "-5";
     private static String NOT_EXIST_TAG_ID = "51";
 
-    private static Long[] tags = new Long[]{3L, 4L};
-    private static Long[] incorrectTags = new Long[]{21L};
+    private static List<Long> tags = new ArrayList<>();
+
+    private static List<Long> incorrectTags = new ArrayList<>();
 
     private static PostForAdd correctPost = new PostForAdd(
             null,
@@ -75,6 +77,9 @@ public class PostRestIT extends AbstractTestIT {
     public static void setUp() {
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         endpoint = "posts";
+        tags.add(3L);
+        tags.add(5L);
+        incorrectTags.add(21L);
     }
 
     @Test

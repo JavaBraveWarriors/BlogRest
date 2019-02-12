@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Component
 public class Validator {
@@ -92,9 +93,9 @@ public class Validator {
         this.commentDao = commentDao;
     }
 
-    public void validateTags(Long[] tagsValidation, TagService tagService) {
-        LOGGER.debug("Validates list of tags [{}].", (Object) tagsValidation);
-        Arrays.stream(tagsValidation).forEach(this::validateTagId);
+    public void validateTags(List<Long> tagsValidation) {
+        LOGGER.debug("Validates list of tags [{}].", tagsValidation);
+        tagsValidation.forEach(this::validateTagId);
     }
 
     public void validateTagId(Long id) {

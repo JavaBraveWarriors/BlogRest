@@ -1,11 +1,12 @@
 package com.blog;
 
 import javax.persistence.Entity;
+import java.util.List;
 
 @Entity
 public class PostForAdd extends Post {
 
-    private Long[] tags;
+    private List<Long> tags;
 
     public PostForAdd() {
     }
@@ -14,11 +15,11 @@ public class PostForAdd extends Post {
         super(id, title, description, text, pathImage, authorId);
     }
 
-    public Long[] getTags() {
+    public List<Long> getTags() {
         return tags;
     }
 
-    public void setTags(Long[] tags) {
+    public void setTags(List<Long> tags) {
         this.tags = tags;
     }
 

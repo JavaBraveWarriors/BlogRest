@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -131,7 +130,7 @@ public class PostServiceImpl implements PostService {
         validator.validateAuthorId(post.getAuthorId());
         post.setTimeOfCreation(LocalDateTime.now());
         Long key = postDao.addPost(post);
-        Arrays.stream(post.getTags()).forEach(tag -> {
+        post.getTags().forEach(tag -> {
             validator.validateTagId(tag);
             postDao.addTagToPost(key, tag);
         });
@@ -150,7 +149,7 @@ public class PostServiceImpl implements PostService {
     public void updatePost(PostForAdd post) {
         LOGGER.debug("Updates post = [{}].", post);
         validator.checkPost(post);
-        validator.validateTags(post.getTags(), tagService);
+        validator.validateTags(post.getTags());
         List<Tag> postTags = tagService.getAllTagsByPostId(post.getId());
         updatePostTags(post, postTags);
         if (!postDao.updatePost(post))
@@ -180,7 +179,7 @@ public class PostServiceImpl implements PostService {
 
     private void removeTagInPost(PostForAdd post, List<Tag> postTags) {
         postTags.forEach(tag -> {
-            if (Arrays.stream(post.getTags()).noneMatch(t -> t.equals(tag.getId()))) {
+            if (post.getTags().stream().noneMatch(t -> t.equals(tag.getId()))) {
                 if (!postDao.deleteTagInPost(post.getId(), tag.getId()))
                     throw new InternalServerException(deleteTagInPost);
             }
@@ -188,7 +187,7 @@ public class PostServiceImpl implements PostService {
     }
 
     private void addTagsToPost(PostForAdd post) {
-        Arrays.stream(post.getTags()).forEach(tag -> {
+        post.getTags().forEach(tag -> {
             if (!postDao.checkTagInPostById(post.getId(), tag)) {
                 if (!postDao.addTagToPost(post.getId(), tag))
                     throw new InternalServerException(addTagToPost);

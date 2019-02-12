@@ -1,7 +1,6 @@
 package com.blog.service.impls;
 
 import com.blog.*;
-import com.blog.dao.AuthorDao;
 import com.blog.dao.PostDao;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
@@ -35,15 +34,12 @@ public class PostServiceImplTest {
     @Mock
     private PostDao postDao;
 
-    @Mock
-    private AuthorDao authorDao;
-
     @InjectMocks
     private PostServiceImpl postService;
 
     private static List<PostForGet> testPosts = new ArrayList<>();
     private static List<Tag> tags = new ArrayList<>();
-    private static Long[] tagUpdated;
+    private static List<Long> tagUpdated;
 
     private static PostForAdd testPostForAdd = new PostForAdd(
             1L,
@@ -80,7 +76,11 @@ public class PostServiceImplTest {
         testPosts.add(new PostForGet());
         testPosts.forEach(post -> post.setId(1L));
         testPosts.forEach(post -> post.setAuthorId(1L));
-        tagUpdated = new Long[]{2L, 3L, 4L, 6L};
+        tagUpdated = new ArrayList<>();
+        tagUpdated.add(2L);
+        tagUpdated.add(3L);
+        tagUpdated.add(4L);
+        tagUpdated.add(6L);
         tags.add(new Tag(1L, "1", "1"));
         tags.add(new Tag(2L, "2", "2"));
         tags.add(new Tag(3L, "3", "3"));
@@ -90,7 +90,6 @@ public class PostServiceImplTest {
     @Test
     public void getAllPostsByAuthorIdSuccess() {
         when(postDao.getAllPostsByAuthorId(anyLong())).thenReturn(testPosts);
-        when(authorDao.getAuthorById(anyLong())).thenReturn(author);
         List<PostForGet> posts = postService.getAllPostsByAuthorId(anyLong());
         assertNotNull(posts);
         assertEquals(posts.size(), testPosts.size());
@@ -116,7 +115,6 @@ public class PostServiceImplTest {
     @Test
     public void getPostsWithPaginationSuccess() {
         when(postDao.getPostsByInitialIdAndQuantity(anyLong(), anyLong(), anyString())).thenReturn(testPosts);
-        when(authorDao.getAuthorById(anyLong())).thenReturn(author);
         postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), "created_date");
         verify(postDao, times(1)).getPostsByInitialIdAndQuantity(anyLong(), anyLong(), anyString());
         verify(tagService, times(testPosts.size())).getAllTagsByPostId(anyLong());
@@ -133,7 +131,6 @@ public class PostServiceImplTest {
     @Test
     public void getAllPostsByTagIdSuccess() {
         when(postDao.getAllPostsByTagId(anyLong())).thenReturn(testPosts);
-        when(authorDao.getAuthorById(anyLong())).thenReturn(author);
         List<PostForGet> posts = postService.getAllPostsByTagId(anyLong());
         assertNotNull(posts);
         assertEquals(posts.size(), testPosts.size());
@@ -159,7 +156,6 @@ public class PostServiceImplTest {
     @Test
     public void getPostByIdSuccess() {
         when(postDao.getPostById(anyLong())).thenReturn(testPostGet);
-        when(authorDao.getAuthorById(anyLong())).thenReturn(author);
         Post post = postService.getPostById(anyLong());
         assertNotNull(post);
         assertEquals(post.getTitle(), testPostForAdd.getTitle());
@@ -187,9 +183,9 @@ public class PostServiceImplTest {
         when(postDao.addPost(any(Post.class))).thenReturn(2L);
         assertEquals((Long) 2L, postService.addPost(testPostForAdd));
         verify(postDao, times(1)).addPost(any(Post.class));
-        verify(validator, times(testPostForAdd.getTags().length)).validateTagId(anyLong());
+        verify(validator, times(testPostForAdd.getTags().size())).validateTagId(anyLong());
         verify(validator, times(1)).validateAuthorId(anyLong());
-        verify(postDao, times(testPostForAdd.getTags().length)).addTagToPost(anyLong(), anyLong());
+        verify(postDao, times(testPostForAdd.getTags().size())).addTagToPost(anyLong(), anyLong());
     }
 
     @Test(expected = ValidationException.class)
@@ -281,7 +277,7 @@ public class PostServiceImplTest {
         verify(tagService, times(1)).getAllTagsByPostId(anyLong());
         verify(postDao, times(1)).deleteTagInPost(anyLong(), anyLong());
         verify(postDao, times(2)).addTagToPost(anyLong(), anyLong());
-        verify(validator, times(1)).validateTags(any(Long[].class), any(TagService.class));
+        verify(validator, times(1)).validateTags(anyList());
     }
 
     @Test(expected = InternalServerException.class)
@@ -300,7 +296,7 @@ public class PostServiceImplTest {
         verify(tagService, times(1)).getAllTagsByPostId(anyLong());
         verify(postDao, times(1)).deleteTagInPost(anyLong(), anyLong());
         verify(postDao, times(2)).addTagToPost(anyLong(), anyLong());
-        verify(validator, times(1)).validateTags(any(Long[].class), any(TagService.class));
+        verify(validator, times(1)).validateTags(anyList());
     }
 
     @Test(expected = InternalServerException.class)
@@ -317,7 +313,7 @@ public class PostServiceImplTest {
         verify(tagService, times(1)).getAllTagsByPostId(anyLong());
         verify(postDao, times(1)).deleteTagInPost(anyLong(), anyLong());
         verify(postDao, times(2)).addTagToPost(anyLong(), anyLong());
-        verify(validator, times(1)).validateTags(any(Long[].class), any(TagService.class));
+        verify(validator, times(1)).validateTags(anyList());
     }
 
     @Test(expected = InternalServerException.class)
@@ -331,7 +327,7 @@ public class PostServiceImplTest {
         verify(tagService, times(1)).getAllTagsByPostId(anyLong());
         verify(postDao, times(1)).deleteTagInPost(anyLong(), anyLong());
         verify(postDao, times(2)).addTagToPost(anyLong(), anyLong());
-        verify(validator, times(1)).validateTags(any(Long[].class), any(TagService.class));
+        verify(validator, times(1)).validateTags(anyList());
     }
 
     @Test

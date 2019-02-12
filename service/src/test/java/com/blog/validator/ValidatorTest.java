@@ -10,12 +10,15 @@ import com.blog.dao.PostDao;
 import com.blog.dao.TagDao;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
-import com.blog.service.TagService;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
@@ -28,9 +31,6 @@ public class ValidatorTest {
 
     @Mock
     private TagDao tagDao;
-
-    @Mock
-    private TagService tagService;
 
     @Mock
     private PostDao postDao;
@@ -64,8 +64,8 @@ public class ValidatorTest {
 
     private static Tag correctTag = new Tag(4L, "test4", "test4");
     private static Tag incorrectTag = new Tag(-1L, "test1", "test1");
-    private static Long[] correctTagsId = new Long[]{4L, 5L};
-    private static Long[] incorrectTagsId = new Long[]{-4L, 0L};
+    private static List<Long> correctTagsId = new ArrayList<>();
+    private static List<Long> incorrectTagsId = new ArrayList<>();
 
     private static Post correctPost = new Post(
             1L,
@@ -107,6 +107,14 @@ public class ValidatorTest {
             2L,
             CORRECT_POST_ID
     );
+
+    @BeforeClass
+    public static void setup(){
+        correctTagsId.add(4L);
+        correctTagsId.add(5L);
+        incorrectTagsId.add(-2L);
+        incorrectTagsId.add(0L);
+    }
 
     @Test
     public void validatePostIdSuccess() {
@@ -187,34 +195,34 @@ public class ValidatorTest {
     @Test
     public void validateTagsSuccess() {
         when(tagDao.checkTagById(anyLong())).thenReturn(true);
-        validator.validateTags(correctTagsId, tagService);
-        verify(tagDao, times(correctTagsId.length)).checkTagById(anyLong());
+        validator.validateTags(correctTagsId);
+        verify(tagDao, times(correctTagsId.size())).checkTagById(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
     public void validateNotExistTags() {
         when(tagDao.checkTagById(anyLong())).thenReturn(false);
-        validator.validateTags(correctTagsId, tagService);
+        validator.validateTags(correctTagsId);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
     @Test(expected = ValidationException.class)
     public void validateIncorrectTags() {
-        validator.validateTags(incorrectTagsId, tagService);
+        validator.validateTags(incorrectTagsId);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
     @Test(expected = ValidationException.class)
     public void validateTagsWhereTagHasIdEqualsNull() {
         incorrectTag.setId(NULL_LONG);
-        validator.validateTags(incorrectTagsId, tagService);
+        validator.validateTags(incorrectTagsId);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
     public void validateTagsWhereTagNotExistInDB() {
         when(tagDao.checkTagById(anyLong())).thenReturn(false);
-        validator.validateTags(correctTagsId, tagService);
+        validator.validateTags(correctTagsId);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
