@@ -3,7 +3,7 @@ package com.blog.controller;
 import com.blog.Comment;
 import com.blog.Post;
 import com.blog.PostForAdd;
-import com.blog.PostForGet;
+import com.blog.PostListWrapper;
 import com.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
-import java.util.List;
 
 /**
  * The type Post rest controller.
@@ -39,19 +38,6 @@ public class PostRestController {
     }
 
     /**
-     * Gets count of pages.
-     *
-     * @param size is {Long} value which determines the size of one page.
-     * @return {Long} value is the count of pages.
-     */
-    @GetMapping("/count")
-    @ResponseStatus(value = HttpStatus.OK)
-    public Long getCountOfPages(
-            @RequestParam(value = "size") Long size) {
-        return postService.getCountOfPagesWithPagination(size);
-    }
-
-    /**
      * Gets a {Post} object where id is equal to argument parameter.
      *
      * @param id {Long} value the ID of the post you want to get.
@@ -74,7 +60,7 @@ public class PostRestController {
      */
     @GetMapping("")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<PostForGet> getPostsWithPagination(
+    public PostListWrapper getPostsWithPagination(
             @RequestParam(value = "page", required = false) Long page,
             @RequestParam(value = "size", required = false) Long size,
             @RequestParam(value = "sort", required = false) String sort
@@ -99,7 +85,7 @@ public class PostRestController {
      */
     @GetMapping("/tag/{id}")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<PostForGet> getAllPostsByTagId(@PathVariable(value = "id") Long tagId) {
+    public PostListWrapper getAllPostsByTagId(@PathVariable(value = "id") Long tagId) {
         return postService.getAllPostsByTagId(tagId);
     }
 

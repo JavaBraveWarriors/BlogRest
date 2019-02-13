@@ -1,9 +1,6 @@
 package com.blog.service.impls;
 
-import com.blog.Comment;
-import com.blog.PostForAdd;
-import com.blog.PostForGet;
-import com.blog.Tag;
+import com.blog.*;
 import com.blog.dao.PostDao;
 import com.blog.exception.InternalServerException;
 import com.blog.service.CommentService;
@@ -67,33 +64,30 @@ public class PostServiceImpl implements PostService {
     }
 
     // refactored with pagination
-    public List<PostForGet> getAllPostsByAuthorId(Long authorId) {
+    public PostListWrapper getAllPostsByAuthorId(Long authorId) {
         LOGGER.debug("Gets all posts by author id = [{}].", authorId);
         validator.validateAuthorId(authorId);
-        List<PostForGet> posts = postDao.getAllPostsByAuthorId(authorId);
-
-        posts.forEach(post -> post.setTags(tagService.getAllTagsByPostId(post.getId())));
-        return posts;
+        PostListWrapper postListWrapper = new PostListWrapper();
+        postListWrapper.setPosts(postDao.getAllPostsByAuthorId(authorId));
+        postListWrapper.getPosts().forEach(post -> post.setTags(tagService.getAllTagsByPostId(post.getId())));
+        Long countOfPosts = postDao.getCountOfPosts();
+        postListWrapper.setCountPosts(countOfPosts);
+        // TODO: refactor this method - add pagination
+        // postListWrapper.setCountPages(PageCounter.getCountPages());
+        return postListWrapper;
     }
 
-    public List<PostForGet> getPostsWithPaginationAndSorting(Long page, Long size, String sort) {
+    public PostListWrapper getPostsWithPaginationAndSorting(Long page, Long size, String sort) {
         LOGGER.debug("Gets list of posts by page id = [{}] and size = [{}].", page, size);
         validator.validatePageAndSize(page, size);
         Long startItem = (page - 1) * size + 1;
-        List<PostForGet> posts = postDao.getPostsByInitialIdAndQuantity(startItem, size, sort);
-        addDataInPosts(posts);
-        return posts;
-    }
-
-    public Long getCountOfPagesWithPagination(Long size) {
-        LOGGER.debug("Gets count of pages by size = [{}].", size);
-        validator.validateSizeOfPages(size);
+        PostListWrapper postListWrapper = new PostListWrapper();
+        postListWrapper.setPosts(postDao.getPostsByInitialIdAndQuantity(startItem, size, sort));
+        addDataInPosts(postListWrapper.getPosts());
         Long countOfPosts = postDao.getCountOfPosts();
-        Long countOfPages = countOfPosts / size;
-        if (countOfPosts % size != 0) {
-            countOfPages++;
-        }
-        return countOfPages;
+        postListWrapper.setCountPosts(countOfPosts);
+        postListWrapper.setCountPages(PageCounter.getCountPages(size, countOfPosts));
+        return postListWrapper;
     }
 
     public void addCommentToPost(Comment comment) {
@@ -109,12 +103,14 @@ public class PostServiceImpl implements PostService {
         postDao.deleteComment(postId);
     }
 
-    public List<PostForGet> getAllPostsByTagId(Long tagId) {
+    // TODO: refactor this method
+    public PostListWrapper getAllPostsByTagId(Long tagId) {
         LOGGER.debug("Gets list of posts by tag id = [{}].", tagId);
         validator.validateTagId(tagId);
-        List<PostForGet> posts = postDao.getAllPostsByTagId(tagId);
-        addDataInPosts(posts);
-        return posts;
+        PostListWrapper postListWrapper = new PostListWrapper();
+        postListWrapper.setPosts(postDao.getAllPostsByTagId(tagId));
+        addDataInPosts(postListWrapper.getPosts());
+        return postListWrapper;
     }
 
     public PostForGet getPostById(Long postId) {

@@ -162,4 +162,8 @@ public interface PostDao {
      * @throws DataAccessException Will throw an error if the data is not access.
      */
     boolean deleteComment(Long postId) throws DataAccessException;
+
+    //boolean addViewToPost(Long postId, Long userId);
+
+    //boolean deleteViewFormPost(Long postId, Long userId);
 }

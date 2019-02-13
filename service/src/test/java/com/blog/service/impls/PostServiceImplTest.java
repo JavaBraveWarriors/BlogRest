@@ -90,9 +90,9 @@ public class PostServiceImplTest {
     @Test
     public void getAllPostsByAuthorIdSuccess() {
         when(postDao.getAllPostsByAuthorId(anyLong())).thenReturn(testPosts);
-        List<PostForGet> posts = postService.getAllPostsByAuthorId(anyLong());
+        PostListWrapper posts = postService.getAllPostsByAuthorId(anyLong());
         assertNotNull(posts);
-        assertEquals(posts.size(), testPosts.size());
+        assertEquals(posts.getPosts().size(), testPosts.size());
         verify(validator, times(1)).validateAuthorId(anyLong());
         verify(postDao, times(1)).getAllPostsByAuthorId(anyLong());
         verify(tagService, times(3)).getAllTagsByPostId(anyLong());
@@ -115,7 +115,9 @@ public class PostServiceImplTest {
     @Test
     public void getPostsWithPaginationSuccess() {
         when(postDao.getPostsByInitialIdAndQuantity(anyLong(), anyLong(), anyString())).thenReturn(testPosts);
-        postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), "created_date");
+        when(postDao.getCountOfPosts()).thenReturn(5L);
+        PostListWrapper postListWrapper = postService.getPostsWithPaginationAndSorting(5L, 5L, "created_date");
+        assertNotNull(postListWrapper);
         verify(postDao, times(1)).getPostsByInitialIdAndQuantity(anyLong(), anyLong(), anyString());
         verify(tagService, times(testPosts.size())).getAllTagsByPostId(anyLong());
         verify(validator, times(1)).validatePageAndSize(anyLong(), anyLong());
@@ -131,9 +133,9 @@ public class PostServiceImplTest {
     @Test
     public void getAllPostsByTagIdSuccess() {
         when(postDao.getAllPostsByTagId(anyLong())).thenReturn(testPosts);
-        List<PostForGet> posts = postService.getAllPostsByTagId(anyLong());
+        PostListWrapper posts = postService.getAllPostsByTagId(anyLong());
         assertNotNull(posts);
-        assertEquals(posts.size(), testPosts.size());
+        assertEquals(posts.getPosts().size(), testPosts.size());
         verify(postDao, times(1)).getAllPostsByTagId(anyLong());
         verify(tagService, times(testPosts.size())).getAllTagsByPostId(anyLong());
         verify(validator, times(1)).validateTagId(anyLong());

@@ -7,8 +7,6 @@ import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
 
-import java.util.List;
-
 /**
  * This interface defines various ways to manage object comment with the correct business model.
  *
@@ -60,16 +58,4 @@ public interface CommentService {
      * @throws InternalServerException Will throw an error if comment is not deleted.
      */
     void deleteComment(Long commentId) throws ValidationException, NotFoundException, InternalServerException;
-
-    /**
-     * Gets count of pages with pagination.
-     *
-     * @param postId is {Long} the value of post ID.
-     * @param size   is {Long} value the size of one page.
-     * @return the count of pages with pagination
-     * @throws ValidationException Will throw an error if postId or size is not valid.
-     * @throws NotFoundException   Will throw an error if not found post with this postId in database.
-     */
-    Long getCountOfPagesWithPagination(Long postId, Long size) throws ValidationException, NotFoundException;
-
 }

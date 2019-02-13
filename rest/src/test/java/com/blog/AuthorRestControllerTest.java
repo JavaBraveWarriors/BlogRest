@@ -45,6 +45,8 @@ public class AuthorRestControllerTest {
 
     private MockMvc mockMvc;
 
+    private static PostListWrapper postListWrapper = new PostListWrapper();
+
     private static Author author = new Author(
             1L,
             "test@mail.ru",
@@ -66,6 +68,7 @@ public class AuthorRestControllerTest {
 
     @Before
     public void setUp() {
+        postListWrapper.setPosts(Collections.singletonList(post));
         mockMvc = MockMvcBuilders.standaloneSetup(authorRestController)
                 .setControllerAdvice(new RestErrorHandler())
                 .build();
@@ -103,11 +106,11 @@ public class AuthorRestControllerTest {
 
     @Test
     public void getAllPostsByAuthorIdSuccess() throws Exception {
-        given(postService.getAllPostsByAuthorId(anyLong())).willReturn(Collections.singletonList(post));
+        given(postService.getAllPostsByAuthorId(anyLong())).willReturn(postListWrapper);
         mockMvc.perform(get("/authors/{id}/posts", anyLong()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(JsonConverter.convertToJson(Collections.singletonList(post))));
+                .andExpect(content().json(JsonConverter.convertToJson(postListWrapper)));
         verify(postService, times(1)).getAllPostsByAuthorId(anyLong());
     }
 

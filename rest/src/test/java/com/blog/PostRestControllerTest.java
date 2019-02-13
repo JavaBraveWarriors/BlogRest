@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import static com.blog.JsonConverter.convertToJson;
-import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
@@ -29,7 +28,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(MockitoJUnitRunner.class)
 public class PostRestControllerTest {
@@ -41,6 +41,8 @@ public class PostRestControllerTest {
     private PostRestController postRestController;
 
     private MockMvc mockMvc;
+
+    private static PostListWrapper postListWrapper = new PostListWrapper();
 
     private static PostForGet post = new PostForGet(
             1L,
@@ -69,6 +71,7 @@ public class PostRestControllerTest {
     @BeforeClass
     public static void setData() {
         ArrayList<Tag> tags = new ArrayList<>();
+        postListWrapper.setPosts(Collections.singletonList(post));
         tags.add(new Tag(1L, "testTitle", "asd"));
         post.setTags(tags);
     }
@@ -83,12 +86,11 @@ public class PostRestControllerTest {
 
     @Test
     public void getAllPosts() throws Exception {
-        given(postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class))).willReturn(Collections.singletonList(post));
+        given(postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class))).willReturn(postListWrapper);
         mockMvc.perform(get("/posts"))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(content().json(convertToJson(Collections.singletonList(post))));
+                .andExpect(content().json(convertToJson(postListWrapper)));
         verify(postService, times(1)).getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class));
     }
 
@@ -157,11 +159,11 @@ public class PostRestControllerTest {
 
     @Test
     public void getPostsByInitialIdAndQuantitySuccess() throws Exception {
-        given(postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class))).willReturn(Collections.singletonList(post));
+        given(postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class))).willReturn(postListWrapper);
         mockMvc.perform(get("/posts?page={page}&size={size}&sort={sort}", anyLong(), anyLong(), any(String.class)))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(convertToJson(Collections.singletonList(post))));
+                .andExpect(content().json(convertToJson(postListWrapper)));
         verify(postService, times(1)).getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class));
     }
 
@@ -176,11 +178,11 @@ public class PostRestControllerTest {
 
     @Test
     public void getAllPostsByTagIdSuccess() throws Exception {
-        given(postService.getAllPostsByTagId(anyLong())).willReturn(Collections.singletonList(post));
+        given(postService.getAllPostsByTagId(anyLong())).willReturn(postListWrapper);
         mockMvc.perform(get("/posts/tag/{id}", anyLong()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(convertToJson(Collections.singletonList(post))));
+                .andExpect(content().json(convertToJson(postListWrapper)));
         verify(postService, times(1)).getAllPostsByTagId(anyLong());
     }
 

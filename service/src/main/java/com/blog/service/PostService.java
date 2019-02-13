@@ -1,15 +1,10 @@
 package com.blog.service;
 
-import com.blog.Comment;
-import com.blog.Post;
-import com.blog.PostForAdd;
-import com.blog.PostForGet;
+import com.blog.*;
 import com.blog.dao.jdbc.PostDaoImpl;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
-
-import java.util.List;
 
 /**
  * This interface defines various ways to manage object post with the correct business model.
@@ -28,7 +23,7 @@ public interface PostService {
      * @throws ValidationException Will throw an error if authorId is not valid.
      * @throws NotFoundException   Will throw an error if not found author with this authorId in database.
      */
-    List<PostForGet> getAllPostsByAuthorId(Long authorId) throws ValidationException, NotFoundException;
+    PostListWrapper getAllPostsByAuthorId(Long authorId) throws ValidationException, NotFoundException;
 
     /**
      * Gets a list of post objects from a specific item, a specific amount.
@@ -38,7 +33,7 @@ public interface PostService {
      * @return {List<Post>} is a list of posts.
      * @throws ValidationException Will throw an error if initial or quantity is not valid.
      */
-    List<PostForGet> getPostsWithPaginationAndSorting(Long page, Long size, String sort) throws ValidationException;
+    PostListWrapper getPostsWithPaginationAndSorting(Long page, Long size, String sort) throws ValidationException;
 
     /**
      * Gets a list of post objects where is this tag.
@@ -48,7 +43,7 @@ public interface PostService {
      * @throws ValidationException Will throw an error if tagId is not valid.
      * @throws NotFoundException   Will throw an error if not found tag with this Id in database.
      */
-    List<PostForGet> getAllPostsByTagId(Long tagId) throws ValidationException, NotFoundException;
+    PostListWrapper getAllPostsByTagId(Long tagId) throws ValidationException, NotFoundException;
 
     /**
      * Gets a {PostForGet} object where id is equal to argument parameter.
@@ -111,8 +106,6 @@ public interface PostService {
      * @throws InternalServerException Will throw an error if tag is not deleted in post.
      */
     void deleteTagInPost(Long postId, Long tagId) throws ValidationException, NotFoundException, InternalServerException;
-
-    Long getCountOfPagesWithPagination(Long size) throws ValidationException, NotFoundException;
 
     void addCommentToPost(Comment comment);
 

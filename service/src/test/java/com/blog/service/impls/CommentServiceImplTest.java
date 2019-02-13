@@ -120,18 +120,4 @@ public class CommentServiceImplTest {
         verify(commentDao, times(1)).deleteComment(anyLong());
         verify(validator, times(1)).validateCommentId(anyLong());
     }
-
-    @Test
-    public void getCountOfPagesWithPaginationWithIncrement() {
-        when(commentDao.getCountOfCommentsByPostId(anyLong())).thenReturn(9L);
-        Long countPages = commentService.getCountOfPagesWithPagination(anyLong(), 4L);
-        assertEquals(3L, countPages.longValue());
-    }
-
-    @Test
-    public void getCountOfPagesWithPaginationWithoutIncrement() {
-        when(commentDao.getCountOfCommentsByPostId(anyLong())).thenReturn(8L);
-        Long countPages = commentService.getCountOfPagesWithPagination(anyLong(), 4L);
-        assertEquals(2L, countPages.longValue());
-    }
 }

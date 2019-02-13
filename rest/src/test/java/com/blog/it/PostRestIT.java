@@ -2,6 +2,7 @@ package com.blog.it;
 
 import com.blog.Post;
 import com.blog.PostForAdd;
+import com.blog.PostListWrapper;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.http.*;
@@ -116,9 +117,9 @@ public class PostRestIT extends AbstractTestIT {
     public void getPostsByInitialIdAndQuantitySuccess() {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
-        ResponseEntity<List> response = restTemplate.exchange(
+        ResponseEntity<PostListWrapper> response = restTemplate.exchange(
                 createURLWithPort("?page=".concat(CORRECT_INITIAL_NUMBER).concat("&size=".concat(CORRECT_QUANTITY_NUMBER))),
-                HttpMethod.GET, entity, List.class);
+                HttpMethod.GET, entity, PostListWrapper.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -137,9 +138,9 @@ public class PostRestIT extends AbstractTestIT {
     public void getAllPostsByTagIdSuccess() {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
-        ResponseEntity<List> response = restTemplate.exchange(
+        ResponseEntity<PostListWrapper> response = restTemplate.exchange(
                 createURLWithPort(SLASH.concat("tag".concat(SLASH).concat(CORRECT_TAG_ID))),
-                HttpMethod.GET, entity, List.class);
+                HttpMethod.GET, entity, PostListWrapper.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());

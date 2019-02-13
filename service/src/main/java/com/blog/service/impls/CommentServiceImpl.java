@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Service
 @Transactional
@@ -49,10 +48,7 @@ public class CommentServiceImpl implements CommentService {
         commentListWrapper.setCommentsPage(commentDao.getListCommentsByInitialAndSize(startItem, size, postId));
         Long countOfComments = commentDao.getCountOfCommentsByPostId(postId);
         commentListWrapper.setCountCommentsInPost(countOfComments);
-        Long countOfPages = countOfComments / size;
-        if (countOfComments % size != 0) {
-            countOfPages++;
-        }
+        Long countOfPages = PageCounter.getCountPages(size, countOfComments);
         commentListWrapper.setCountPages(countOfPages);
         return commentListWrapper;
     }
@@ -77,17 +73,5 @@ public class CommentServiceImpl implements CommentService {
         validator.validateCommentId(commentId);
         if (!commentDao.deleteComment(commentId))
             throw new InternalServerException(updateError);
-    }
-
-    public Long getCountOfPagesWithPagination(Long postId, Long size) throws ValidationException, NotFoundException {
-        LOGGER.debug("Gets counts of pages comments in post id = [{}].", postId);
-        validator.validatePostId(postId);
-        validator.validateSizeOfPages(size);
-        Long countOfPosts = commentDao.getCountOfCommentsByPostId(postId);
-        Long countOfPages = countOfPosts / size;
-        if (countOfPosts % size != 0) {
-            countOfPages++;
-        }
-        return countOfPages;
     }
 }

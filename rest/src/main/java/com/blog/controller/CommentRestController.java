@@ -1,13 +1,10 @@
 package com.blog.controller;
 
-import com.blog.Comment;
 import com.blog.CommentListWrapper;
 import com.blog.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/comments")
@@ -28,7 +25,7 @@ public class CommentRestController {
     CommentListWrapper getListCommentsByPostIdWithPagination(
             @RequestParam(value = "page", required = false) Long page,
             @RequestParam(value = "size", required = false) Long size,
-            @RequestParam(value = "postId") Long postId){
+            @RequestParam(value = "postId") Long postId) {
         if (page == null) {
             page = DEFAULT_RESPONSE_COMMENT_PAGE;
         }
