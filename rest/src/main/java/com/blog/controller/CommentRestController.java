@@ -1,6 +1,7 @@
 package com.blog.controller;
 
 import com.blog.Comment;
+import com.blog.CommentListWrapper;
 import com.blog.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,9 +22,10 @@ public class CommentRestController {
     public CommentRestController(CommentService commentService) {
         this.commentService = commentService;
     }
+
     @GetMapping("/")
     @ResponseStatus(value = HttpStatus.OK)
-    List<Comment> getListCommentsByPostIdWithPagination(
+    CommentListWrapper getListCommentsByPostIdWithPagination(
             @RequestParam(value = "page", required = false) Long page,
             @RequestParam(value = "size", required = false) Long size,
             @RequestParam(value = "postId") Long postId){
@@ -35,4 +37,5 @@ public class CommentRestController {
         }
         return commentService.getListCommentsByPostIdWithPagination(page, size, postId);
     }
+
 }

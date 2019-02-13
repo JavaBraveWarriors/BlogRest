@@ -1,6 +1,7 @@
 package com.blog.service.impls;
 
 import com.blog.Comment;
+import com.blog.CommentListWrapper;
 import com.blog.dao.CommentDao;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
@@ -39,12 +40,21 @@ public class CommentServiceImpl implements CommentService {
         this.commentDao = commentDao;
     }
 
-    public List<Comment> getListCommentsByPostIdWithPagination(Long page, Long size, Long postId) throws ValidationException, NotFoundException {
+    public CommentListWrapper getListCommentsByPostIdWithPagination(Long page, Long size, Long postId) throws ValidationException, NotFoundException {
         LOGGER.debug("Gets list of comments by page id = [{}], size = [{}] and postId = [{}].", page, size, postId);
         validator.validatePageAndSize(page, size);
         validator.validatePostId(postId);
         Long startItem = (page - 1) * size + 1;
-        return commentDao.getListCommentsByInitialAndSize(startItem, size, postId);
+        CommentListWrapper commentListWrapper = new CommentListWrapper();
+        commentListWrapper.setCommentsPage(commentDao.getListCommentsByInitialAndSize(startItem, size, postId));
+        Long countOfComments = commentDao.getCountOfCommentsByPostId(postId);
+        commentListWrapper.setCountCommentsInPost(countOfComments);
+        Long countOfPages = countOfComments / size;
+        if (countOfComments % size != 0) {
+            countOfPages++;
+        }
+        commentListWrapper.setCountPages(countOfPages);
+        return commentListWrapper;
     }
 
     public Long addComment(Comment comment) throws ValidationException, NotFoundException {

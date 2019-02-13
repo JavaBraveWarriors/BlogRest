@@ -1,6 +1,7 @@
 package com.blog.service;
 
 import com.blog.Comment;
+import com.blog.CommentListWrapper;
 import com.blog.dao.jdbc.CommentDaoImpl;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
@@ -27,7 +28,7 @@ public interface CommentService {
      * @throws ValidationException Will throw an error if initial or quantity is not valid.
      * @throws NotFoundException   Will throw an error if not found post with this postId in database.
      */
-    List<Comment> getListCommentsByPostIdWithPagination(Long page, Long size, Long postId)
+    CommentListWrapper getListCommentsByPostIdWithPagination(Long page, Long size, Long postId)
             throws ValidationException, NotFoundException;
 
     /**

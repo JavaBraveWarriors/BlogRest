@@ -1,6 +1,7 @@
 package com.blog.service.impls;
 
 import com.blog.Comment;
+import com.blog.CommentListWrapper;
 import com.blog.dao.CommentDao;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.ValidationException;
@@ -50,11 +51,12 @@ public class CommentServiceImplTest {
     @Test
     public void getListCommentsByPostIdWithPaginationSuccess() {
         when(commentDao.getListCommentsByInitialAndSize(anyLong(), anyLong(), anyLong())).thenReturn(comments);
+        when(commentDao.getCountOfCommentsByPostId(anyLong())).thenReturn(5L);
 
-        List<Comment> comments = commentService.getListCommentsByPostIdWithPagination(2L, 10L, 1L);
+        CommentListWrapper comments = commentService.getListCommentsByPostIdWithPagination(2L, 10L, 1L);
 
         assertNotNull(comments);
-        assertEquals(comments.size(), comments.size());
+        assertEquals(comments.getCommentsPage().size(), comments.getCommentsPage().size());
 
         verify(validator, times(1)).validatePageAndSize(anyLong(), anyLong());
         verify(validator, times(1)).validatePostId(anyLong());
@@ -65,7 +67,7 @@ public class CommentServiceImplTest {
     public void getListCommentsByIncorrectPostIdWithPagination() {
         doThrow(ValidationException.class).when(validator).validatePostId(anyLong());
 
-        List<Comment> comments = commentService.getListCommentsByPostIdWithPagination(-2L, 10L, 1L);
+        CommentListWrapper comments = commentService.getListCommentsByPostIdWithPagination(-2L, 10L, 1L);
     }
 
     @Test
