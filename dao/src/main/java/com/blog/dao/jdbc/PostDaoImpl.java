@@ -83,6 +83,9 @@ public class PostDaoImpl implements PostDao {
     @Value("${post.deleteComment}")
     private String deleteCommentSql;
 
+    @Value("${post.addView}")
+    private String addViewSql;
+
     private PostRowMapper postRowMapper;
     private PostShortRowMapper postShortRowMapper;
 
@@ -205,6 +208,12 @@ public class PostDaoImpl implements PostDao {
         LOGGER.debug("Delete comment in post id = [{}] in database.", postId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, postId);
         return jdbcTemplate.update(deleteCommentSql, parameterSource) == 1;
+    }
+
+    public boolean addViewToPost(Long postId) {
+        LOGGER.debug("Add view to post id = [{}] in database.", postId);
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource(ID, postId);
+        return jdbcTemplate.update(addViewSql, parameterSource) == 1;
     }
 
     private MapSqlParameterSource getParameterSourcePost(Post post) {

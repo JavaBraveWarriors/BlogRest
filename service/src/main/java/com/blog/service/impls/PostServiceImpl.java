@@ -2,6 +2,7 @@ package com.blog.service.impls;
 
 import com.blog.*;
 import com.blog.dao.PostDao;
+import com.blog.dao.ViewDao;
 import com.blog.exception.InternalServerException;
 import com.blog.service.CommentService;
 import com.blog.service.PostService;
@@ -31,6 +32,8 @@ public class PostServiceImpl implements PostService {
      */
     private PostDao postDao;
 
+    private ViewDao viewDao;
+
     /**
      * This field is used for validate data.
      */
@@ -56,11 +59,12 @@ public class PostServiceImpl implements PostService {
     private String deleteTagInPost;
 
     @Autowired
-    public PostServiceImpl(PostDao postDao, Validator validator, TagService tagService, CommentService commentService) {
+    public PostServiceImpl(PostDao postDao, Validator validator, TagService tagService, CommentService commentService, ViewDao viewDao) {
         this.postDao = postDao;
         this.validator = validator;
         this.tagService = tagService;
         this.commentService = commentService;
+        this.viewDao = viewDao;
     }
 
     // refactored with pagination
@@ -117,7 +121,20 @@ public class PostServiceImpl implements PostService {
         LOGGER.debug("Gets post by id = [{}].", postId);
         validator.validatePostId(postId);
         PostForGet post = postDao.getPostById(postId);
+
+        View view = new View();
+        view.setPostId(postId);
+        // TODO: refactor when will be security(add userId from)
+        //view.setUserId();
+        // TODO: refactor this !!!
+        validator.validateAuthorId(1L);
+        view.setUserId(1L);
+        if (!viewDao.checkViewByPostIdAndUserId(postId, view.getUserId())) {
+            viewDao.addView(view);
+            postDao.addViewToPost(postId);
+        }
         post.setTags(tagService.getAllTagsByPostId(post.getId()));
+
         return post;
     }
 

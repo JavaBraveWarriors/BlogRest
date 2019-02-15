@@ -21,6 +21,7 @@ public class PostRowMapper implements RowMapper<PostForGet> {
     public static final String QUANTITY = "quantity";
     public static final String TAG_ID = "tag_id";
     public static final String COMMENTS_COUNT = "comments_count";
+    public static final String VIEWS_COUNT = "views_count";
     public static final String AUTHOR_FIRST_NAME = "first_name";
     public static final String AUTHOR_LAST_NAME = "last_name";
 

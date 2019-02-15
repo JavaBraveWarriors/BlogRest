@@ -32,3 +32,13 @@ INSERT INTO comment (comment_text, comment_post_id, comment_author_id) VALUES ('
 INSERT INTO comment (comment_text, comment_post_id, comment_author_id) VALUES ('text5', 1, 2)
 INSERT INTO comment (comment_text, comment_post_id, comment_author_id) VALUES ('text6', 1, 3)
 
+INSERT INTO view (view_id, post_id, author_id) VALUES (1, 1, 1)
+INSERT INTO view (view_id, post_id, author_id) VALUES (2, 2, 1)
+INSERT INTO view (view_id, post_id, author_id) VALUES (3, 1, 2)
+INSERT INTO view (view_id, post_id, author_id) VALUES (4, 1, 3)
+INSERT INTO view (view_id, post_id, author_id) VALUES (5, 3, 3)
+INSERT INTO view (view_id, post_id, author_id) VALUES (6, 1, 4)
+INSERT INTO view (view_id, post_id, author_id) VALUES (7, 2, 2)
+INSERT INTO view (view_id, post_id, author_id) VALUES (8, 1, 5)
+INSERT INTO view (view_id, post_id, author_id) VALUES (9, 5, 4)
+
