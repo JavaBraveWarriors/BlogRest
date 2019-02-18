@@ -27,6 +27,7 @@ public class PostShortRowMapper implements RowMapper<ResponsePostDto> {
         post.setAuthorId(rs.getLong(AUTHOR_ID));
         post.setAuthorName(rs.getString(AUTHOR_FIRST_NAME));
         post.setAuthorLastName(rs.getString(AUTHOR_LAST_NAME));
+        post.setViewsCount(rs.getLong(VIEWS_COUNT));
         Timestamp date = rs.getTimestamp(CREATED_DATE);
         if (date != null) {
             post.setTimeOfCreation(date.toLocalDateTime());

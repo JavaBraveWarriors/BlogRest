@@ -40,6 +40,7 @@ CREATE TABLE `post`
   `path_image`   varchar(45) DEFAULT NULL,
   `author_id`    bigint(11) unsigned NOT NULL,
   `comments_count` bigint(11) unsigned DEFAULT '0',
+  `views_count` bigint(11) unsigned DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `INDEX` (`author_id`),
   CONSTRAINT `fk_post_1` FOREIGN KEY (`author_id`) REFERENCES `author` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
@@ -70,7 +71,7 @@ CREATE TABLE `view`
   PRIMARY KEY (`view_id`),
   KEY `fk_view_1_idx` (`post_id`),
   KEY `fk_view_2_idx` (`author_id`),
-  CONSTRAINT `fk_view_author` FOREIGN KEY (`author_id`) REFERENCES `author` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_view_author` FOREIGN KEY (`author_id`) REFERENCES `author` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_view_post` FOREIGN KEY (`post_id`) REFERENCES `post` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8;

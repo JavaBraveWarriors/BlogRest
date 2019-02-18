@@ -2,6 +2,7 @@ package com.blog.service.impls;
 
 import com.blog.*;
 import com.blog.dao.PostDao;
+import com.blog.dao.ViewDao;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
@@ -30,6 +31,9 @@ public class PostServiceImplTest {
 
     @Mock
     private Validator validator;
+
+    @Mock
+    private ViewDao viewDao;
 
     @Mock
     private PostDao postDao;
@@ -150,6 +154,7 @@ public class PostServiceImplTest {
     @Test
     public void getPostByIdSuccess() {
         when(postDao.getPostById(anyLong())).thenReturn(testPostGet);
+        when(viewDao.checkViewByPostIdAndUserId(anyLong(), anyLong())).thenReturn(false);
         Post post = postService.getPostById(anyLong());
         assertNotNull(post);
         assertEquals(post.getTitle(), testRequestPostDto.getTitle());

@@ -163,7 +163,5 @@ public interface PostDao {
      */
     boolean deleteComment(Long postId) throws DataAccessException;
 
-    //boolean addViewToPost(Long postId, Long userId);
-
-    //boolean deleteViewFormPost(Long postId, Long userId);
+    boolean addViewToPost(Long postId) throws DataAccessException;
 }
