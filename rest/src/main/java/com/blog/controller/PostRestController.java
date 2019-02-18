@@ -2,7 +2,7 @@ package com.blog.controller;
 
 import com.blog.Comment;
 import com.blog.Post;
-import com.blog.PostForAdd;
+import com.blog.RequestPostDto;
 import com.blog.PostListWrapper;
 import com.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,7 +125,7 @@ public class PostRestController {
      */
     @PostMapping("")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public Long addPost(@Valid @RequestBody PostForAdd post, BindingResult validationResults) {
+    public Long addPost(@Valid @RequestBody RequestPostDto post, BindingResult validationResults) {
         if (validationResults.hasErrors()) {
             throw new ValidationException(validationResults.getFieldErrors().toString());
         } else {
@@ -157,7 +157,7 @@ public class PostRestController {
      */
     @PutMapping("")
     @ResponseStatus(value = HttpStatus.OK)
-    public void updatePost(@Valid @RequestBody PostForAdd post, BindingResult validationResults) {
+    public void updatePost(@Valid @RequestBody RequestPostDto post, BindingResult validationResults) {
         if (validationResults.hasErrors()) {
             throw new ValidationException(validationResults.getFieldErrors().toString());
         } else {

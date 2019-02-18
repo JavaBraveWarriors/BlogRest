@@ -1,7 +1,7 @@
 package com.blog.it;
 
 import com.blog.Post;
-import com.blog.PostForAdd;
+import com.blog.RequestPostDto;
 import com.blog.PostListWrapper;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,7 +38,7 @@ public class PostRestIT extends AbstractTestIT {
 
     private static List<Long> incorrectTags = new ArrayList<>();
 
-    private static PostForAdd correctPost = new PostForAdd(
+    private static RequestPostDto correctPost = new RequestPostDto(
             null,
             "testTitle",
             "testDescription",
@@ -47,7 +47,7 @@ public class PostRestIT extends AbstractTestIT {
             1L
     );
 
-    private static PostForAdd existPost = new PostForAdd(
+    private static RequestPostDto existPost = new RequestPostDto(
             1L,
             "title1",
             "testDescription1",
@@ -56,7 +56,7 @@ public class PostRestIT extends AbstractTestIT {
             1L
     );
 
-    private static PostForAdd authorIdIncorrectPost = new PostForAdd(
+    private static RequestPostDto authorIdIncorrectPost = new RequestPostDto(
             null,
             "testTitle",
             "testDescription",
@@ -65,7 +65,7 @@ public class PostRestIT extends AbstractTestIT {
             -2L
     );
 
-    private static PostForAdd authorNotExistIncorrectPost = new PostForAdd(
+    private static RequestPostDto authorNotExistIncorrectPost = new RequestPostDto(
             null,
             "testTitle",
             "testDescription",

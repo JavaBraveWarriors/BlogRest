@@ -57,7 +57,7 @@ public class AuthorRestControllerTest {
             "testDescription",
             "testPhone");
 
-    private static PostForGet post = new PostForGet(
+    private static ResponsePostDto post = new ResponsePostDto(
             1L,
             "testTitle",
             "testDescription",

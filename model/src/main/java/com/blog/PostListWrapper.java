@@ -3,15 +3,15 @@ package com.blog;
 import java.util.List;
 
 public class PostListWrapper {
-    List<PostForGet> posts;
+    List<ResponsePostDto> posts;
     Long countPages;
     Long countPosts;
 
-    public List<PostForGet> getPosts() {
+    public List<ResponsePostDto> getPosts() {
         return posts;
     }
 
-    public void setPosts(List<PostForGet> posts) {
+    public void setPosts(List<ResponsePostDto> posts) {
         this.posts = posts;
     }
 

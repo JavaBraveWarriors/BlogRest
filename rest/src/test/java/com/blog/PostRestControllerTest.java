@@ -44,7 +44,7 @@ public class PostRestControllerTest {
 
     private static PostListWrapper postListWrapper = new PostListWrapper();
 
-    private static PostForGet post = new PostForGet(
+    private static ResponsePostDto post = new ResponsePostDto(
             1L,
             "testTitle",
             "testDescription",
@@ -53,7 +53,7 @@ public class PostRestControllerTest {
             1L
     );
 
-    private static PostForAdd correctPostForAdding = new PostForAdd(
+    private static RequestPostDto correctRequestPostForAdding = new RequestPostDto(
             null,
             "testTitle",
             "testDescription",
@@ -198,13 +198,13 @@ public class PostRestControllerTest {
     @Test
     public void addPost() throws Exception {
         post.setTimeOfCreation(null);
-        given(postService.addPost(any(PostForAdd.class))).willReturn(anyLong());
+        given(postService.addPost(any(RequestPostDto.class))).willReturn(anyLong());
         mockMvc.perform(post("/posts")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(convertToJson(correctPostForAdding)))
+                .content(convertToJson(correctRequestPostForAdding)))
                 .andDo(print())
                 .andExpect(status().isCreated());
-        verify(postService, times(1)).addPost(any(PostForAdd.class));
+        verify(postService, times(1)).addPost(any(RequestPostDto.class));
     }
 
     @Test
@@ -212,10 +212,10 @@ public class PostRestControllerTest {
         post.setTimeOfCreation(null);
         mockMvc.perform(put("/posts")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(convertToJson(correctPostForAdding)))
+                .content(convertToJson(correctRequestPostForAdding)))
                 .andDo(print())
                 .andExpect(status().isOk());
-        verify(postService, times(1)).updatePost(any(PostForAdd.class));
+        verify(postService, times(1)).updatePost(any(RequestPostDto.class));
     }
 
     @Test

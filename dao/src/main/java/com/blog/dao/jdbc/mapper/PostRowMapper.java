@@ -1,6 +1,6 @@
 package com.blog.dao.jdbc.mapper;
 
-import com.blog.PostForGet;
+import com.blog.ResponsePostDto;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 @Component
-public class PostRowMapper implements RowMapper<PostForGet> {
+public class PostRowMapper implements RowMapper<ResponsePostDto> {
 
     public static final String ID = "id";
     public static final String TITLE = "title";
@@ -24,8 +24,8 @@ public class PostRowMapper implements RowMapper<PostForGet> {
     public static final String AUTHOR_FIRST_NAME = "first_name";
     public static final String AUTHOR_LAST_NAME = "last_name";
 
-    public PostForGet mapRow(ResultSet rs, int rowNum) throws SQLException {
-        PostForGet post = PostShortRowMapper.rowFields(rs);
+    public ResponsePostDto mapRow(ResultSet rs, int rowNum) throws SQLException {
+        ResponsePostDto post = PostShortRowMapper.rowFields(rs);
         post.setText(rs.getString(TEXT));
         return post;
     }

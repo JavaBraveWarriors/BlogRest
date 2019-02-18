@@ -85,6 +85,9 @@ public class Validator {
     @Value("${commentService.notExistCommentInPost}")
     private String notExistCommentInPost;
 
+    @Value("${commentService.commentTextNull}")
+    private String commentTextNull;
+
     @Autowired
     public Validator(PostDao postDao, TagDao tagDao, AuthorDao authorDao, CommentDao commentDao) {
         this.postDao = postDao;
@@ -188,6 +191,11 @@ public class Validator {
         validateCommentId(commentId);
         if (!commentDao.checkCommentInPostById(commentId, postId))
             throw new NotFoundException(notExistCommentInPost);
-
+    }
+    public void validateCommentText(String text){
+        LOGGER.debug("Validate comment in text= [{}].", text);
+        if(text==null|| text.isEmpty()){
+            throw new ValidationException(commentTextNull);
+        }
     }
 }

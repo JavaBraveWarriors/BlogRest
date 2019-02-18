@@ -37,11 +37,11 @@ public class PostServiceImplTest {
     @InjectMocks
     private PostServiceImpl postService;
 
-    private static List<PostForGet> testPosts = new ArrayList<>();
+    private static List<ResponsePostDto> testPosts = new ArrayList<>();
     private static List<Tag> tags = new ArrayList<>();
     private static List<Long> tagUpdated;
 
-    private static PostForAdd testPostForAdd = new PostForAdd(
+    private static RequestPostDto testRequestPostDto = new RequestPostDto(
             1L,
             "testTitle",
             "testDescription",
@@ -49,7 +49,7 @@ public class PostServiceImplTest {
             "",
             1L
     );
-    private static PostForGet testPostGet = new PostForGet(
+    private static ResponsePostDto testPostGet = new ResponsePostDto(
             1L,
             "testTitle",
             "testDescription",
@@ -57,33 +57,25 @@ public class PostServiceImplTest {
             "",
             1L
     );
-
-    private static Author author = new Author(
-            1L,
-            "test@mail.ru",
-            "testLogin",
-            "testPsw",
-            "testFirstName",
-            "testLastName",
-            "testDescription",
-            "testPhone");
 
     @BeforeClass
     public static void setUp() {
-
-        testPosts.add(new PostForGet());
-        testPosts.add(new PostForGet());
-        testPosts.add(new PostForGet());
+        testPosts.add(new ResponsePostDto());
+        testPosts.add(new ResponsePostDto());
+        testPosts.add(new ResponsePostDto());
         testPosts.forEach(post -> post.setId(1L));
         testPosts.forEach(post -> post.setAuthorId(1L));
+
         tagUpdated = new ArrayList<>();
         tagUpdated.add(2L);
         tagUpdated.add(3L);
         tagUpdated.add(4L);
         tagUpdated.add(6L);
+
         tags.add(new Tag(1L, "1", "1"));
         tags.add(new Tag(2L, "2", "2"));
         tags.add(new Tag(3L, "3", "3"));
+
         testPostGet.setTags(tags);
     }
 
@@ -160,7 +152,7 @@ public class PostServiceImplTest {
         when(postDao.getPostById(anyLong())).thenReturn(testPostGet);
         Post post = postService.getPostById(anyLong());
         assertNotNull(post);
-        assertEquals(post.getTitle(), testPostForAdd.getTitle());
+        assertEquals(post.getTitle(), testRequestPostDto.getTitle());
         verify(postDao, times(1)).getPostById(anyLong());
         verify(tagService, times(1)).getAllTagsByPostId(anyLong());
         verify(validator, times(1)).validatePostId(anyLong());
@@ -183,17 +175,17 @@ public class PostServiceImplTest {
     @Test
     public void addPostSuccess() {
         when(postDao.addPost(any(Post.class))).thenReturn(2L);
-        assertEquals((Long) 2L, postService.addPost(testPostForAdd));
+        assertEquals((Long) 2L, postService.addPost(testRequestPostDto));
         verify(postDao, times(1)).addPost(any(Post.class));
-        verify(validator, times(testPostForAdd.getTags().size())).validateTagId(anyLong());
+        verify(validator, times(testRequestPostDto.getTags().size())).validateTagId(anyLong());
         verify(validator, times(1)).validateAuthorId(anyLong());
-        verify(postDao, times(testPostForAdd.getTags().size())).addTagToPost(anyLong(), anyLong());
+        verify(postDao, times(testRequestPostDto.getTags().size())).addTagToPost(anyLong(), anyLong());
     }
 
     @Test(expected = ValidationException.class)
     public void addPostWithIncorrectAuthorId() {
         doThrow(ValidationException.class).when(validator).validateAuthorId(anyLong());
-        postService.addPost(testPostForAdd);
+        postService.addPost(testRequestPostDto);
         verify(validator, times(1)).validateAuthorId(anyLong());
     }
 
@@ -201,7 +193,7 @@ public class PostServiceImplTest {
     public void addPostWithIncorrectTag() {
         doThrow(ValidationException.class).when(validator).validateTagId(anyLong());
         when(postDao.addPost(any(Post.class))).thenReturn(anyLong());
-        postService.addPost(testPostForAdd);
+        postService.addPost(testRequestPostDto);
         verify(postDao, times(1)).addPost(any(Post.class));
         verify(validator, times(1)).validateTagId(anyLong());
         verify(validator, times(1)).validateAuthorId(anyLong());
@@ -210,7 +202,7 @@ public class PostServiceImplTest {
     @Test(expected = NotFoundException.class)
     public void addPostWithNotExistAuthor() {
         doThrow(NotFoundException.class).when(validator).validateAuthorId(anyLong());
-        postService.addPost(testPostForAdd);
+        postService.addPost(testRequestPostDto);
         verify(validator, times(1)).validateAuthorId(anyLong());
     }
 
@@ -265,7 +257,7 @@ public class PostServiceImplTest {
 
     @Test
     public void updatePostSuccess() {
-        testPostForAdd.setTags(tagUpdated);
+        testRequestPostDto.setTags(tagUpdated);
         when(postDao.updatePost(any(Post.class))).thenReturn(true);
         when(postDao.checkTagInPostById(anyLong(), eq(2L))).thenReturn(true);
         when(postDao.checkTagInPostById(anyLong(), eq(3L))).thenReturn(true);
@@ -273,7 +265,7 @@ public class PostServiceImplTest {
         when(postDao.addTagToPost(anyLong(), anyLong())).thenReturn(true);
         when(postDao.deleteTagInPost(anyLong(), anyLong())).thenReturn(true);
         when(tagService.getAllTagsByPostId(anyLong())).thenReturn(tags);
-        postService.updatePost(testPostForAdd);
+        postService.updatePost(testRequestPostDto);
         verify(postDao, times(1)).updatePost(any(Post.class));
         verify(validator, times(1)).checkPost(any(Post.class));
         verify(tagService, times(1)).getAllTagsByPostId(anyLong());
@@ -284,7 +276,7 @@ public class PostServiceImplTest {
 
     @Test(expected = InternalServerException.class)
     public void updatePostWithNotUpdatedInDao() {
-        testPostForAdd.setTags(tagUpdated);
+        testRequestPostDto.setTags(tagUpdated);
         when(postDao.updatePost(any(Post.class))).thenReturn(false);
         when(postDao.checkTagInPostById(anyLong(), eq(2L))).thenReturn(true);
         when(postDao.checkTagInPostById(anyLong(), eq(3L))).thenReturn(true);
@@ -292,7 +284,7 @@ public class PostServiceImplTest {
         when(postDao.addTagToPost(anyLong(), anyLong())).thenReturn(true);
         when(postDao.deleteTagInPost(anyLong(), anyLong())).thenReturn(true);
         when(tagService.getAllTagsByPostId(anyLong())).thenReturn(tags);
-        postService.updatePost(testPostForAdd);
+        postService.updatePost(testRequestPostDto);
         verify(postDao, times(1)).updatePost(any(Post.class));
         verify(validator, times(1)).checkPost(any(Post.class));
         verify(tagService, times(1)).getAllTagsByPostId(anyLong());
@@ -303,12 +295,12 @@ public class PostServiceImplTest {
 
     @Test(expected = InternalServerException.class)
     public void updatePostWithNotAddedTagToPost() {
-        testPostForAdd.setTags(tagUpdated);
+        testRequestPostDto.setTags(tagUpdated);
         when(tagService.getAllTagsByPostId(anyLong())).thenReturn(tags);
         when(postDao.deleteTagInPost(anyLong(), anyLong())).thenReturn(true);
         when(postDao.addTagToPost(anyLong(), anyLong())).thenReturn(false);
 
-        postService.updatePost(testPostForAdd);
+        postService.updatePost(testRequestPostDto);
 
         verify(postDao, times(1)).updatePost(any(Post.class));
         verify(validator, times(1)).checkPost(any(Post.class));
@@ -320,10 +312,10 @@ public class PostServiceImplTest {
 
     @Test(expected = InternalServerException.class)
     public void updatePostWithNotDeletedTagFromPost() {
-        testPostForAdd.setTags(tagUpdated);
+        testRequestPostDto.setTags(tagUpdated);
         when(postDao.deleteTagInPost(anyLong(), anyLong())).thenReturn(false);
         when(tagService.getAllTagsByPostId(anyLong())).thenReturn(tags);
-        postService.updatePost(testPostForAdd);
+        postService.updatePost(testRequestPostDto);
         verify(postDao, times(1)).updatePost(any(Post.class));
         verify(validator, times(1)).checkPost(any(Post.class));
         verify(tagService, times(1)).getAllTagsByPostId(anyLong());

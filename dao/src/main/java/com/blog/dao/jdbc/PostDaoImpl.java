@@ -1,7 +1,7 @@
 package com.blog.dao.jdbc;
 
 import com.blog.Post;
-import com.blog.PostForGet;
+import com.blog.ResponsePostDto;
 import com.blog.dao.PostDao;
 import com.blog.dao.jdbc.mapper.PostRowMapper;
 import com.blog.dao.jdbc.mapper.PostShortRowMapper;
@@ -104,31 +104,31 @@ public class PostDaoImpl implements PostDao {
         this.postShortRowMapper = postShortRowMapper;
     }
 
-    public PostForGet getPostById(Long id) throws DataAccessException {
+    public ResponsePostDto getPostById(Long id) throws DataAccessException {
         LOGGER.debug("Get post by id = [{}] from database.", id);
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.queryForObject(getPostByIdSql, parameterSource, postRowMapper);
     }
 
-    public List<PostForGet> getAllPostsByAuthorId(Long authorId) throws DataAccessException {
+    public List<ResponsePostDto> getAllPostsByAuthorId(Long authorId) throws DataAccessException {
         LOGGER.debug("Get list of posts by author id = [{}] from database.", authorId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(AUTHOR_ID, authorId);
         return jdbcTemplate.query(getAllPostsByAuthorIdSql, parameterSource, (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
     }
 
-    public List<PostForGet> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws DataAccessException {
+    public List<ResponsePostDto> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws DataAccessException {
         LOGGER.debug("Get list of posts by initial = [{}] and quantity = [{}] from database.", initial, quantity);
         MapSqlParameterSource parameterSource = getParameterSourceForInitialAndQuantity(initial, quantity);
         return jdbcTemplate.query(getAllPostsByInitialIdAndQuantitySql, parameterSource, (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
     }
 
-    public List<PostForGet> getPostsByInitialIdAndQuantity(Long initial, Long quantity, String sort) throws DataAccessException {
+    public List<ResponsePostDto> getPostsByInitialIdAndQuantity(Long initial, Long quantity, String sort) throws DataAccessException {
         LOGGER.debug("Get list of posts by initial = [{}], quantity = [{}] and sort = [{}] from database.", initial, quantity, sort);
         MapSqlParameterSource parameterSource = getParameterSourceForInitialAndQuantity(initial, quantity);
         return jdbcTemplate.query(String.format(getAllPostsByInitialIdQuantityAndSortSql, sort), parameterSource, (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
     }
 
-    public List<PostForGet> getAllPostsByTagId(Long tagId) throws DataAccessException {
+    public List<ResponsePostDto> getAllPostsByTagId(Long tagId) throws DataAccessException {
         LOGGER.debug("Get list of posts by tag id = [{}] from database.", tagId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(TAG_ID, tagId);
         return jdbcTemplate.query(getAllPostsByTagSql, parameterSource, (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));

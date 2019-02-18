@@ -72,14 +72,18 @@ public class CommentDaoImpl implements CommentDao {
         LOGGER.debug("Get list of comments by initial = [{}], quantity = [{}] and postId = [{}] from database.", initial, size, postId);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue(POST_ID, postId);
-        parameterSource.addValue(INITIAL, initial);
+        parameterSource.addValue(INITIAL, initial - 1L);
         parameterSource.addValue(QUANTITY, size);
         return jdbcTemplate.query(selectByInitialIdAndQuantityCommentSql, parameterSource, (resultSet, i) -> commentRowMapper.mapRow(resultSet, i));
     }
 
     public Long addComment(Comment comment) throws DataAccessException {
         LOGGER.debug("Add new comment = [{}] to database.", comment);
-        MapSqlParameterSource parameterSource = getParameterSource(comment);
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
+        parameterSource.addValue(CREATED_DATE, comment.getTimeOfCreation());
+        parameterSource.addValue(AUTHOR_ID, comment.getAuthorId());
+        parameterSource.addValue(POST_ID, comment.getPostId());
+        parameterSource.addValue(TEXT, comment.getText());
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(addCommentSql, parameterSource, keyHolder, new String[]{ID});
         return keyHolder.getKey().longValue();
@@ -93,8 +97,9 @@ public class CommentDaoImpl implements CommentDao {
 
     public boolean updateComment(Comment comment) throws DataAccessException {
         LOGGER.debug("Update comment [{}] in database.", comment);
-        MapSqlParameterSource parameterSource = getParameterSource(comment);
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue(ID, comment.getId());
+        parameterSource.addValue(TEXT, comment.getText());
         return jdbcTemplate.update(updateCommentSql, parameterSource) == 1;
     }
 
@@ -123,12 +128,4 @@ public class CommentDaoImpl implements CommentDao {
         return jdbcTemplate.queryForObject(getAuthorIdByCommentIdSql, parameterSource, Long.class);
     }
 
-    private MapSqlParameterSource getParameterSource(Comment comment) {
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource();
-        parameterSource.addValue(AUTHOR_ID, comment.getAuthorId());
-        parameterSource.addValue(POST_ID, comment.getPostId());
-        parameterSource.addValue(CREATED_DATE, comment.getTimeOfCreation());
-        parameterSource.addValue(TEXT, comment.getText());
-        return parameterSource;
-    }
 }

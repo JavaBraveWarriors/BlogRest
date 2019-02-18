@@ -1,6 +1,6 @@
 package com.blog.dao.jdbc.mapper;
 
-import com.blog.PostForGet;
+import com.blog.ResponsePostDto;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
@@ -11,14 +11,14 @@ import java.sql.Timestamp;
 import static com.blog.dao.jdbc.mapper.PostRowMapper.*;
 
 @Component
-public class PostShortRowMapper implements RowMapper<PostForGet> {
+public class PostShortRowMapper implements RowMapper<ResponsePostDto> {
     @Override
-    public PostForGet mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public ResponsePostDto mapRow(ResultSet rs, int rowNum) throws SQLException {
         return rowFields(rs);
     }
 
-    public static PostForGet rowFields(ResultSet rs) throws SQLException {
-        PostForGet post = new PostForGet();
+    public static ResponsePostDto rowFields(ResultSet rs) throws SQLException {
+        ResponsePostDto post = new ResponsePostDto();
         post.setId(rs.getLong(ID));
         post.setTitle(rs.getString(TITLE));
         post.setDescription(rs.getString(DESCRIPTION));

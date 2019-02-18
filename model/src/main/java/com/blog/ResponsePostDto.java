@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-public class PostForGet extends Post {
+public class ResponsePostDto extends Post {
 
     private String authorName;
 
@@ -19,10 +19,10 @@ public class PostForGet extends Post {
 
     private List<Comment> comments;
 
-    public PostForGet() {
+    public ResponsePostDto() {
     }
 
-    public PostForGet(Long id, String title, String description, String text, String pathImage, Long authorId) {
+    public ResponsePostDto(Long id, String title, String description, String text, String pathImage, Long authorId) {
         super(id, title, description, text, pathImage, authorId);
     }
 
@@ -87,7 +87,7 @@ public class PostForGet extends Post {
 
     @Override
     public String toString() {
-        return "PostForGet{" +
+        return "ResponsePostDto{" +
                 "  id=" + id +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +

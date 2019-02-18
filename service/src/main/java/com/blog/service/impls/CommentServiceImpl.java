@@ -39,6 +39,13 @@ public class CommentServiceImpl implements CommentService {
         this.commentDao = commentDao;
     }
 
+    @Override
+    public Comment getCommentById(Long commentId) throws ValidationException, NotFoundException {
+        LOGGER.debug("Gets comment by id = [{}].", commentId);
+        validator.validateCommentId(commentId);
+        return commentDao.getCommentById(commentId);
+    }
+
     public CommentListWrapper getListCommentsByPostIdWithPagination(Long page, Long size, Long postId) throws ValidationException, NotFoundException {
         LOGGER.debug("Gets list of comments by page id = [{}], size = [{}] and postId = [{}].", page, size, postId);
         validator.validatePageAndSize(page, size);
@@ -57,6 +64,7 @@ public class CommentServiceImpl implements CommentService {
         LOGGER.debug("Adds new comment = [{}].", comment);
         validator.validatePostId(comment.getPostId());
         validator.validateAuthorId(comment.getAuthorId());
+        validator.validateCommentText(comment.getText());
         comment.setTimeOfCreation(LocalDateTime.now());
         return commentDao.addComment(comment);
     }
@@ -73,5 +81,17 @@ public class CommentServiceImpl implements CommentService {
         validator.validateCommentId(commentId);
         if (!commentDao.deleteComment(commentId))
             throw new InternalServerException(updateError);
+    }
+
+    public Long getCountOfPagesWithPagination(Long postId, Long size) throws ValidationException, NotFoundException {
+        LOGGER.debug("Gets counts of pages comments in post id = [{}].", postId);
+        validator.validatePostId(postId);
+        validator.validateSizeOfPages(size);
+        Long countOfPosts = commentDao.getCountOfCommentsByPostId(postId);
+        Long countOfPages = countOfPosts / size;
+        if (countOfPosts % size != 0) {
+            countOfPages++;
+        }
+        return countOfPages;
     }
 }

@@ -1,10 +1,13 @@
 package com.blog.controller;
 
+import com.blog.Comment;
 import com.blog.CommentListWrapper;
 import com.blog.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/comments")
@@ -20,9 +23,16 @@ public class CommentRestController {
         this.commentService = commentService;
     }
 
-    @GetMapping("/")
+    @GetMapping("/{commentId}")
     @ResponseStatus(value = HttpStatus.OK)
-    CommentListWrapper getListCommentsByPostIdWithPagination(
+    public Comment getCommentById(
+            @PathVariable(value = "commentId") Long commentId){
+        return commentService.getCommentById(commentId);
+    }
+
+    @GetMapping("")
+    @ResponseStatus(value = HttpStatus.OK)
+    public CommentListWrapper getListCommentsByPostIdWithPagination(
             @RequestParam(value = "page", required = false) Long page,
             @RequestParam(value = "size", required = false) Long size,
             @RequestParam(value = "postId") Long postId) {
@@ -35,4 +45,17 @@ public class CommentRestController {
         return commentService.getListCommentsByPostIdWithPagination(page, size, postId);
     }
 
+    @GetMapping("/count")
+    @ResponseStatus(value = HttpStatus.OK)
+    public Long getCountOfCommentsByPostId(
+            @RequestParam(value = "size") Long size,
+            @RequestParam(value = "postId") Long postId){
+        return commentService.getCountOfPagesWithPagination(postId, size);
+    }
+
+    @PutMapping("")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void updateComment(@Valid @RequestBody Comment comment){
+        commentService.updateComment(comment);
+    }
 }

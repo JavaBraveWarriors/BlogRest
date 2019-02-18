@@ -46,24 +46,24 @@ public interface PostService {
     PostListWrapper getAllPostsByTagId(Long tagId) throws ValidationException, NotFoundException;
 
     /**
-     * Gets a {PostForGet} object where id is equal to argument parameter.
+     * Gets a {ResponsePostDto} object where id is equal to argument parameter.
      *
      * @param postId {Long} value the ID of the post you want to get.
      * @return {Post} is a object which has this ID.
      * @throws ValidationException Will throw an error if postId is not valid.
      * @throws NotFoundException   Will throw an error if not found post with this postId in database.
      */
-    PostForGet getPostById(Long postId) throws ValidationException, NotFoundException;
+    ResponsePostDto getPostById(Long postId) throws ValidationException, NotFoundException;
 
     /**
      * Add new post.
      *
-     * @param post {PostForAdd} to be added.
+     * @param post {RequestPostDto} to be added.
      * @return {Long} is the value that is the id of the new post.
      * @throws ValidationException Will throw an error if authorId or list of tags is not valid.
      * @throws NotFoundException   Will throw an error if not found author or one of the tag list items in database.
      */
-    Long addPost(PostForAdd post) throws ValidationException, NotFoundException;
+    Long addPost(RequestPostDto post) throws ValidationException, NotFoundException;
 
     /**
      * Add tag to post.
@@ -79,12 +79,12 @@ public interface PostService {
     /**
      * Update post.
      *
-     * @param post {PostForAdd} to be updated.
+     * @param post {RequestPostDto} to be updated.
      * @throws ValidationException     Will throw an error if authorId or list of tags is not valid.
      * @throws NotFoundException       Will throw an error if not found post or one of the tag list items in database.
      * @throws InternalServerException Will throw an error if post or tags in post is not updated.
      */
-    void updatePost(PostForAdd post) throws ValidationException, NotFoundException, InternalServerException;
+    void updatePost(RequestPostDto post) throws ValidationException, NotFoundException, InternalServerException;
 
     /**
      * Deletes post using post ID.

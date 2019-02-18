@@ -113,15 +113,15 @@ public class PostServiceImpl implements PostService {
         return postListWrapper;
     }
 
-    public PostForGet getPostById(Long postId) {
+    public ResponsePostDto getPostById(Long postId) {
         LOGGER.debug("Gets post by id = [{}].", postId);
         validator.validatePostId(postId);
-        PostForGet post = postDao.getPostById(postId);
+        ResponsePostDto post = postDao.getPostById(postId);
         post.setTags(tagService.getAllTagsByPostId(post.getId()));
         return post;
     }
 
-    public Long addPost(PostForAdd post) {
+    public Long addPost(RequestPostDto post) {
         LOGGER.debug("Adds new post = [{}].", post);
         validator.validateAuthorId(post.getAuthorId());
         post.setTimeOfCreation(LocalDateTime.now());
@@ -142,7 +142,7 @@ public class PostServiceImpl implements PostService {
             throw new InternalServerException(addTagToPost);
     }
 
-    public void updatePost(PostForAdd post) {
+    public void updatePost(RequestPostDto post) {
         LOGGER.debug("Updates post = [{}].", post);
         validator.checkPost(post);
         validator.validateTags(post.getTags());
@@ -168,12 +168,12 @@ public class PostServiceImpl implements PostService {
             throw new InternalServerException(deleteTagInPost);
     }
 
-    private void updatePostTags(PostForAdd post, List<Tag> postTags) {
+    private void updatePostTags(RequestPostDto post, List<Tag> postTags) {
         removeTagInPost(post, postTags);
         addTagsToPost(post);
     }
 
-    private void removeTagInPost(PostForAdd post, List<Tag> postTags) {
+    private void removeTagInPost(RequestPostDto post, List<Tag> postTags) {
         postTags.forEach(tag -> {
             if (post.getTags().stream().noneMatch(t -> t.equals(tag.getId()))) {
                 if (!postDao.deleteTagInPost(post.getId(), tag.getId()))
@@ -182,7 +182,7 @@ public class PostServiceImpl implements PostService {
         });
     }
 
-    private void addTagsToPost(PostForAdd post) {
+    private void addTagsToPost(RequestPostDto post) {
         post.getTags().forEach(tag -> {
             if (!postDao.checkTagInPostById(post.getId(), tag)) {
                 if (!postDao.addTagToPost(post.getId(), tag))
@@ -191,7 +191,7 @@ public class PostServiceImpl implements PostService {
         });
     }
 
-    private void addDataInPosts(List<PostForGet> posts) {
+    private void addDataInPosts(List<ResponsePostDto> posts) {
         posts.forEach(post -> post.setTags(tagService.getAllTagsByPostId(post.getId())));
     }
 }
