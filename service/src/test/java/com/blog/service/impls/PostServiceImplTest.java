@@ -154,7 +154,7 @@ public class PostServiceImplTest {
     @Test
     public void getPostByIdSuccess() {
         when(postDao.getPostById(anyLong())).thenReturn(testPostGet);
-        when(viewDao.checkViewByPostIdAndUserId(anyLong(), anyLong())).thenReturn(false);
+        //when(viewDao.checkViewByPostIdAndUserId(anyLong(), anyLong())).thenReturn(false);
         Post post = postService.getPostById(anyLong());
         assertNotNull(post);
         assertEquals(post.getTitle(), testRequestPostDto.getTitle());
