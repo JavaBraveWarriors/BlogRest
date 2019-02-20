@@ -6,7 +6,6 @@ import com.blog.dao.jdbc.CommentDaoImpl;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
-import org.springframework.dao.DataAccessException;
 
 /**
  * This interface defines various ways to manage object comment with the correct business model.
