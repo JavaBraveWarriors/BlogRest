@@ -89,7 +89,7 @@ public class ViewDaoImpl implements ViewDao {
     }
 
     private MapSqlParameterSource getParameterSource(Long initial, Long size) {
-        MapSqlParameterSource parameterSource = new MapSqlParameterSource(INITIAL, initial);
+        MapSqlParameterSource parameterSource = new MapSqlParameterSource(INITIAL, initial - 1L);
         parameterSource.addValue(QUANTITY, size);
         return parameterSource;
     }

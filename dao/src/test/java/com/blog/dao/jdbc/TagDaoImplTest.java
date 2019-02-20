@@ -23,6 +23,7 @@ public class TagDaoImplTest {
     private static Long CORRECT_TAG_UPDATED_ID = 2L;
     private static Long INCORRECT_TAG_ID = 7L;
     private static Long CORRECT_POST_ID = 1L;
+    private static int COUNT_TAGS_IN_DB = 5;
 
     private static Long NEW_TAG_ID = 6L;
     private static String NEW_TAG_TITLE = "newTitle4";
@@ -44,7 +45,7 @@ public class TagDaoImplTest {
         List<Tag> tags = tagDao.getAllTags();
 
         assertNotNull(tags);
-        assertEquals(5, tags.size());
+        assertEquals(COUNT_TAGS_IN_DB, tags.size());
     }
 
     @Test
