@@ -1,4 +1,7 @@
 # BlogRest
+[![Build Status](https://travis-ci.org/JavaBraveWarriors/BlogRest.svg?branch=master)](https://travis-ci.org/JavaBraveWarriors/BlogRest)
+[![Coverage Status](https://coveralls.io/repos/github/JavaBraveWarriors/BlogRest/badge.svg?branch=refactoringApi)](https://coveralls.io/github/JavaBraveWarriors/BlogRest?branch=refactoringApi)
+
 This application is used to create and manage a blog.
 The technical task is described in [Technical Task][1]
 
