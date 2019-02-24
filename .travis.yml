@@ -4,12 +4,11 @@ install: true
 
 addons:
   sonarcloud:
-    organization: $organizationName
+    organization: ${organizationName}
     token:
-      secure: $token
+      secure: ${token}
 jdk:
   - oraclejdk8
-
 script:
   - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:scanner
 
