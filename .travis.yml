@@ -10,7 +10,7 @@ addons:
 jdk:
   - oraclejdk8
 script:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:scanner
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent verify sonar:sonar
 
 cache:
   directories:
