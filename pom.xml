@@ -14,6 +14,7 @@
         <module>service</module>
         <module>model</module>
         <module>rest</module>
+        <module>jmsConsumer</module>
     </modules>
 
     <profiles>
@@ -64,6 +65,8 @@
         <coveralls-maven-plugin.version>4.3.0</coveralls-maven-plugin.version>
         <maven-project-info-reports-plugin.version>2.9</maven-project-info-reports-plugin.version>
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
+        <activemq.version>5.8.0</activemq.version>
+        <javax.jms.version>2.0</javax.jms.version>
     </properties>
 
     <dependencyManagement>
@@ -87,6 +90,11 @@
             <dependency>
                 <groupId>com.blog</groupId>
                 <artifactId>rest</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.blog</groupId>
+                <artifactId>jmsConsumer</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!--spring-->
@@ -227,6 +235,28 @@
                 <groupId>javax.persistence</groupId>
                 <artifactId>javax.persistence-api</artifactId>
                 <version>${persistence-api.version}</version>
+            </dependency>
+
+            <!--jms-->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jms</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.jms</groupId>
+                <artifactId>javax.jms-api</artifactId>
+                <version>${javax.jms.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-spring</artifactId>
+                <version>${activemq.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.activemq</groupId>
+                <artifactId>activemq-core</artifactId>
+                <version>5.7.0</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
