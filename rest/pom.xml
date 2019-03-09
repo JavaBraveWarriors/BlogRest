@@ -19,6 +19,10 @@
         </dependency>
         <dependency>
             <groupId>com.blog</groupId>
+            <artifactId>jmsConsumer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.blog</groupId>
             <artifactId>model</artifactId>
         </dependency>
         <dependency>
@@ -118,11 +122,11 @@
 
     <build>
         <filters>
-            <filter>src/main/resources/${spring.profiles.active}/database.properties </filter>
+            <filter>src/main/resources/${spring.profiles.active}/database.properties</filter>
         </filters>
         <resources>
             <resource>
-                <directory>src/main/resources</directory>
+                <directory>resources</directory>
                 <filtering>true</filtering>
             </resource>
         </resources>

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
@@ -26,8 +27,8 @@ import java.util.Map;
 @Configuration
 @EnableJms
 @PropertySource({
-        "classpath:queue.properties",
-        "classpath:activeMQ.properties"
+        "classpath*:queue.properties",
+        "classpath*:activeMQ.properties"
 })
 public class MessagingConfiguration {
 
@@ -42,6 +43,15 @@ public class MessagingConfiguration {
 
     @Value("${queue.tag}")
     private String TAG_QUEUE;
+
+    @Value("${queue.comment}")
+    private String COMMENT_QUEUE;
+
+    @Value("${queue.default}")
+    private String DEFAULT_QUEUE;
+
+    @Value("${queue.responseComment}")
+    private String COMMENT_RESPONSE_QUEUE;
 
     @Bean
     public ActiveMQConnectionFactory connectionFactory() {
@@ -60,9 +70,25 @@ public class MessagingConfiguration {
         return template;
     }
 
+    @Bean("default")
+    public Queue defaultQueue() {
+        return new ActiveMQQueue(DEFAULT_QUEUE);
+    }
+
+    @Bean("responseComment")
+    @Lazy
+    public Queue responseComment() {
+        return new ActiveMQQueue(COMMENT_RESPONSE_QUEUE);
+    }
+
     @Bean("tag")
-    public Queue queue() {
+    public Queue tagQueue() {
         return new ActiveMQQueue(TAG_QUEUE);
+    }
+
+    @Bean("comment")
+    public Queue commentQueue() {
+        return new ActiveMQQueue(COMMENT_QUEUE);
     }
 
     @Bean(name = "jmsTopicTemplate")
@@ -70,7 +96,7 @@ public class MessagingConfiguration {
         JmsTemplate template = new JmsTemplate(cachingConnectionFactory());
         template.setConnectionFactory(connectionFactory());
         template.setPubSubDomain(true);
-        template.setDefaultDestination(queue());
+        template.setDefaultDestination(defaultQueue());
         return template;
     }
 

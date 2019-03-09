@@ -13,7 +13,6 @@ import org.springframework.stereotype.Component;
 public class TagConsumer {
 
     private static final Logger LOGGER = LogManager.getLogger();
-    private static final String TAG_QUEUE = "tag.queue";
 
     private TagService tagService;
 
@@ -22,7 +21,7 @@ public class TagConsumer {
         this.tagService = tagService;
     }
 
-    @JmsListener(destination = TAG_QUEUE)
+    @JmsListener(destination = "${tag.queue}")
     public void receiveMessage(Message<Tag> message) {
         LOGGER.debug("Add new Tag from queue [{}]", message.getPayload());
         tagService.addTag(message.getPayload());
