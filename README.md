@@ -52,7 +52,10 @@ mvn -Pprod tomcat7:redeploy
 * [Spring Framework 5.1.3.RELEASE][5]
 * [Maven 3][6]
 * [Docker 17.05.0-ce][7]
+* [Docker-compose 1.23.2][9]
 * [Java 8][4]
+* [ActiveMQ 5.15.8][10]
+
 
 ### Links
 * How setup deploy a real environment [Docker Containers Setup][3]
@@ -65,3 +68,5 @@ mvn -Pprod tomcat7:redeploy
 [6]: https://maven.apache.org/guides/
 [7]: https://docs.docker.com/
 [8]: docs/Specification.md
+[9]: https://docs.docker.com/compose/
+[10]: http://activemq.apache.org/

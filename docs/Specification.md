@@ -1,8 +1,8 @@
-##Introduction
+## Introduction
 It is required to create a working prototype of a Web application for working with users and publications.
 The application must implement the [functions][1].
 
-##1. Tag
+## 1. Tag
 #### 1.1 View Tag List
 This program mode is intended for viewing a list of tags.
 
@@ -27,7 +27,7 @@ The main scenario:
 * If the data is correct, the tag is added to the database;
 * If there was an error saving the data, an error message is displayed;
 * If the role is successfully added, the form of viewing the list of roles with the updated data opens.
-
+![image](images/addTag.png)
 Cancellation scenario:
 * The user, being in the mode of viewing the list of tags, clicks the "Add" button;
 * Displays the form of adding the tag;
@@ -47,6 +47,7 @@ The main scenario:
 * If the data is correct, the database is updated;
 * If there was an error saving the data, an error message is displayed;
 * If the tag is successfully updated, a form for viewing the list of tags with updated data opens.
+![image](images/updateTag.png)
 Cancellation scenario:
 * The user, being in the mode of viewing the list of tags, clicks the "Edit" button in the row of the selected tag;
 * A tag editing form is displayed;
@@ -64,6 +65,7 @@ The main scenario:
 * The tag is deleted in the database;
 * If an error occurred during deletion, the corresponding message is displayed;
 * If the tag is deleted successfully, the form of viewing tags with the updated data opens.
+![image](images/deleteTag.png)
 
 Cancellation scenario:
 * The user, being in the mode of viewing the list of tags, clicks the "Delete" button in the row of the selected tag;
@@ -71,9 +73,9 @@ Cancellation scenario:
 * User clicks 'No';
 * The tag viewer page with not updated data opens.
 
-##2. Post
+## 2. Post
 
-####2.1 View the list of posts
+#### 2.1 View the list of posts
 The main scenario:
 The user selects the menu item "posts"
 Displaying the form for viewing the list of all posts. List of all posts
