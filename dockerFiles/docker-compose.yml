@@ -5,6 +5,7 @@ app:
     - "8888:8888"
   links:
     - db
+    - activemq
 db:
   build: ./dbSetup/
   container_name: yam_mysql
@@ -13,3 +14,10 @@ db:
   environment:
     MYSQL_REMOTE_HOST: db
     MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+activemq:
+  build: ./activeMQSetup/
+  container_name: yam_activeMQ
+  ports:
+    - "61616:61616"
+    - "8161:8161"
+
