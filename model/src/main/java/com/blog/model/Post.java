@@ -1,5 +1,4 @@
-package com.blog;
-
+package com.blog.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -9,7 +8,6 @@ import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 public class Post {
@@ -36,7 +34,6 @@ public class Post {
 
     @NotNull
     protected Long authorId;
-
 
     public Post() {
     }

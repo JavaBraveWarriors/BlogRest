@@ -1,8 +1,8 @@
 package com.blog.service.impls;
 
-import com.blog.Tag;
 import com.blog.dao.TagDao;
 import com.blog.exception.InternalServerException;
+import com.blog.model.Tag;
 import com.blog.service.TagService;
 import com.blog.validator.Validator;
 import org.apache.logging.log4j.LogManager;

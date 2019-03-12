@@ -1,8 +1,8 @@
 package com.blog.dao.jdbc;
 
-import com.blog.View;
 import com.blog.dao.ViewDao;
 import com.blog.dao.jdbc.mapper.ViewRowMapper;
+import com.blog.model.View;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

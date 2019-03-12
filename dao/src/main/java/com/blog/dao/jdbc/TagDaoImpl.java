@@ -1,8 +1,8 @@
 package com.blog.dao.jdbc;
 
-import com.blog.Tag;
 import com.blog.dao.TagDao;
 import com.blog.dao.jdbc.mapper.TagRowMapper;
+import com.blog.model.Tag;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

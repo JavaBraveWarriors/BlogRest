@@ -1,6 +1,6 @@
 package com.blog.it;
 
-import com.blog.Tag;
+import com.blog.model.Tag;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.http.*;

@@ -1,10 +1,10 @@
 package com.blog.service.impls;
 
-import com.blog.Comment;
-import com.blog.CommentListWrapper;
 import com.blog.dao.CommentDao;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.ValidationException;
+import com.blog.model.Comment;
+import com.blog.model.CommentListWrapper;
 import com.blog.validator.Validator;
 import org.junit.BeforeClass;
 import org.junit.Test;

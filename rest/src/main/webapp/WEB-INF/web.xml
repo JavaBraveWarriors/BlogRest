@@ -7,7 +7,6 @@
     <servlet>
         <servlet-name>blog-rest-api</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
-
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>classpath:spring-rest-context.xml</param-value>

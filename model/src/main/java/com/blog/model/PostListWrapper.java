@@ -1,4 +1,4 @@
-package com.blog;
+package com.blog.model;
 
 import java.util.List;
 

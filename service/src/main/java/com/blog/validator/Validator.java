@@ -1,23 +1,21 @@
 package com.blog.validator;
 
-import com.blog.Author;
-import com.blog.Comment;
-import com.blog.Post;
-import com.blog.Tag;
 import com.blog.dao.AuthorDao;
 import com.blog.dao.CommentDao;
 import com.blog.dao.PostDao;
 import com.blog.dao.TagDao;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
-import com.blog.service.TagService;
+import com.blog.model.Author;
+import com.blog.model.Comment;
+import com.blog.model.Post;
+import com.blog.model.Tag;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Component

@@ -1,7 +1,7 @@
 package com.blog.dao;
 
-import com.blog.Comment;
 import com.blog.dao.jdbc.CommentDaoImpl;
+import com.blog.model.Comment;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;

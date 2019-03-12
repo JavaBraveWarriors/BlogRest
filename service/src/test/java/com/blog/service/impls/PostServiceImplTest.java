@@ -1,11 +1,11 @@
 package com.blog.service.impls;
 
-import com.blog.*;
 import com.blog.dao.PostDao;
 import com.blog.dao.ViewDao;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
+import com.blog.model.*;
 import com.blog.service.TagService;
 import com.blog.validator.Validator;
 import org.junit.BeforeClass;

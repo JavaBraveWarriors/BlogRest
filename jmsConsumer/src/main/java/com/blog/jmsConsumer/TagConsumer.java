@@ -1,6 +1,6 @@
 package com.blog.jmsConsumer;
 
-import com.blog.Tag;
+import com.blog.model.Tag;
 import com.blog.service.TagService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -21,8 +21,8 @@ public class TagConsumer {
         this.tagService = tagService;
     }
 
-    @JmsListener(destination = "${tag.queue}")
-    public void receiveMessage(Message<Tag> message) {
+    @JmsListener(destination = "${queue.tag}")
+    public void receiveTagToAdd(Message<Tag> message) {
         LOGGER.debug("Add new Tag from queue [{}]", message.getPayload());
         tagService.addTag(message.getPayload());
     }

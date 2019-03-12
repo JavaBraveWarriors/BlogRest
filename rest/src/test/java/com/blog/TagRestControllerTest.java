@@ -5,6 +5,7 @@ import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
 import com.blog.handler.RestErrorHandler;
+import com.blog.model.Tag;
 import com.blog.service.TagService;
 import org.junit.Before;
 import org.junit.Test;

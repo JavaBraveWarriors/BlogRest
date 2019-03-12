@@ -1,15 +1,15 @@
 package com.blog.validator;
 
-import com.blog.Author;
-import com.blog.Comment;
-import com.blog.Post;
-import com.blog.Tag;
 import com.blog.dao.AuthorDao;
 import com.blog.dao.CommentDao;
 import com.blog.dao.PostDao;
 import com.blog.dao.TagDao;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
+import com.blog.model.Author;
+import com.blog.model.Comment;
+import com.blog.model.Post;
+import com.blog.model.Tag;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -1,7 +1,8 @@
 package com.blog.config;
 
-import com.blog.Tag;
+import com.blog.model.Tag;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,8 +28,8 @@ import java.util.Map;
 @Configuration
 @EnableJms
 @PropertySource({
-        "classpath*:queue.properties",
-        "classpath*:activeMQ.properties"
+        "classpath:queue.properties",
+        "classpath:dev/activeMQ.properties"
 })
 public class MessagingConfiguration {
 
@@ -132,6 +133,13 @@ public class MessagingConfiguration {
         messageConverter.setTargetType(MessageType.TEXT);
         messageConverter.setTypeIdPropertyName("_type");
         return messageConverter;
+    }
+
+    @Bean
+    public ObjectMapper getObjectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
     }
 
     private Map<String, Class<?>> getClassSerializationId() {

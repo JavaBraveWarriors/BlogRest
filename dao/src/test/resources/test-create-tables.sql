@@ -62,7 +62,6 @@ CREATE TABLE `post_has_tag`
   DEFAULT CHARSET = utf8;
 
 DROP TABLE IF EXISTS `view`;
-
 CREATE TABLE `view`
 (
   `view_id`   bigint(11) unsigned NOT NULL AUTO_INCREMENT,

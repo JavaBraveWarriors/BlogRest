@@ -1,10 +1,10 @@
 package com.blog.service;
 
-import com.blog.Author;
 import com.blog.dao.jdbc.AuthorDaoImpl;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
+import com.blog.model.Author;
 
 import java.util.List;
 

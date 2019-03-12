@@ -18,8 +18,6 @@
                 <value>classpath:sql-queries.properties</value>
                 <value>classpath:message.properties</value>
                 <value>classpath:test-database-it.properties</value>
-                <value>classpath*:queue.properties</value>
-                <value>classpath*:activeMQ.properties</value>
             </list>
         </property>
     </bean>

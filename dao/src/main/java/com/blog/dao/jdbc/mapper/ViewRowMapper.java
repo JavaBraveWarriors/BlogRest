@@ -1,6 +1,6 @@
 package com.blog.dao.jdbc.mapper;
 
-import com.blog.View;
+import com.blog.model.View;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 

@@ -1,6 +1,6 @@
 package com.blog.dao.jdbc.mapper;
 
-import com.blog.ResponsePostDto;
+import com.blog.model.ResponsePostDto;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 

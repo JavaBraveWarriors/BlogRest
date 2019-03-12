@@ -1,6 +1,6 @@
 package com.blog.dao;
 
-import com.blog.View;
+import com.blog.model.View;
 
 import java.util.List;
 
