@@ -1,7 +1,7 @@
 package com.blog.controller;
 
-import com.blog.Author;
-import com.blog.PostListWrapper;
+import com.blog.model.Author;
+import com.blog.model.PostListWrapper;
 import com.blog.service.AuthorService;
 import com.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;

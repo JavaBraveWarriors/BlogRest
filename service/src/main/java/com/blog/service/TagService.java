@@ -1,10 +1,10 @@
 package com.blog.service;
 
-import com.blog.Tag;
 import com.blog.dao.jdbc.TagDaoImpl;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
+import com.blog.model.Tag;
 
 import java.util.List;
 

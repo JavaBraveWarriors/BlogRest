@@ -1,7 +1,7 @@
 package com.blog.dao;
 
-import com.blog.Author;
 import com.blog.dao.jdbc.AuthorDaoImpl;
+import com.blog.model.Author;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;

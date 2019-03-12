@@ -1,7 +1,7 @@
 package com.blog.it;
 
-import com.blog.Author;
-import com.blog.PostListWrapper;
+import com.blog.model.Author;
+import com.blog.model.PostListWrapper;
 import com.blog.response.ExceptionResponse;
 import org.junit.BeforeClass;
 import org.junit.Test;

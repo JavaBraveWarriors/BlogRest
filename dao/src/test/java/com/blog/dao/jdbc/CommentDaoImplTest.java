@@ -1,7 +1,7 @@
 package com.blog.dao.jdbc;
 
-import com.blog.Comment;
 import com.blog.dao.CommentDao;
+import com.blog.model.Comment;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

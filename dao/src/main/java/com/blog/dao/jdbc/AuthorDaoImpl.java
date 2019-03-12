@@ -1,8 +1,8 @@
 package com.blog.dao.jdbc;
 
-import com.blog.Author;
 import com.blog.dao.AuthorDao;
 import com.blog.dao.jdbc.mapper.AuthorRowMapper;
+import com.blog.model.Author;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

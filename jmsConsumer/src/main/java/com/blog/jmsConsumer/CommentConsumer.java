@@ -1,6 +1,6 @@
 package com.blog.jmsConsumer;
 
-import com.blog.Comment;
+import com.blog.model.Comment;
 import com.blog.service.CommentService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -19,6 +19,7 @@ import javax.jms.TextMessage;
 public class CommentConsumer {
 
     private static final Logger LOGGER = LogManager.getLogger();
+    public static final String CREATED_STATUS = "Created";
 
     private JmsTemplate jmsTemplate;
     private Queue responseCommentQueue;
@@ -36,11 +37,22 @@ public class CommentConsumer {
     @JmsListener(destination = "${queue.comment}")
     public void receiveOrder(Message<Comment> commentMessage,
                              @Header(JmsHeaders.MESSAGE_ID) String messageId) {
+        LOGGER.debug("Add new Comment from queue [{}]", commentMessage.getPayload());
+        String responseMessage = CREATED_STATUS;
+        try {
+            commentService.addComment(commentMessage.getPayload());
+        } catch (RuntimeException ex) {
+            LOGGER.error("Could not add new comment exception = [{}]", ex.toString());
+            responseMessage = ex.toString();
+        }
+        sendResponseToAddComment(messageId, responseMessage);
+    }
 
-        commentService.addComment(commentMessage.getPayload());
+    private void sendResponseToAddComment(final String messageId, final String responseMessage) {
+        LOGGER.debug("Send response after attempt to add comment [{}]", responseMessage);
         jmsTemplate.send(responseCommentQueue, messageCreator -> {
             TextMessage message =
-                    messageCreator.createTextMessage("Accepted");
+                    messageCreator.createTextMessage(responseMessage);
             message.setJMSCorrelationID(messageId);
             return message;
         });

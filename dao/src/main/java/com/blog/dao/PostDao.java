@@ -1,8 +1,8 @@
 package com.blog.dao;
 
-import com.blog.Post;
-import com.blog.ResponsePostDto;
 import com.blog.dao.jdbc.PostDaoImpl;
+import com.blog.model.Post;
+import com.blog.model.ResponsePostDto;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;

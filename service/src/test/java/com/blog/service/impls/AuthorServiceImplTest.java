@@ -1,10 +1,10 @@
 package com.blog.service.impls;
 
-import com.blog.Author;
 import com.blog.dao.AuthorDao;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
+import com.blog.model.Author;
 import com.blog.validator.Validator;
 import org.junit.Test;
 import org.junit.runner.RunWith;

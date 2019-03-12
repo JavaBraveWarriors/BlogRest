@@ -1,10 +1,10 @@
 package com.blog.service;
 
-import com.blog.*;
 import com.blog.dao.jdbc.PostDaoImpl;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
+import com.blog.model.*;
 
 /**
  * This interface defines various ways to manage object post with the correct business model.

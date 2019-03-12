@@ -1,8 +1,8 @@
 package com.blog.dao.jdbc;
 
-import com.blog.Post;
-import com.blog.ResponsePostDto;
 import com.blog.dao.PostDao;
+import com.blog.model.Post;
+import com.blog.model.ResponsePostDto;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

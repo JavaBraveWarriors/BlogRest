@@ -1,7 +1,7 @@
 package com.blog.dao;
 
-import com.blog.Tag;
 import com.blog.dao.jdbc.TagDaoImpl;
+import com.blog.model.Tag;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;

@@ -1,9 +1,9 @@
 package com.blog.service.impls;
 
-import com.blog.*;
 import com.blog.dao.PostDao;
 import com.blog.dao.ViewDao;
 import com.blog.exception.InternalServerException;
+import com.blog.model.*;
 import com.blog.service.CommentService;
 import com.blog.service.PostService;
 import com.blog.service.TagService;

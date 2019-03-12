@@ -1,5 +1,4 @@
-package com.blog;
-
+package com.blog.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

@@ -1,7 +1,7 @@
 package com.blog.dao.jdbc;
 
-import com.blog.Tag;
 import com.blog.dao.TagDao;
+import com.blog.model.Tag;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,8 @@
 package com.blog.it;
 
-import com.blog.Post;
-import com.blog.RequestPostDto;
-import com.blog.PostListWrapper;
+import com.blog.model.Post;
+import com.blog.model.PostListWrapper;
+import com.blog.model.RequestPostDto;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.http.*;

@@ -1,10 +1,10 @@
 package com.blog.dao.jdbc;
 
-import com.blog.Post;
-import com.blog.ResponsePostDto;
 import com.blog.dao.PostDao;
 import com.blog.dao.jdbc.mapper.PostRowMapper;
 import com.blog.dao.jdbc.mapper.PostShortRowMapper;
+import com.blog.model.Post;
+import com.blog.model.ResponsePostDto;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;

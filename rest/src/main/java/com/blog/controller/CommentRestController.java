@@ -1,7 +1,7 @@
 package com.blog.controller;
 
-import com.blog.Comment;
-import com.blog.CommentListWrapper;
+import com.blog.model.Comment;
+import com.blog.model.CommentListWrapper;
 import com.blog.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
