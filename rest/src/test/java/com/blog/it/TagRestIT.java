@@ -16,7 +16,7 @@ public class TagRestIT extends AbstractTestIT {
 
     private static String CORRECT_TAG_ID = "1";
     private static String DELETED_TAG_ID = "4";
-    private static String NOT_EXIST_TAG_ID = "8";
+    private static String NOT_EXIST_TAG_ID = "1238";
     private static String INCORRECT_TAG_ID = "-1";
     private static String NULL = "";
     private static String SLASH = "/";

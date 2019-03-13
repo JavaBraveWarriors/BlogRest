@@ -18,6 +18,7 @@
                 <value>classpath:sql-queries.properties</value>
                 <value>classpath:message.properties</value>
                 <value>classpath:test-database-it.properties</value>
+                <value>classpath:activeMQ-test.properties</value>
             </list>
         </property>
     </bean>
@@ -44,6 +45,9 @@
     <bean class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
         <constructor-arg ref="dataSource"/>
     </bean>
+
+    <bean class="com.blog.it.config.JmsConfig"/>
+    <bean class="com.blog.it.config.BrokerServiceConfig"/>
 
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
         <property name="messageConverters">
