@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -30,6 +29,7 @@ import static com.blog.dao.jdbc.mapper.TagRowMapper.*;
  * @author Aliaksandr Yeutushenka
  * @see TagDao
  * @see TagRowMapper
+ * @see TagDtoRowMapper
  */
 @Repository
 public class TagDaoImpl implements TagDao {
@@ -89,19 +89,19 @@ public class TagDaoImpl implements TagDao {
         return jdbcTemplate.query(getAllTagsSql, tagRowMapper);
     }
 
-    public Tag getTagById(Long id) {
+    public Tag getTagById(final Long id) {
         LOGGER.debug("Get tag by id = [{}] from database.", id);
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.queryForObject(getTagByIdSql, parameterSource, tagRowMapper);
     }
 
-    public List<TagDto> getAllTagsByPostsId(Set<Long> postsId) throws DataAccessException {
+    public List<TagDto> getAllTagsByPostsId(final Set<Long> postsId) {
         LOGGER.debug("Get all tags by post id = [{}] from database.", postsId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(POST_ID, postsId);
         return jdbcTemplate.query(selectAllByPostId, parameterSource, ((rs, rowNum) -> tagDtoRowMapper.mapRow(rs, rowNum)));
     }
 
-    public Long addTag(final Tag tag) throws DataAccessException {
+    public Long addTag(final Tag tag) {
         LOGGER.debug("Add new tag [{}] in database.", tag);
         KeyHolder keyHolder = new GeneratedKeyHolder();
         MapSqlParameterSource parameterSource = getParameterSourceTag(tag);
@@ -109,27 +109,27 @@ public class TagDaoImpl implements TagDao {
         return keyHolder.getKey().longValue();
     }
 
-    public boolean updateTag(final Tag tag) throws DataAccessException {
+    public boolean updateTag(final Tag tag) {
         LOGGER.debug("Update tag [{}] in database.", tag);
 
         MapSqlParameterSource parameterSource = getParameterSourceTag(tag);
         return jdbcTemplate.update(updateTagSql, parameterSource) == 1;
     }
 
-    public boolean deleteTag(Long id) throws DataAccessException {
+    public boolean deleteTag(final Long id) {
         LOGGER.debug("Delete tag by id = [{}] from database.", id);
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.update(deleteTagSql, parameterSource) == 1;
 
     }
 
-    public boolean checkTagById(Long id) {
+    public boolean checkTagById(final Long id) {
         LOGGER.debug("Check tag by id = [{}] from database.", id);
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.queryForObject(checkTagByIdSql, parameterSource, boolean.class);
     }
 
-    public boolean checkTagByTitle(String title) {
+    public boolean checkTagByTitle(final String title) {
         LOGGER.debug("Check tag by title = [{}] from database.", title);
         SqlParameterSource parameterSource = new MapSqlParameterSource(TITLE, title);
         return jdbcTemplate.queryForObject(checkTagByTitleSql, parameterSource, boolean.class);

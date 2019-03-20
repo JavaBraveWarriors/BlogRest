@@ -21,7 +21,6 @@ public class CommentRowMapper implements RowMapper<Comment> {
     public static final String AUTHOR_FIRST_NAME = "first_name";
     public static final String AUTHOR_LAST_NAME = "last_name";
 
-    @Override
     public Comment mapRow(ResultSet rs, int rowNum) throws SQLException {
         Comment comment = new Comment();
         comment.setId(rs.getLong(ID));

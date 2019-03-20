@@ -19,19 +19,20 @@ import static org.junit.Assert.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class AuthorDaoImplTest {
 
-    private static Long CORRECT_ID = 1L;
-    private static Long CORRECT_CHECKED_ID = 2L;
-    private static Long INCORRECT_ID = 6L;
-    private static Long INCORRECT_NEGATIVE_ID = -111L;
-    private static String CORRECT_AUTHOR_LOGIN = "testLogin2";
-    private static String INCORRECT_AUTHOR_LOGIN = "testLogin7";
-    private static Long CORRECT_DELETE_ID = 5L;
-    private static String UPDATED_AUTHOR_PHONE = "1232223";
-    private static String UPDATED_AUTHOR_MAIL = "testUpdateMail1";
-    private static String UPDATED_AUTHOR_PASSWORD = "testUpdatePsw1";
-    private static String UPDATED_AUTHOR_LAST_NAME = "testUpdateLast1";
+    private static final int COUNT_USERS_IN_DB = 5;
+    private static final Long CORRECT_ID = 1L;
+    private static final Long CORRECT_CHECKED_ID = 2L;
+    private static final Long INCORRECT_ID = 6L;
+    private static final Long INCORRECT_NEGATIVE_ID = -111L;
+    private static final String CORRECT_AUTHOR_LOGIN = "testLogin2";
+    private static final String INCORRECT_AUTHOR_LOGIN = "testLogin7";
+    private static final Long CORRECT_DELETE_ID = 5L;
+    private static final String UPDATED_AUTHOR_PHONE = "1232223";
+    private static final String UPDATED_AUTHOR_MAIL = "testUpdateMail1";
+    private static final String UPDATED_AUTHOR_PASSWORD = "testUpdatePsw1";
+    private static final String UPDATED_AUTHOR_LAST_NAME = "testUpdateLast1";
 
-    private static Author author = new Author(
+    private static Author CORRECT_AUTHOR = new Author(
             null,
             "testMail4",
             "testLogin4",
@@ -48,7 +49,7 @@ public class AuthorDaoImplTest {
     public void getAllAuthorsSuccess() {
         List<Author> authors = authorDao.getAllAuthors();
         assertNotNull(authors);
-        assertEquals(5, authors.size());
+        assertEquals(COUNT_USERS_IN_DB, authors.size());
     }
 
     @Test
@@ -91,16 +92,16 @@ public class AuthorDaoImplTest {
         assertNotNull(authors);
         int initialSize = authors.size();
 
-        Long newId = authorDao.addAuthor(author);
+        Long newId = authorDao.addAuthor(CORRECT_AUTHOR);
         assertNotNull(newId);
         Author newAuthor = authorDao.getAuthorById(newId);
-        assertEquals(author.getMail(), newAuthor.getMail());
-        assertEquals(author.getLogin(), newAuthor.getLogin());
-        assertEquals(author.getPassword(), newAuthor.getPassword());
-        assertEquals(author.getFirstName(), newAuthor.getFirstName());
-        assertEquals(author.getLastName(), newAuthor.getLastName());
-        assertEquals(author.getDescription(), newAuthor.getDescription());
-        assertEquals(author.getPhone(), newAuthor.getPhone());
+        assertEquals(CORRECT_AUTHOR.getMail(), newAuthor.getMail());
+        assertEquals(CORRECT_AUTHOR.getLogin(), newAuthor.getLogin());
+        assertEquals(CORRECT_AUTHOR.getPassword(), newAuthor.getPassword());
+        assertEquals(CORRECT_AUTHOR.getFirstName(), newAuthor.getFirstName());
+        assertEquals(CORRECT_AUTHOR.getLastName(), newAuthor.getLastName());
+        assertEquals(CORRECT_AUTHOR.getDescription(), newAuthor.getDescription());
+        assertEquals(CORRECT_AUTHOR.getPhone(), newAuthor.getPhone());
 
         authors = authorDao.getAllAuthors();
         assertNotNull(authors);

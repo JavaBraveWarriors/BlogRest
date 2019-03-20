@@ -28,29 +28,36 @@ import static org.junit.Assert.*;
 public class PostDaoImplTest {
 
     private static final int ZERO_VALUE = 0;
-    private static Long CORRECT_POST_ID = 1L;
-    private static Long CORRECT_POST_ID_2 = 5L;
-    private static Long CORRECT_POST_CHECK_ID = 4L;
-    private static Long CORRECT_POST_DELETE_ID = 5L;
+    private static final String SORTED_FIELD = "id";
+    private static final int COUNT_POSTS_IN_CORRECT_TAG = 3;
+    private static final Long CORRECT_POST_ID = 1L;
+    private static final Long CORRECT_POST_ID_2 = 5L;
+    private static final Long CORRECT_SECOND_POST_ID = 2L;
+    private static final Long CORRECT_THIRD_POST_ID = 3L;
+    private static final Long CORRECT_FOURTH_POST_ID = 4L;
+    private static final Long CORRECT_POST_CHECK_ID = 4L;
+    private static final Long CORRECT_POST_DELETE_ID = 5L;
+    private static final Long COUNT_NECESSARY_POSTS = 3L;
 
-    private static Long INCORRECT_POST_ID = 9L;
-    private static Long CORRECT_USER_ID = 1L;
-    private static Long INCORRECT_USER_ID = 9L;
-    private static Long CORRECT_TAG_ID = 3L;
-    private static Long CORRECT_TAG_ID_2 = 2L;
-    private static Long INCORRECT_TAG_ID = 5L;
-    private static Long INCORRECT_NEGATIVE_ID = -3L;
+    private static final Long INCORRECT_POST_ID = 9L;
+    private static final Long CORRECT_USER_ID = 1L;
+    private static final Long COUNT_POSTS_IN_FIRST_USER = 2L;
+    private static final Long INCORRECT_USER_ID = 9L;
+    private static final Long CORRECT_TAG_ID = 3L;
+    private static final Long CORRECT_TAG_ID_2 = 2L;
+    private static final Long INCORRECT_TAG_ID = 5L;
+    private static final Long INCORRECT_NEGATIVE_ID = -3L;
 
-    private static Long NEW_POST_ID = 6L;
-    private static String NEW_POST_TITLE = "newTitle4";
-    private static String NEW_POST_DESCRIPTION = "newDescription4";
-    private static String NEW_POST_TEXT = "newText4";
-    private static String NEW_POST_PATH_IMAGE = "newPathImage4";
-    private static Long NEW_POST_AUTHOR_ID = 2L;
+    private static final Long NEW_POST_ID = 6L;
+    private static final String NEW_POST_TITLE = "newTitle4";
+    private static final String NEW_POST_DESCRIPTION = "newDescription4";
+    private static final String NEW_POST_TEXT = "newText4";
+    private static final String NEW_POST_PATH_IMAGE = "newPathImage4";
+    private static final Long NEW_POST_AUTHOR_ID = 2L;
 
-    private static String UPDATED_POST_TITLE = "updatedTestTitle1";
-    private static String UPDATED_POST_TEXT = "updatedTestText1";
-    private static String UPDATED_POST_DESCRIPTION = "updatedTestDescription1";
+    private static final String UPDATED_POST_TITLE = "updatedTestTitle1";
+    private static final String UPDATED_POST_TEXT = "updatedTestText1";
+    private static final String UPDATED_POST_DESCRIPTION = "updatedTestDescription1";
     private static List<Long> ADDED_TAGS_ID = new ArrayList<>();
 
     private static Post post = new Post(
@@ -94,21 +101,21 @@ public class PostDaoImplTest {
     public void getAllPostsByAuthorIdSuccess() {
         List<ResponsePostDto> posts = postDao.getAllPostsByAuthorId(CORRECT_USER_ID);
         assertNotNull(posts);
-        assertEquals(2, posts.size());
+        assertEquals(COUNT_POSTS_IN_FIRST_USER.intValue(), posts.size());
     }
 
     @Test
     public void getAllPostsByIncorrectAuthorId() {
         List<ResponsePostDto> posts = postDao.getAllPostsByAuthorId(INCORRECT_USER_ID);
         assertNotNull(posts);
-        assertEquals(0, posts.size());
+        assertEquals(ZERO_VALUE, posts.size());
     }
 
     @Test
     public void getAllPostsByNullAuthorId() {
         List<ResponsePostDto> posts = postDao.getAllPostsByAuthorId(null);
         assertNotNull(posts);
-        assertEquals(0, posts.size());
+        assertEquals(ZERO_VALUE, posts.size());
     }
 
     @Test
@@ -135,12 +142,22 @@ public class PostDaoImplTest {
 
     @Test
     public void getPostsByInitialIdAndQuantitySuccess() {
-        List<ResponsePostDto> posts = postDao.getPostsByInitialIdAndQuantity(2L, 3L);
+        List<ResponsePostDto> posts = postDao.getPostsByInitialIdAndQuantity(CORRECT_SECOND_POST_ID, COUNT_NECESSARY_POSTS);
         assertNotNull(posts);
-        assertEquals(3, posts.size());
-        assertEquals((Long) 2L, posts.get(0).getId());
-        assertEquals((Long) 3L, posts.get(1).getId());
-        assertEquals((Long) 4L, posts.get(2).getId());
+        assertEquals(COUNT_NECESSARY_POSTS.intValue(), posts.size());
+        assertEquals(CORRECT_SECOND_POST_ID, posts.get(0).getId());
+        assertEquals(CORRECT_THIRD_POST_ID, posts.get(1).getId());
+        assertEquals(CORRECT_FOURTH_POST_ID, posts.get(2).getId());
+    }
+
+    @Test
+    public void getPostsByInitialIdAndQuantityWithSortSuccess() {
+        List<ResponsePostDto> posts = postDao.getPostsByInitialIdAndQuantity(CORRECT_SECOND_POST_ID, COUNT_NECESSARY_POSTS, SORTED_FIELD);
+        assertNotNull(posts);
+        assertEquals(COUNT_NECESSARY_POSTS.intValue(), posts.size());
+        assertEquals(CORRECT_FOURTH_POST_ID, posts.get(0).getId());
+        assertEquals(CORRECT_THIRD_POST_ID, posts.get(1).getId());
+        assertEquals(CORRECT_SECOND_POST_ID, posts.get(2).getId());
     }
 
     @Test(expected = NullPointerException.class)
@@ -152,21 +169,21 @@ public class PostDaoImplTest {
     public void getAllPostsByTagIdSuccess() {
         List<ResponsePostDto> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID);
         assertNotNull(posts);
-        assertEquals(3, posts.size());
+        assertEquals(COUNT_POSTS_IN_CORRECT_TAG, posts.size());
     }
 
     @Test
     public void getAllPostsByNullTagId() {
         List<ResponsePostDto> posts = postDao.getAllPostsByTagId(null);
         assertNotNull(posts);
-        assertEquals(0, posts.size());
+        assertEquals(ZERO_VALUE, posts.size());
     }
 
     @Test
     public void getAllPostsByIncorrectTagId() {
         List<ResponsePostDto> posts = postDao.getAllPostsByTagId(INCORRECT_NEGATIVE_ID);
         assertNotNull(posts);
-        assertEquals(0, posts.size());
+        assertEquals(ZERO_VALUE, posts.size());
     }
 
     @Test
@@ -485,5 +502,4 @@ public class PostDaoImplTest {
     public void checkPostByAuthorIncorrectNegativeId() {
         assertFalse(postDao.checkPostByAuthorId(INCORRECT_NEGATIVE_ID));
     }
-
 }

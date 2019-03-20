@@ -15,7 +15,6 @@ public class ViewRowMapper implements RowMapper<View> {
     public static final String INITIAL = "initial";
     public static final String QUANTITY = "quantity";
 
-    @Override
     public View mapRow(ResultSet rs, int rowNum) throws SQLException {
         View view = new View();
         view.setId(rs.getLong(ID));

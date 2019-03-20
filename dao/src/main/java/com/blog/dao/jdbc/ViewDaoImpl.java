@@ -17,6 +17,14 @@ import java.util.List;
 
 import static com.blog.dao.jdbc.mapper.ViewRowMapper.*;
 
+/**
+ * This interface implementation {ViewDao} allows operations to easily manage a database for an View object.
+ * Use this class if you want to access the View database.
+ *
+ * @author Aliaksandr Yeutushenka
+ * @see ViewDao
+ * @see ViewRowMapper
+ */
 @Repository
 public class ViewDaoImpl implements ViewDao {
 
@@ -47,7 +55,6 @@ public class ViewDaoImpl implements ViewDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    @Override
     public boolean addView(View view) {
         LOGGER.debug("Add new view [{}] to database.", view);
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -57,30 +64,26 @@ public class ViewDaoImpl implements ViewDao {
         return keyHolder.getKey().longValue() > 0L;
     }
 
-    @Override
     public boolean deleteView(Long viewId) {
         LOGGER.debug("Delete view by id = [{}] in database.", viewId);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(ID, viewId);
         return jdbcTemplate.update(deleteViewSql, parameterSource) == 1;
     }
 
-    @Override
     public List<View> getListViewsOfPost(Long initial, Long size, Long postId) {
         LOGGER.debug("Get list of view with initial = [{}], size = [{}] and post id = [{}] in database.", initial, size, postId);
-        MapSqlParameterSource parameterSource = getParameterSource(initial, size);
+        MapSqlParameterSource parameterSource = getViewParameterSource(initial, size);
         parameterSource.addValue(POST_ID, postId);
         return queryForListViews(getListViewOfPostSql, parameterSource);
     }
 
-    @Override
     public List<View> getListViewsOfUser(Long initial, Long size, Long userId) {
         LOGGER.debug("Get list of view with initial = [{}], size = [{}] and user id = [{}] in database.", initial, size, userId);
-        MapSqlParameterSource parameterSource = getParameterSource(initial, size);
+        MapSqlParameterSource parameterSource = getViewParameterSource(initial, size);
         parameterSource.addValue(AUTHOR_ID, userId);
         return queryForListViews(getListViewOfUserSql, parameterSource);
     }
 
-    @Override
     public boolean checkViewByPostIdAndUserId(Long postId, Long userId) {
         LOGGER.debug("Check view post id = [{}] and user id = [{}] in database.", postId, userId);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(POST_ID, postId);
@@ -88,7 +91,7 @@ public class ViewDaoImpl implements ViewDao {
         return jdbcTemplate.queryForObject(checkViewByPostIdAndUserIdSql, parameterSource, boolean.class);
     }
 
-    private MapSqlParameterSource getParameterSource(Long initial, Long size) {
+    private MapSqlParameterSource getViewParameterSource(Long initial, Long size) {
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(INITIAL, initial - 1L);
         parameterSource.addValue(QUANTITY, size);
         return parameterSource;

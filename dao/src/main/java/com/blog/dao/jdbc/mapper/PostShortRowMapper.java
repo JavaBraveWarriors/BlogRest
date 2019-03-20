@@ -12,12 +12,8 @@ import static com.blog.dao.jdbc.mapper.PostRowMapper.*;
 
 @Component
 public class PostShortRowMapper implements RowMapper<ResponsePostDto> {
-    @Override
-    public ResponsePostDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return rowFields(rs);
-    }
 
-    public static ResponsePostDto rowFields(ResultSet rs) throws SQLException {
+    public ResponsePostDto mapRow(ResultSet rs, int rowNum) throws SQLException {
         ResponsePostDto post = new ResponsePostDto();
         post.setId(rs.getLong(ID));
         post.setTitle(rs.getString(TITLE));

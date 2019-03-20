@@ -9,7 +9,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -36,7 +35,7 @@ import static com.blog.dao.jdbc.mapper.ViewRowMapper.POST_ID;
  */
 @Repository
 public class PostDaoImpl implements PostDao {
-    private static final Logger LOGGER = LogManager.getLogger(PostDaoImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Value("${post.selectById}")
     private String getPostByIdSql;
@@ -116,37 +115,37 @@ public class PostDaoImpl implements PostDao {
         this.postShortRowMapper = postShortRowMapper;
     }
 
-    public ResponsePostDto getPostById(Long id) throws DataAccessException {
+    public ResponsePostDto getPostById(final Long id) {
         LOGGER.debug("Get post by id = [{}] from database.", id);
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.queryForObject(getPostByIdSql, parameterSource, postRowMapper);
     }
 
-    public List<ResponsePostDto> getAllPostsByAuthorId(Long authorId) throws DataAccessException {
+    public List<ResponsePostDto> getAllPostsByAuthorId(final Long authorId) {
         LOGGER.debug("Get list of posts by author id = [{}] from database.", authorId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(AUTHOR_ID, authorId);
         return jdbcTemplate.query(getAllPostsByAuthorIdSql, parameterSource, (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
     }
 
-    public List<ResponsePostDto> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws DataAccessException {
+    public List<ResponsePostDto> getPostsByInitialIdAndQuantity(final Long initial, final Long quantity) {
         LOGGER.debug("Get list of posts by initial = [{}] and quantity = [{}] from database.", initial, quantity);
         MapSqlParameterSource parameterSource = getParameterSourceForInitialAndQuantity(initial, quantity);
         return jdbcTemplate.query(getAllPostsByInitialIdAndQuantitySql, parameterSource, (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
     }
 
-    public List<ResponsePostDto> getPostsByInitialIdAndQuantity(Long initial, Long quantity, String sort) throws DataAccessException {
+    public List<ResponsePostDto> getPostsByInitialIdAndQuantity(final Long initial, final Long quantity, final String sort) {
         LOGGER.debug("Get list of posts by initial = [{}], quantity = [{}] and sort = [{}] from database.", initial, quantity, sort);
         MapSqlParameterSource parameterSource = getParameterSourceForInitialAndQuantity(initial, quantity);
         return jdbcTemplate.query(String.format(getAllPostsByInitialIdQuantityAndSortSql, sort), parameterSource, (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
     }
 
-    public List<ResponsePostDto> getAllPostsByTagId(Long tagId) throws DataAccessException {
+    public List<ResponsePostDto> getAllPostsByTagId(final Long tagId) {
         LOGGER.debug("Get list of posts by tag id = [{}] from database.", tagId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(TAG_ID, tagId);
         return jdbcTemplate.query(getAllPostsByTagSql, parameterSource, (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
     }
 
-    public Long addPost(final Post post) throws DataAccessException {
+    public Long addPost(final Post post) {
         LOGGER.debug("Add new post [{}] in database.", post);
         KeyHolder keyHolder = new GeneratedKeyHolder();
         MapSqlParameterSource parameterSource = getParameterSourcePost(post);
@@ -154,26 +153,26 @@ public class PostDaoImpl implements PostDao {
         return keyHolder.getKey().longValue();
     }
 
-    public boolean addTagToPost(Long id, Long tagId) throws DataAccessException {
+    public boolean addTagToPost(final Long id, final Long tagId) {
         LOGGER.debug("Add tag id = [{}] to post id = [{}] in database.", tagId, id);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         parameterSource.addValue(TAG_ID, tagId);
         return jdbcTemplate.update(addTagToPostSql, parameterSource) == 1;
     }
 
-    public boolean updatePost(final Post post) throws DataAccessException {
+    public boolean updatePost(final Post post) {
         LOGGER.debug("Update post [{}] in database.", post);
         MapSqlParameterSource parameterSource = getParameterSourcePost(post);
         return jdbcTemplate.update(updatePostSql, parameterSource) == 1;
     }
 
-    public boolean deletePost(Long id) throws DataAccessException {
+    public boolean deletePost(final Long id) {
         LOGGER.debug("Delete post id = [{}] from database.", id);
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.update(deletePostSql, parameterSource) == 1;
     }
 
-    public boolean deleteTagInPost(Long id, Long tagId) throws DataAccessException {
+    public boolean deleteTagInPost(final Long id, final Long tagId) {
         LOGGER.debug("Delete tag id = [{}] from post id = [{}] in database.", tagId, id);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue(ID, id);
@@ -181,13 +180,13 @@ public class PostDaoImpl implements PostDao {
         return jdbcTemplate.update(deleteTagInPostSql, parameterSource) == 1;
     }
 
-    public boolean checkPostById(Long id) {
+    public boolean checkPostById(final Long id) {
         LOGGER.debug("Check post by id = [{}]  in database.", id);
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.queryForObject(checkPostByIdSql, parameterSource, boolean.class);
     }
 
-    public boolean checkTagInPostById(Long id, Long tagId) {
+    public boolean checkTagInPostById(final Long id, final Long tagId) {
         LOGGER.debug("Check tag by id = [{}] in post id = [{}] from database.", tagId, id);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue(ID, id);
@@ -195,7 +194,7 @@ public class PostDaoImpl implements PostDao {
         return jdbcTemplate.queryForObject(checkTagInPostByIdSql, parameterSource, boolean.class);
     }
 
-    public boolean checkPostByAuthorId(Long authorId) {
+    public boolean checkPostByAuthorId(final Long authorId) {
         LOGGER.debug("Check post by author id = [{}]  in database.", authorId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(AUTHOR_ID, authorId);
         return jdbcTemplate.queryForObject(checkPostByUserIdSql, parameterSource, boolean.class);
@@ -207,39 +206,38 @@ public class PostDaoImpl implements PostDao {
         return jdbcTemplate.queryForObject(getCountOfPages, parameterSource, Long.class);
     }
 
-    public boolean addComment(Long postId) throws DataAccessException {
+    public boolean addComment(final Long postId) {
         LOGGER.debug("Add comment to post id = [{}] in database.", postId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, postId);
         return jdbcTemplate.update(addCommentSql, parameterSource) == 1;
     }
 
-    public boolean deleteComment(Long postId) throws DataAccessException {
+    public boolean deleteComment(final Long postId) {
         LOGGER.debug("Delete comment in post id = [{}] in database.", postId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, postId);
         return jdbcTemplate.update(deleteCommentSql, parameterSource) == 1;
     }
 
-    public boolean addViewToPost(Long postId) {
+    public boolean addViewToPost(final Long postId) {
         LOGGER.debug("Add view to post id = [{}] in database.", postId);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(ID, postId);
         return jdbcTemplate.update(addViewSql, parameterSource) == 1;
     }
 
-    public boolean deleteAllTags(Long postId) {
+    public boolean deleteAllTags(final Long postId) {
         LOGGER.debug("Delete all tags from post id = [{}] in database.", postId);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(ID, postId);
         return jdbcTemplate.update(deleteAllTagsInPostSql, parameterSource) != 0;
     }
 
-    public boolean addTags(Long postId, List<Long> tags) {
+    public boolean addTags(final Long postId, final List<Long> tags) {
         LOGGER.debug("Add tags to post by id = [{}], tags = [{}]", postId, tags);
         List<Map<String, Object>> batchValues = new ArrayList<>(tags.size());
-        for (Long tagId : tags) {
-            batchValues.add(
-                    new MapSqlParameterSource(POST_ID, postId)
-                            .addValue(TAG_ID, tagId)
-                            .getValues());
-        }
+        tags.forEach(tagId -> batchValues.add(
+                new MapSqlParameterSource(POST_ID, postId)
+                        .addValue(TAG_ID, tagId)
+                        .getValues()));
+
         return jdbcTemplate.batchUpdate(addTagsToPostSql, batchValues.toArray(new Map[tags.size()])) != null;
     }
 
