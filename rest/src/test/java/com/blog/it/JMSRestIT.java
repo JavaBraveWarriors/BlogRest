@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(classes = {JmsConfig.class})
 public class JMSRestIT extends AbstractTestIT {
 
-    private static final Long MAX_WAITING_TIME = 500L;
+    private static final Long MAX_WAITING_TIME = 1000L;
     private static final Long MILLISECONDS = 50L;
 
     private static Long CORRECT_POST_ID_ADDED_COMMENT = 3L;
