@@ -1,10 +1,12 @@
 package com.blog.dao;
 
 import com.blog.dao.jdbc.TagDaoImpl;
+import com.blog.dto.TagDto;
 import com.blog.model.Tag;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * This interface defines various operations for easy database management for the Post object.
@@ -34,13 +36,14 @@ public interface TagDao {
     Tag getTagById(final Long id);
 
     /**
+     * TODO:
      * Gets a list of tags objects where is this post from the database.
      *
-     * @param postId is {Long} value post ID
+     * @param postsId is {Long} value post ID
      * @return {List<Tag>} is a list of tags from the database.
      * @throws DataAccessException Will throw an error if the data is not access.
      */
-    List<Tag> getAllTagsByPostId(final Long postId) throws DataAccessException;
+    List<TagDto> getAllTagsByPostsId(final Set<Long> postsId) throws DataAccessException;
 
     /**
      * Adds new tag in database.

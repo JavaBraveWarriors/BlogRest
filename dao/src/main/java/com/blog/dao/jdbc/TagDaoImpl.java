@@ -1,7 +1,9 @@
 package com.blog.dao.jdbc;
 
 import com.blog.dao.TagDao;
+import com.blog.dao.jdbc.mapper.TagDtoRowMapper;
 import com.blog.dao.jdbc.mapper.TagRowMapper;
+import com.blog.dto.TagDto;
 import com.blog.model.Tag;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -16,7 +18,9 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Set;
 
+import static com.blog.dao.jdbc.mapper.TagDtoRowMapper.POST_ID;
 import static com.blog.dao.jdbc.mapper.TagRowMapper.*;
 
 /**
@@ -60,6 +64,7 @@ public class TagDaoImpl implements TagDao {
      * Allows to make a mapping for an {Tag} object from database.
      */
     private TagRowMapper tagRowMapper;
+    private TagDtoRowMapper tagDtoRowMapper;
 
     /**
      * The JdbcTemplate which uses named parameters.
@@ -73,9 +78,10 @@ public class TagDaoImpl implements TagDao {
      * @param jdbcTemplate the jdbc template
      */
     @Autowired
-    public TagDaoImpl(TagRowMapper tagRowMapper, NamedParameterJdbcTemplate jdbcTemplate) {
+    public TagDaoImpl(TagRowMapper tagRowMapper, TagDtoRowMapper tagDtoRowMapper, NamedParameterJdbcTemplate jdbcTemplate) {
         this.tagRowMapper = tagRowMapper;
         this.jdbcTemplate = jdbcTemplate;
+        this.tagDtoRowMapper = tagDtoRowMapper;
     }
 
     public List<Tag> getAllTags() {
@@ -89,10 +95,10 @@ public class TagDaoImpl implements TagDao {
         return jdbcTemplate.queryForObject(getTagByIdSql, parameterSource, tagRowMapper);
     }
 
-    public List<Tag> getAllTagsByPostId(Long id) throws DataAccessException {
-        LOGGER.debug("Get all tags by post id = [{}] from database.", id);
-        SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
-        return jdbcTemplate.query(selectAllByPostId, parameterSource, (resultSet, i) -> new TagRowMapper().mapRow(resultSet, i));
+    public List<TagDto> getAllTagsByPostsId(Set<Long> postsId) throws DataAccessException {
+        LOGGER.debug("Get all tags by post id = [{}] from database.", postsId);
+        SqlParameterSource parameterSource = new MapSqlParameterSource(POST_ID, postsId);
+        return jdbcTemplate.query(selectAllByPostId, parameterSource, ((rs, rowNum) -> tagDtoRowMapper.mapRow(rs, rowNum)));
     }
 
     public Long addTag(final Tag tag) throws DataAccessException {
