@@ -1,6 +1,7 @@
 package com.blog.dao.jdbc;
 
 import com.blog.dao.TagDao;
+import com.blog.dto.TagDto;
 import com.blog.model.Tag;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,6 +11,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -50,7 +52,7 @@ public class TagDaoImplTest {
 
     @Test
     public void getAllTagsByCorrectPostId() {
-        List<Tag> tags = tagDao.getAllTagsByPostId(CORRECT_POST_ID);
+        List<TagDto> tags = tagDao.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID));
         assertNotNull(tags);
         assertEquals(2, tags.size());
     }
@@ -78,7 +80,6 @@ public class TagDaoImplTest {
         assertEquals(NEW_TAG_ID, newTag.getId());
         assertEquals(NEW_TAG_TITLE, newTag.getTitle());
         assertEquals(NEW_TAG_PATH_IMAGE, newTag.getPathImage());
-
 
         tags = tagDao.getAllTags();
         assertNotNull(tags);
