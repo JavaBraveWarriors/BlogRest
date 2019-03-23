@@ -46,7 +46,7 @@
         <constructor-arg ref="dataSource"/>
     </bean>
 
-    <bean class="com.blog.it.config.JmsConfig"/>
+    <bean class="com.blog.it.config.JmsTestConfig"/>
     <bean class="com.blog.it.config.BrokerServiceConfig"/>
 
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
