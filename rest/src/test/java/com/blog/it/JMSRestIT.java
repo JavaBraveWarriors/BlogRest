@@ -1,6 +1,6 @@
 package com.blog.it;
 
-import com.blog.it.config.JmsConfig;
+import com.blog.it.config.JmsTestConfig;
 import com.blog.model.Comment;
 import com.blog.model.Tag;
 import org.junit.BeforeClass;
@@ -25,10 +25,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {JmsConfig.class})
+@ContextConfiguration(classes = {JmsTestConfig.class})
 public class JMSRestIT extends AbstractTestIT {
 
-    private static final Long MAX_WAITING_TIME = 500L;
+    private static final Long MAX_WAITING_TIME = 1000L;
     private static final Long MILLISECONDS = 50L;
 
     private static Long CORRECT_POST_ID_ADDED_COMMENT = 3L;
@@ -68,7 +68,7 @@ public class JMSRestIT extends AbstractTestIT {
 
     @Test
     public void listenCommentQueue() throws InterruptedException {
-        Long initSize = getCountCommentsInPost(CORRECT_POST_ID_ADDED_COMMENT);
+        int initSize = getCountCommentsInPost(CORRECT_POST_ID_ADDED_COMMENT);
         final AtomicReference<Message> message = new AtomicReference<>();
 
         jmsTemplate.convertAndSend(queueComment, COMMENT, messagePostProcessor -> {
@@ -78,15 +78,15 @@ public class JMSRestIT extends AbstractTestIT {
         jmsTemplate.setReceiveTimeout(10000);
 
         Long time = MAX_WAITING_TIME;
-        Long currentSize = getCountCommentsInPost(CORRECT_POST_ID_ADDED_COMMENT);
+        int currentSize = getCountCommentsInPost(CORRECT_POST_ID_ADDED_COMMENT);
 
-        while (time > 0 && currentSize.equals(initSize)) {
+        while (time > 0 && currentSize == initSize) {
             Thread.sleep(MILLISECONDS);
             time -= MILLISECONDS;
             currentSize = getCountCommentsInPost(CORRECT_POST_ID_ADDED_COMMENT);
         }
 
-        assertEquals(initSize + 1L, currentSize.longValue());
+        assertEquals(initSize + 1L, currentSize);
     }
 
     @Test
@@ -119,10 +119,10 @@ public class JMSRestIT extends AbstractTestIT {
         return response.getBody();
     }
 
-    private Long getCountCommentsInPost(Long postId) {
+    private int getCountCommentsInPost(Long postId) {
         endpoint = "comments";
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
-        ResponseEntity<Long> response = restTemplate.exchange(
+        ResponseEntity<Integer> response = restTemplate.exchange(
                 createURLWithPort(
                         "/count"
                                 .concat("?postId=")
@@ -130,7 +130,7 @@ public class JMSRestIT extends AbstractTestIT {
                                 .concat("&size=")
                                 .concat(COUNT_COMMENTS)),
                 HttpMethod.GET, entity,
-                Long.class);
+                Integer.class);
         return response.getBody();
     }
 }

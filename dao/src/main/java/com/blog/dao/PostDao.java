@@ -164,4 +164,8 @@ public interface PostDao {
     boolean deleteComment(Long postId) throws DataAccessException;
 
     boolean addViewToPost(Long postId) throws DataAccessException;
+
+    boolean deleteAllTagsInPost(Long postId);
+
+    boolean addTagsToPost(Long postId, List<Long> tags);
 }

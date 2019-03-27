@@ -1,8 +1,11 @@
 package com.blog.dao.jdbc;
 
 import com.blog.dao.PostDao;
+import com.blog.dao.TagDao;
+import com.blog.dto.TagDto;
 import com.blog.model.Post;
 import com.blog.model.ResponsePostDto;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +16,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -22,7 +27,9 @@ import static org.junit.Assert.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class PostDaoImplTest {
 
+    public static final int ZERO_VALUE = 0;
     private static Long CORRECT_POST_ID = 1L;
+    private static Long CORRECT_POST_ID_2 = 5L;
     private static Long CORRECT_POST_CHECK_ID = 4L;
     private static Long CORRECT_POST_DELETE_ID = 5L;
 
@@ -44,6 +51,7 @@ public class PostDaoImplTest {
     private static String UPDATED_POST_TITLE = "updatedTestTitle1";
     private static String UPDATED_POST_TEXT = "updatedTestText1";
     private static String UPDATED_POST_DESCRIPTION = "updatedTestDescription1";
+    private static List<Long> ADDED_TAGS_ID = new ArrayList<>();
 
     private static Post post = new Post(
             null,
@@ -55,6 +63,15 @@ public class PostDaoImplTest {
     );
     @Autowired
     private PostDao postDao;
+
+    @Autowired
+    private TagDao tagDao;
+
+    @BeforeClass
+    public static void setup() {
+        ADDED_TAGS_ID.add(CORRECT_TAG_ID);
+        ADDED_TAGS_ID.add(CORRECT_TAG_ID_2);
+    }
 
     @Test
     public void getPostByIdSuccess() {
@@ -292,6 +309,24 @@ public class PostDaoImplTest {
     }
 
     @Test
+    public void addViewToPostSuccess() {
+        ResponsePostDto postBeforeAddingView = postDao.getPostById(CORRECT_POST_ID);
+        assertNotNull(postBeforeAddingView);
+
+        postDao.addViewToPost(CORRECT_POST_ID);
+
+        ResponsePostDto postAfterAddingView = postDao.getPostById(CORRECT_POST_ID);
+        assertNotNull(postBeforeAddingView);
+
+        assertEquals(postBeforeAddingView.getViewsCount() + 1L, postAfterAddingView.getViewsCount().longValue());
+    }
+
+    @Test
+    public void addViewToIncorrectPost() {
+        assertFalse(postDao.addViewToPost(INCORRECT_POST_ID));
+    }
+
+    @Test
     public void deleteTagInPostSuccess() {
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
@@ -333,6 +368,47 @@ public class PostDaoImplTest {
 
         posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID_2);
         assertEquals(initialSize, posts.size());
+    }
+
+    @Test
+    public void deleteAllTagsInPostSuccess() {
+        List<TagDto> tagsBeforeDeleting = tagDao.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID));
+        assertNotNull(tagsBeforeDeleting);
+        assertTrue(tagsBeforeDeleting.size() > 0);
+
+        assertTrue(postDao.deleteAllTagsInPost(CORRECT_POST_ID));
+
+        List<TagDto> tagsAfterDeleting = tagDao.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID));
+        assertNotNull(tagsAfterDeleting);
+        assertEquals(ZERO_VALUE, tagsAfterDeleting.size());
+    }
+
+    @Test()
+    public void deleteAllTagsInIncorrectPost() {
+        assertFalse(postDao.deleteAllTagsInPost(INCORRECT_POST_ID));
+    }
+
+    @Test()
+    public void deleteAllTagsInNullPost() {
+        assertFalse(postDao.deleteAllTagsInPost(null));
+    }
+
+    @Test
+    public void addTagsToPostSuccess() {
+        List<TagDto> tagsBeforeAdding = tagDao.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID_2));
+        assertNotNull(tagsBeforeAdding);
+
+        assertTrue(postDao.addTagsToPost(CORRECT_POST_ID_2, ADDED_TAGS_ID));
+
+        List<TagDto> tagsAfterAdding = tagDao.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID_2));
+        assertNotNull(tagsAfterAdding);
+
+        assertEquals(tagsBeforeAdding.size() + ADDED_TAGS_ID.size(), tagsAfterAdding.size());
+    }
+
+    @Test(expected = DataIntegrityViolationException.class)
+    public void addTagsToIncorrectPost() {
+        assertFalse(postDao.addTagsToPost(INCORRECT_POST_ID, ADDED_TAGS_ID));
     }
 
     @Test
@@ -409,4 +485,5 @@ public class PostDaoImplTest {
     public void checkPostByAuthorIncorrectNegativeId() {
         assertFalse(postDao.checkPostByAuthorId(INCORRECT_NEGATIVE_ID));
     }
+
 }

@@ -1,6 +1,7 @@
 package com.blog.service.impls;
 
 import com.blog.dao.TagDao;
+import com.blog.dto.TagDto;
 import com.blog.exception.InternalServerException;
 import com.blog.model.Tag;
 import com.blog.service.TagService;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional
@@ -56,10 +58,9 @@ public class TagServiceImpl implements TagService {
         return tagDao.getTagById(tagId);
     }
 
-    public List<Tag> getAllTagsByPostId(Long postId) {
-        LOGGER.debug("Gets list of tags by post id = [{}].", postId);
-        validator.validatePostId(postId);
-        return tagDao.getAllTagsByPostId(postId);
+    public List<TagDto> getAllTagsByPostsId(final Set<Long> postsId) {
+        LOGGER.debug("Gets list of tags by post id = [{}].", postsId);
+        return tagDao.getAllTagsByPostsId(postsId);
     }
 
     public Long addTag(Tag tag) {

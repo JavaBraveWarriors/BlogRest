@@ -2,6 +2,7 @@ package com.blog.service.impls;
 
 import com.blog.dao.PostDao;
 import com.blog.dao.ViewDao;
+import com.blog.dto.TagDto;
 import com.blog.exception.InternalServerException;
 import com.blog.model.*;
 import com.blog.service.CommentService;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Transactional
@@ -73,7 +74,7 @@ public class PostServiceImpl implements PostService {
         validator.validateAuthorId(authorId);
         PostListWrapper postListWrapper = new PostListWrapper();
         postListWrapper.setPosts(postDao.getAllPostsByAuthorId(authorId));
-        postListWrapper.getPosts().forEach(post -> post.setTags(tagService.getAllTagsByPostId(post.getId())));
+        addTagsToPosts(postListWrapper.getPosts());
         Long countOfPosts = postDao.getCountOfPosts();
         postListWrapper.setCountPosts(countOfPosts);
         // TODO: refactor this method - add pagination
@@ -87,7 +88,7 @@ public class PostServiceImpl implements PostService {
         Long startItem = (page - 1) * size + 1;
         PostListWrapper postListWrapper = new PostListWrapper();
         postListWrapper.setPosts(postDao.getPostsByInitialIdAndQuantity(startItem, size, sort));
-        addDataInPosts(postListWrapper.getPosts());
+        addTagsToPosts(postListWrapper.getPosts());
         Long countOfPosts = postDao.getCountOfPosts();
         postListWrapper.setCountPosts(countOfPosts);
         postListWrapper.setCountPages(PageCounter.getCountPages(size, countOfPosts));
@@ -113,7 +114,7 @@ public class PostServiceImpl implements PostService {
         validator.validateTagId(tagId);
         PostListWrapper postListWrapper = new PostListWrapper();
         postListWrapper.setPosts(postDao.getAllPostsByTagId(tagId));
-        addDataInPosts(postListWrapper.getPosts());
+        addTagsToPosts(postListWrapper.getPosts());
         return postListWrapper;
     }
 
@@ -133,8 +134,7 @@ public class PostServiceImpl implements PostService {
         //  viewDao.addView(view);
         //  postDao.addViewToPost(postId);
         //}
-        post.setTags(tagService.getAllTagsByPostId(post.getId()));
-
+        addTagsToPosts(Collections.singletonList(post));
         return post;
     }
 
@@ -163,8 +163,7 @@ public class PostServiceImpl implements PostService {
         LOGGER.debug("Updates post = [{}].", post);
         validator.checkPost(post);
         validator.validateTags(post.getTags());
-        List<Tag> postTags = tagService.getAllTagsByPostId(post.getId());
-        updatePostTags(post, postTags);
+        updatePostTags(post);
         if (!postDao.updatePost(post))
             throw new InternalServerException(updateError);
     }
@@ -185,30 +184,27 @@ public class PostServiceImpl implements PostService {
             throw new InternalServerException(deleteTagInPost);
     }
 
-    private void updatePostTags(RequestPostDto post, List<Tag> postTags) {
-        removeTagInPost(post, postTags);
+    private void updatePostTags(RequestPostDto post) {
+        removeTagInPost(post.getId());
         addTagsToPost(post);
     }
 
-    private void removeTagInPost(RequestPostDto post, List<Tag> postTags) {
-        postTags.forEach(tag -> {
-            if (post.getTags().stream().noneMatch(t -> t.equals(tag.getId()))) {
-                if (!postDao.deleteTagInPost(post.getId(), tag.getId()))
-                    throw new InternalServerException(deleteTagInPost);
-            }
-        });
+    private void removeTagInPost(Long postId) {
+        postDao.deleteAllTagsInPost(postId);
     }
 
     private void addTagsToPost(RequestPostDto post) {
-        post.getTags().forEach(tag -> {
-            if (!postDao.checkTagInPostById(post.getId(), tag)) {
-                if (!postDao.addTagToPost(post.getId(), tag))
-                    throw new InternalServerException(addTagToPost);
-            }
-        });
+        postDao.addTagsToPost(post.getId(), post.getTags());
     }
 
-    private void addDataInPosts(List<ResponsePostDto> posts) {
-        posts.forEach(post -> post.setTags(tagService.getAllTagsByPostId(post.getId())));
+    private void addTagsToPosts(List<ResponsePostDto> posts) {
+        Set<Long> postsId = new HashSet<>();
+        posts.forEach(responsePostDto -> postsId.add(responsePostDto.getId()));
+        List<TagDto> tagDtoList = tagService.getAllTagsByPostsId(postsId);
+        posts.forEach(post -> {
+            List<Tag> postTags = new ArrayList<>();
+            tagDtoList.stream().filter(tagDto -> post.getId().equals(tagDto.getPostId())).forEach(tagDto -> postTags.add(tagDto.getTag()));
+            post.setTags(postTags);
+        });
     }
 }

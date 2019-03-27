@@ -24,6 +24,11 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class CommentServiceImplTest {
 
+    public static final long CORRECT_COMMENT_ID = 1L;
+    public static final long CORRECT_PAGE = 2L;
+    public static final long SIZE_PAGES = 10L;
+    public static final long CORRECT_POST_ID = 1L;
+    public static final long INCORRECT_PAGE = -2L;
     @Mock
     private CommentDao commentDao;
 
@@ -33,30 +38,30 @@ public class CommentServiceImplTest {
     @InjectMocks
     private CommentServiceImpl commentService;
 
-    private static List<Comment> comments = new ArrayList<>();
+    private static List<Comment> COMMENTS = new ArrayList<>();
 
-    private static Comment comment = new Comment();
+    private static Comment COMMENT = new Comment();
 
     @BeforeClass
     public static void setUp() {
-        comments.add(new Comment());
-        comments.add(new Comment());
-        comments.add(comment);
-        comment.setId(1L);
-        comment.setText("some");
-        comment.setPostId(2L);
-        comment.setAuthorId(2L);
+        COMMENTS.add(new Comment());
+        COMMENTS.add(new Comment());
+        COMMENTS.add(COMMENT);
+        COMMENT.setId(CORRECT_COMMENT_ID);
+        COMMENT.setText("some");
+        COMMENT.setPostId(2L);
+        COMMENT.setAuthorId(2L);
     }
 
     @Test
     public void getListCommentsByPostIdWithPaginationSuccess() {
-        when(commentDao.getListCommentsByInitialAndSize(anyLong(), anyLong(), anyLong())).thenReturn(comments);
+        when(commentDao.getListCommentsByInitialAndSize(anyLong(), anyLong(), anyLong())).thenReturn(COMMENTS);
         when(commentDao.getCountOfCommentsByPostId(anyLong())).thenReturn(5L);
 
-        CommentListWrapper comments = commentService.getListCommentsByPostIdWithPagination(2L, 10L, 1L);
+        CommentListWrapper comments = commentService.getListCommentsByPostIdWithPagination(CORRECT_PAGE, SIZE_PAGES, CORRECT_POST_ID);
 
         assertNotNull(comments);
-        assertEquals(comments.getCommentsPage().size(), comments.getCommentsPage().size());
+        assertEquals(comments.getCommentsPage().size(), COMMENTS.size());
 
         verify(validator, times(1)).validatePageAndSize(anyLong(), anyLong());
         verify(validator, times(1)).validatePostId(anyLong());
@@ -67,14 +72,33 @@ public class CommentServiceImplTest {
     public void getListCommentsByIncorrectPostIdWithPagination() {
         doThrow(ValidationException.class).when(validator).validatePostId(anyLong());
 
-        CommentListWrapper comments = commentService.getListCommentsByPostIdWithPagination(-2L, 10L, 1L);
+        CommentListWrapper comments = commentService.getListCommentsByPostIdWithPagination(INCORRECT_PAGE, SIZE_PAGES, CORRECT_POST_ID);
+    }
+
+    @Test
+    public void getCommentByIdSuccess() {
+        when(commentDao.getCommentById(anyLong())).thenReturn(COMMENT);
+
+        commentService.getCommentById(CORRECT_COMMENT_ID);
+
+        verify(validator, times(1)).validateCommentId(anyLong());
+        verify(commentDao, times(1)).getCommentById(anyLong());
+    }
+
+    @Test(expected = ValidationException.class)
+    public void getCommentByIncorrectId() {
+        doThrow(ValidationException.class).when(validator).validateCommentId(anyLong());
+
+        commentService.getCommentById(CORRECT_COMMENT_ID);
+
+        verify(validator, times(1)).validateCommentId(anyLong());
     }
 
     @Test
     public void addCommentSuccess() {
         when(commentDao.addComment(any(Comment.class))).thenReturn(2L);
 
-        assertEquals((Long) 2L, commentService.addComment(comment));
+        assertEquals((Long) 2L, commentService.addComment(COMMENT));
 
         verify(commentDao, times(1)).addComment(any(Comment.class));
         verify(validator, times(1)).validateAuthorId(anyLong());
@@ -85,7 +109,7 @@ public class CommentServiceImplTest {
     public void updateCommentSuccess() {
         when(commentDao.updateComment(any(Comment.class))).thenReturn(true);
 
-        commentService.updateComment(comment);
+        commentService.updateComment(COMMENT);
 
         verify(commentDao, times(1)).updateComment(any(Comment.class));
         verify(validator, times(1)).validateUpdatedComment(any(Comment.class));
@@ -95,7 +119,7 @@ public class CommentServiceImplTest {
     public void updateCommentWithNotUpdatedInDao() {
         when(commentDao.updateComment(any(Comment.class))).thenReturn(false);
 
-        commentService.updateComment(comment);
+        commentService.updateComment(COMMENT);
 
         verify(commentDao, times(1)).updateComment(any(Comment.class));
         verify(validator, times(1)).validateUpdatedComment(any(Comment.class));

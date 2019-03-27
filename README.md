@@ -59,6 +59,7 @@ mvn -Pprod tomcat7:redeploy
 
 ### Links
 * How setup deploy a real environment [Docker Containers Setup][3]
+* Performance tests [results][11]
 
 [1]: docs/TechnicalTask.md
 [2]: https://maven.apache.org/install.html
@@ -70,3 +71,4 @@ mvn -Pprod tomcat7:redeploy
 [8]: docs/Specification.md
 [9]: https://docs.docker.com/compose/
 [10]: http://activemq.apache.org/
+[11]: docs/PerformanceTests.md
