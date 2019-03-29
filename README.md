@@ -39,13 +39,12 @@ mvn -Pdev jetty:tun
 > *Node*: server identifier in the settings.xml file must match the identifier in pom.xml in the root of the plugin project "tomcat7-maven-plugin".
 * When the settings are completed, run the following commands:
 ```
-mvn -Pprod clean install
-mvn -Pprod tomcat7:deploy
+mvn -Pprod clean install tomcat7:deploy -Dserver.deploy.port=${YOUR_CUSTOM_PORT}
+
 ```
 * If you want to redeploy the project:
 ```
-mvn -Pprod clean install
-mvn -Pprod tomcat7:redeploy
+mvn -Pprod clean install tomcat7:redeploy -Dserver.deploy.port=${YOUR_CUSTOM_PORT}
 ```
 
 ## Technology stack
@@ -55,6 +54,7 @@ mvn -Pprod tomcat7:redeploy
 * [Docker-compose 1.23.2][9]
 * [Java 8][4]
 * [ActiveMQ 5.15.8][10]
+* [Apache 2.4][12]
 
 
 ### Links
@@ -72,3 +72,4 @@ mvn -Pprod tomcat7:redeploy
 [9]: https://docs.docker.com/compose/
 [10]: http://activemq.apache.org/
 [11]: docs/PerformanceTests.md
+[12]: https://httpd.apache.org/docs/2.4/
