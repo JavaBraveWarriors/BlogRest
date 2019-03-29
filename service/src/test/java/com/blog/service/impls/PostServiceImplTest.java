@@ -274,8 +274,8 @@ public class PostServiceImplTest {
         postService.updatePost(testRequestPostDto);
         verify(postDao, times(1)).updatePost(any(Post.class));
         verify(validator, times(1)).checkPost(any(Post.class));
-        verify(postDao, times(1)).deleteAllTagsInPost(anyLong());
-        verify(postDao, times(1)).addTagsToPost(anyLong(), any());
+        verify(postDao, times(1)).deleteAllTags(anyLong());
+        verify(postDao, times(1)).addTags(anyLong(), any());
         verify(validator, times(1)).validateTags(anyList());
     }
 

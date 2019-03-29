@@ -2,6 +2,7 @@ package com.blog.it;
 
 import com.blog.it.config.JmsTestConfig;
 import com.blog.model.Comment;
+import com.blog.model.CommentListWrapper;
 import com.blog.model.Tag;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -68,7 +69,7 @@ public class JMSRestIT extends AbstractTestIT {
 
     @Test
     public void listenCommentQueue() throws InterruptedException {
-        int initSize = getCountCommentsInPost(CORRECT_POST_ID_ADDED_COMMENT);
+        Long initSize = getCountCommentsInPost(CORRECT_POST_ID_ADDED_COMMENT).getCountCommentsInPost();
         final AtomicReference<Message> message = new AtomicReference<>();
 
         jmsTemplate.convertAndSend(queueComment, COMMENT, messagePostProcessor -> {
@@ -78,15 +79,14 @@ public class JMSRestIT extends AbstractTestIT {
         jmsTemplate.setReceiveTimeout(10000);
 
         Long time = MAX_WAITING_TIME;
-        int currentSize = getCountCommentsInPost(CORRECT_POST_ID_ADDED_COMMENT);
+        Long currentSize = getCountCommentsInPost(CORRECT_POST_ID_ADDED_COMMENT).getCountCommentsInPost();
 
-        while (time > 0 && currentSize == initSize) {
+        while (time > 0 && currentSize.equals(initSize)) {
             Thread.sleep(MILLISECONDS);
             time -= MILLISECONDS;
-            currentSize = getCountCommentsInPost(CORRECT_POST_ID_ADDED_COMMENT);
+            currentSize = getCountCommentsInPost(CORRECT_POST_ID_ADDED_COMMENT).getCountCommentsInPost();
         }
-
-        assertEquals(initSize + 1L, currentSize);
+        assertEquals(initSize + 1L, currentSize.longValue());
     }
 
     @Test
@@ -119,18 +119,18 @@ public class JMSRestIT extends AbstractTestIT {
         return response.getBody();
     }
 
-    private int getCountCommentsInPost(Long postId) {
+    private CommentListWrapper getCountCommentsInPost(Long postId) {
         endpoint = "comments";
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
-        ResponseEntity<Integer> response = restTemplate.exchange(
+        ResponseEntity<CommentListWrapper> response = restTemplate.exchange(
                 createURLWithPort(
-                        "/count"
+                        ""
                                 .concat("?postId=")
                                 .concat(postId.toString())
                                 .concat("&size=")
                                 .concat(COUNT_COMMENTS)),
                 HttpMethod.GET, entity,
-                Integer.class);
+                CommentListWrapper.class);
         return response.getBody();
     }
 }

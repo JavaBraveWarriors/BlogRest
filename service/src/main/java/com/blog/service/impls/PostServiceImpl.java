@@ -17,7 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -190,21 +193,27 @@ public class PostServiceImpl implements PostService {
     }
 
     private void removeTagInPost(Long postId) {
-        postDao.deleteAllTagsInPost(postId);
+        postDao.deleteAllTags(postId);
     }
 
     private void addTagsToPost(RequestPostDto post) {
-        postDao.addTagsToPost(post.getId(), post.getTags());
+        postDao.addTags(post.getId(), post.getTags());
     }
 
     private void addTagsToPosts(List<ResponsePostDto> posts) {
-        Set<Long> postsId = new HashSet<>();
-        posts.forEach(responsePostDto -> postsId.add(responsePostDto.getId()));
+        Set<Long> postsId = posts.stream().map(ResponsePostDto::getId).collect(Collectors.toSet());
+
         List<TagDto> tagDtoList = tagService.getAllTagsByPostsId(postsId);
-        posts.forEach(post -> {
-            List<Tag> postTags = new ArrayList<>();
-            tagDtoList.stream().filter(tagDto -> post.getId().equals(tagDto.getPostId())).forEach(tagDto -> postTags.add(tagDto.getTag()));
-            post.setTags(postTags);
-        });
+
+        posts.forEach(post ->
+                post.setTags(getPostTags(post.getId(), tagDtoList))
+        );
+    }
+
+    private List<Tag> getPostTags(Long postId, List<TagDto> allTagsDto) {
+        return allTagsDto.stream()
+                .filter(tagDto -> postId.equals(tagDto.getPostId()))
+                .map(TagDto::getTag)
+                .collect(Collectors.toList());
     }
 }

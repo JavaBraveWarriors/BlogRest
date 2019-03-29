@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class PostDaoImplTest {
 
-    public static final int ZERO_VALUE = 0;
+    private static final int ZERO_VALUE = 0;
     private static Long CORRECT_POST_ID = 1L;
     private static Long CORRECT_POST_ID_2 = 5L;
     private static Long CORRECT_POST_CHECK_ID = 4L;
@@ -376,7 +376,7 @@ public class PostDaoImplTest {
         assertNotNull(tagsBeforeDeleting);
         assertTrue(tagsBeforeDeleting.size() > 0);
 
-        assertTrue(postDao.deleteAllTagsInPost(CORRECT_POST_ID));
+        assertTrue(postDao.deleteAllTags(CORRECT_POST_ID));
 
         List<TagDto> tagsAfterDeleting = tagDao.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID));
         assertNotNull(tagsAfterDeleting);
@@ -385,12 +385,12 @@ public class PostDaoImplTest {
 
     @Test()
     public void deleteAllTagsInIncorrectPost() {
-        assertFalse(postDao.deleteAllTagsInPost(INCORRECT_POST_ID));
+        assertFalse(postDao.deleteAllTags(INCORRECT_POST_ID));
     }
 
     @Test()
     public void deleteAllTagsInNullPost() {
-        assertFalse(postDao.deleteAllTagsInPost(null));
+        assertFalse(postDao.deleteAllTags(null));
     }
 
     @Test
@@ -398,7 +398,7 @@ public class PostDaoImplTest {
         List<TagDto> tagsBeforeAdding = tagDao.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID_2));
         assertNotNull(tagsBeforeAdding);
 
-        assertTrue(postDao.addTagsToPost(CORRECT_POST_ID_2, ADDED_TAGS_ID));
+        assertTrue(postDao.addTags(CORRECT_POST_ID_2, ADDED_TAGS_ID));
 
         List<TagDto> tagsAfterAdding = tagDao.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID_2));
         assertNotNull(tagsAfterAdding);
@@ -408,7 +408,7 @@ public class PostDaoImplTest {
 
     @Test(expected = DataIntegrityViolationException.class)
     public void addTagsToIncorrectPost() {
-        assertFalse(postDao.addTagsToPost(INCORRECT_POST_ID, ADDED_TAGS_ID));
+        assertFalse(postDao.addTags(INCORRECT_POST_ID, ADDED_TAGS_ID));
     }
 
     @Test

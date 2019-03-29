@@ -165,7 +165,7 @@ public interface PostDao {
 
     boolean addViewToPost(Long postId) throws DataAccessException;
 
-    boolean deleteAllTagsInPost(Long postId);
+    boolean deleteAllTags(Long postId);
 
-    boolean addTagsToPost(Long postId, List<Long> tags);
+    boolean addTags(Long postId, List<Long> tags);
 }

@@ -13,7 +13,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
-import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -226,15 +225,14 @@ public class PostDaoImpl implements PostDao {
         return jdbcTemplate.update(addViewSql, parameterSource) == 1;
     }
 
-    public boolean deleteAllTagsInPost(Long postId) {
+    public boolean deleteAllTags(Long postId) {
         LOGGER.debug("Delete all tags from post id = [{}] in database.", postId);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(ID, postId);
         return jdbcTemplate.update(deleteAllTagsInPostSql, parameterSource) != 0;
     }
 
-    public boolean addTagsToPost(Long postId, List<Long> tags) {
+    public boolean addTags(Long postId, List<Long> tags) {
         LOGGER.debug("Add tags to post by id = [{}], tags = [{}]", postId, tags);
-        SqlParameterSource[] parameterSource = SqlParameterSourceUtils.createBatch(postId, tags);
         List<Map<String, Object>> batchValues = new ArrayList<>(tags.size());
         for (Long tagId : tags) {
             batchValues.add(
