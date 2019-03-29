@@ -21,7 +21,7 @@ import javax.jms.Queue;
         "classpath:queue.properties",
         "classpath:activeMQ-test.properties"
 })
-public class JmsConfig {
+public class JmsTestConfig {
     @Value("${activeMqUrl}")
     private String BROKER_URL;
 

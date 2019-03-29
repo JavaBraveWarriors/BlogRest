@@ -67,6 +67,7 @@
         <cobertura-maven-plugin.version>2.7</cobertura-maven-plugin.version>
         <activemq.version>5.8.0</activemq.version>
         <javax.jms.version>2.0</javax.jms.version>
+        <server.deploy.port>8888</server.deploy.port>
     </properties>
 
     <dependencyManagement>
@@ -342,7 +343,7 @@
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>${tomcat-maven-plugin.version}</version>
                 <configuration>
-                    <url>http://localhost:8888/manager/text</url>
+                    <url>http://localhost:${server.deploy.port}/manager/text</url>
                     <server>apache-tomcat</server>
                     <path>/${project.build.finalName}</path>
                     <update>true</update>
