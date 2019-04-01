@@ -8,6 +8,8 @@ services:
     links:
       - tomcat_rest_1
       - tomcat_rest_2
+      - tomcat_front_3
+      - tomcat_front_4
 
   tomcat_rest_1:
     build: ./tomcatSetupInstance1/
@@ -28,6 +30,22 @@ services:
     links:
       - db
       - activemq
+  tomcat_front_3:
+    build: ./tomcatSetupInstance3/
+    container_name: yam_tomcat_3-th_instance
+    ports:
+      - "8883:8080"
+      - "8010:8010"
+    links:
+      - activemq
+  tomcat_front_4:
+    build: ./tomcatSetupInstance4/
+    container_name: yam_tomcat_4-th_instance
+    ports:
+      - "8884:8080"
+      - "8011:8011"
+    links:
+      - activemq
   db:
     build: ./dbSetup/
     container_name: yam_mysql
@@ -42,4 +60,3 @@ services:
     ports:
       - "61616:61616"
       - "8161:8161"
-

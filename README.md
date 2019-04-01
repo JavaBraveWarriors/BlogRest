@@ -46,7 +46,7 @@ mvn -Pprod clean install tomcat7:deploy -Dserver.deploy.port=${YOUR_CUSTOM_PORT}
 ```
 mvn -Pprod clean install tomcat7:redeploy -Dserver.deploy.port=${YOUR_CUSTOM_PORT}
 ```
-
+> *Node*: ${YOUR_CUSTOM_PORT} is the port on which tomcat is running.
 ## Technology stack
 * [Spring Framework 5.1.3.RELEASE][5]
 * [Maven 3][6]
