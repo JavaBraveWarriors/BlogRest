@@ -18,10 +18,10 @@ import javax.jms.Queue;
 @Configuration
 @EnableJms
 @PropertySource({
-        "classpath:queue.properties",
+        "classpath:jmsConsumer.properties",
         "classpath:activeMQ-test.properties"
 })
-public class JmsTestConfig {
+public class JmsTestConfiguration {
     @Value("${activeMqUrl}")
     private String BROKER_URL;
 

@@ -12,7 +12,7 @@ import javax.validation.ValidationException;
 import java.util.List;
 
 /**
- * The type Tag rest controller.
+ * The Tag rest controller provides an interface to interact with our rest-API service to Tag model.
  *
  * @author Aliaksandr Yeutushenka
  * @see TagService

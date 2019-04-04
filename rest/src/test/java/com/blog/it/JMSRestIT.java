@@ -1,6 +1,6 @@
 package com.blog.it;
 
-import com.blog.it.config.JmsTestConfig;
+import com.blog.it.config.JmsTestConfiguration;
 import com.blog.model.Comment;
 import com.blog.model.CommentListWrapper;
 import com.blog.model.Tag;
@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {JmsTestConfig.class})
+@ContextConfiguration(classes = {JmsTestConfiguration.class})
 public class JMSRestIT extends AbstractTestIT {
 
     private static final Long MAX_WAITING_TIME = 1000L;
