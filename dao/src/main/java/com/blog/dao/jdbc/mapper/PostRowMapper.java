@@ -1,6 +1,7 @@
 package com.blog.dao.jdbc.mapper;
 
 import com.blog.model.ResponsePostDto;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
@@ -25,8 +26,15 @@ public class PostRowMapper implements RowMapper<ResponsePostDto> {
     public static final String AUTHOR_FIRST_NAME = "first_name";
     public static final String AUTHOR_LAST_NAME = "last_name";
 
+    private PostShortRowMapper postShortRowMapper;
+
+    @Autowired
+    public PostRowMapper(PostShortRowMapper postShortRowMapper) {
+        this.postShortRowMapper = postShortRowMapper;
+    }
+
     public ResponsePostDto mapRow(ResultSet rs, int rowNum) throws SQLException {
-        ResponsePostDto post = PostShortRowMapper.rowFields(rs);
+        ResponsePostDto post = postShortRowMapper.mapRow(rs, rowNum);
         post.setText(rs.getString(TEXT));
         return post;
     }

@@ -25,22 +25,6 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ValidatorTest {
-
-    @Mock
-    private AuthorDao authorDao;
-
-    @Mock
-    private TagDao tagDao;
-
-    @Mock
-    private PostDao postDao;
-
-    @Mock
-    private CommentDao commentDao;
-
-    @InjectMocks
-    private Validator validator;
-
     private static Long CORRECT_AUTHOR_ID = 1L;
     private static Long INCORRECT_AUTHOR_ID = -2L;
     private static String CORRECT_AUTHOR_LOGIN = "testLoginCorrect";
@@ -62,12 +46,12 @@ public class ValidatorTest {
     private static Long INCORRECT_QUANTITY_NUMBER = -3L;
     private static String NULL_STRING = null;
 
-    private static Tag correctTag = new Tag(4L, "test4", "test4");
-    private static Tag incorrectTag = new Tag(-1L, "test1", "test1");
-    private static List<Long> correctTagsId = new ArrayList<>();
-    private static List<Long> incorrectTagsId = new ArrayList<>();
+    private static Tag CORRECT_TAG = new Tag(4L, "test4", "test4");
+    private static Tag INCORRECT_TAG = new Tag(-1L, "test1", "test1");
+    private static List<Long> CORRECT_TAGS_ID_LIST = new ArrayList<>();
+    private static List<Long> INCORRECT_TAGS_ID_LIST = new ArrayList<>();
 
-    private static Post correctPost = new Post(
+    private static Post CORRECT_POST = new Post(
             1L,
             "testTitle",
             "testDescription",
@@ -76,7 +60,7 @@ public class ValidatorTest {
             1L
     );
 
-    private static Post incorrectPost1 = new Post(
+    private static Post INCORRECT_POST_1 = new Post(
             -1L,
             "testTitle",
             "testDescription",
@@ -84,7 +68,7 @@ public class ValidatorTest {
             "testPath",
             1L
     );
-    private static Post incorrectPost2 = new Post(
+    private static Post INCORRECT_POST_2 = new Post(
             1L,
             "testTitle",
             "testDescription",
@@ -92,7 +76,7 @@ public class ValidatorTest {
             "testPath",
             -1L
     );
-    private static Author author = new Author(
+    private static Author CORRECT_AUTHOR = new Author(
             1L,
             "test@mail.ru",
             "testLogin",
@@ -102,18 +86,34 @@ public class ValidatorTest {
             "testDescription",
             "testPhone");
 
-    private static Comment comment = new Comment(
+    private static Comment CORRECT_COMMENT = new Comment(
             "text",
             2L,
             CORRECT_POST_ID
     );
 
+    @Mock
+    private AuthorDao authorDao;
+
+    @Mock
+    private TagDao tagDao;
+
+    @Mock
+    private PostDao postDao;
+
+    @Mock
+    private CommentDao commentDao;
+
+    @InjectMocks
+    private Validator validator;
+
+
     @BeforeClass
     public static void setup(){
-        correctTagsId.add(4L);
-        correctTagsId.add(5L);
-        incorrectTagsId.add(-2L);
-        incorrectTagsId.add(0L);
+        CORRECT_TAGS_ID_LIST.add(4L);
+        CORRECT_TAGS_ID_LIST.add(5L);
+        INCORRECT_TAGS_ID_LIST.add(-2L);
+        INCORRECT_TAGS_ID_LIST.add(0L);
     }
 
     @Test
@@ -143,9 +143,9 @@ public class ValidatorTest {
     @Test
     public void validateUpdatedCommentSuccess() {
         when(commentDao.checkCommentInPostById(anyLong(), anyLong())).thenReturn(true);
-        when(commentDao.getAuthorIdByCommentId(anyLong())).thenReturn(comment.getAuthorId());
-        comment.setId(CORRECT_COMMENT_ID);
-        validator.validateUpdatedComment(comment);
+        when(commentDao.getAuthorIdByCommentId(anyLong())).thenReturn(CORRECT_COMMENT.getAuthorId());
+        CORRECT_COMMENT.setId(CORRECT_COMMENT_ID);
+        validator.validateUpdatedComment(CORRECT_COMMENT);
         verify(commentDao, times(1)).checkCommentInPostById(anyLong(), anyLong());
         verify(commentDao, times(1)).getAuthorIdByCommentId(anyLong());
     }
@@ -154,8 +154,8 @@ public class ValidatorTest {
     public void validateUpdatedCommentByIncorrectAuthorId() {
         when(commentDao.checkCommentInPostById(anyLong(), anyLong())).thenReturn(true);
         when(commentDao.getAuthorIdByCommentId(anyLong())).thenReturn(CORRECT_AUTHOR_ID);
-        comment.setId(CORRECT_COMMENT_ID);
-        validator.validateUpdatedComment(comment);
+        CORRECT_COMMENT.setId(CORRECT_COMMENT_ID);
+        validator.validateUpdatedComment(CORRECT_COMMENT);
         verify(commentDao, times(1)).checkCommentInPostById(anyLong(), anyLong());
         verify(commentDao, times(1)).getAuthorIdByCommentId(anyLong());
     }
@@ -163,8 +163,8 @@ public class ValidatorTest {
     @Test(expected = NotFoundException.class)
     public void validateUpdatedCommentByIncorrectCommentId() {
         when(commentDao.checkCommentInPostById(anyLong(), anyLong())).thenReturn(false);
-        comment.setId(CORRECT_COMMENT_ID);
-        validator.validateUpdatedComment(comment);
+        CORRECT_COMMENT.setId(CORRECT_COMMENT_ID);
+        validator.validateUpdatedComment(CORRECT_COMMENT);
         verify(commentDao, times(1)).checkCommentInPostById(anyLong(), anyLong());
     }
 
@@ -195,34 +195,34 @@ public class ValidatorTest {
     @Test
     public void validateTagsSuccess() {
         when(tagDao.checkTagById(anyLong())).thenReturn(true);
-        validator.validateTags(correctTagsId);
-        verify(tagDao, times(correctTagsId.size())).checkTagById(anyLong());
+        validator.validateTags(CORRECT_TAGS_ID_LIST);
+        verify(tagDao, times(CORRECT_TAGS_ID_LIST.size())).checkTagById(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
     public void validateNotExistTags() {
         when(tagDao.checkTagById(anyLong())).thenReturn(false);
-        validator.validateTags(correctTagsId);
+        validator.validateTags(CORRECT_TAGS_ID_LIST);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
     @Test(expected = ValidationException.class)
     public void validateIncorrectTags() {
-        validator.validateTags(incorrectTagsId);
+        validator.validateTags(INCORRECT_TAGS_ID_LIST);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
     @Test(expected = ValidationException.class)
     public void validateTagsWhereTagHasIdEqualsNull() {
-        incorrectTag.setId(NULL_LONG);
-        validator.validateTags(incorrectTagsId);
+        INCORRECT_TAG.setId(NULL_LONG);
+        validator.validateTags(INCORRECT_TAGS_ID_LIST);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
     public void validateTagsWhereTagNotExistInDB() {
         when(tagDao.checkTagById(anyLong())).thenReturn(false);
-        validator.validateTags(correctTagsId);
+        validator.validateTags(CORRECT_TAGS_ID_LIST);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
@@ -230,26 +230,26 @@ public class ValidatorTest {
     public void checkPostSuccess() {
         when(postDao.checkPostById(anyLong())).thenReturn(true);
         when(authorDao.checkAuthorById(anyLong())).thenReturn(true);
-        validator.checkPost(correctPost);
+        validator.checkPost(CORRECT_POST);
         verify(authorDao, times(1)).checkAuthorById(anyLong());
         verify(postDao, times(1)).checkPostById(anyLong());
     }
 
     @Test(expected = ValidationException.class)
     public void checkPostWithIncorrectNegativeId() {
-        validator.checkPost(incorrectPost1);
+        validator.checkPost(INCORRECT_POST_1);
     }
 
     @Test(expected = ValidationException.class)
     public void checkPostWithIncorrectNegativeAuthorId() {
         when(postDao.checkPostById(anyLong())).thenReturn(true);
-        validator.checkPost(incorrectPost2);
+        validator.checkPost(INCORRECT_POST_2);
     }
 
     @Test(expected = NotFoundException.class)
     public void checkNotExistPost() {
         when(postDao.checkPostById(anyLong())).thenReturn(false);
-        validator.checkPost(correctPost);
+        validator.checkPost(CORRECT_POST);
         verify(authorDao, never()).checkAuthorById(anyLong());
         verify(postDao, times(1)).checkPostById(anyLong());
     }
@@ -258,7 +258,7 @@ public class ValidatorTest {
     public void checkPostWhereAuthorIdNotEqualWithPostInDB() {
         when(postDao.checkPostById(anyLong())).thenReturn(true);
         when(authorDao.checkAuthorById(anyLong())).thenReturn(false);
-        validator.checkPost(correctPost);
+        validator.checkPost(CORRECT_POST);
         verify(authorDao, times(1)).checkAuthorById(anyLong());
         verify(postDao, times(1)).checkPostById(anyLong());
     }
@@ -334,13 +334,13 @@ public class ValidatorTest {
     @Test
     public void checkTagWithTitleSuccess() {
         when(tagDao.checkTagByTitle(anyString())).thenReturn(false);
-        validator.checkTagWithTitle(correctTag);
+        validator.checkTagWithTitle(CORRECT_TAG);
     }
 
     @Test(expected = ValidationException.class)
     public void checkExistTagWithTitle() {
         when(tagDao.checkTagByTitle(anyString())).thenReturn(true);
-        validator.checkTagWithTitle(correctTag);
+        validator.checkTagWithTitle(CORRECT_TAG);
     }
 
     @Test
@@ -381,13 +381,13 @@ public class ValidatorTest {
     @Test
     public void checkAuthorExistenceSuccess() {
         when(authorDao.checkAuthorByLogin(anyString())).thenReturn(false);
-        validator.checkAuthorExistence(author);
+        validator.checkAuthorExistence(CORRECT_AUTHOR);
     }
 
     @Test(expected = ValidationException.class)
     public void checkExistAuthorExistence() {
         when(authorDao.checkAuthorByLogin(anyString())).thenReturn(true);
-        validator.checkAuthorExistence(author);
+        validator.checkAuthorExistence(CORRECT_AUTHOR);
     }
 
     @Test

@@ -21,23 +21,27 @@ import static org.junit.Assert.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class CommentDaoImplTest {
 
-    private static Long CORRECT_PAGE_ID = 2L;
-    private static Long CORRECT_POST_ID = 1L;
-    private static Long CORRECT_COMMENT_DELETE_ID = 5L;
-    private static Long CORRECT_COMMENT_CHECK_ID = 1L;
-    private static Long INCORRECT_COMMENT_ID = 15L;
-    private static Long CORRECT_COMMENT_ID = 2L;
-    private static Long CORRECT_POST_ID_ADDED_COMMENT = 3L;
-    private static Long COUNT_COMMENTS_IN_POST3 = 2L;
+    private static final Long CORRECT_PAGE_ID = 2L;
+    private static final int COUNT_COMMENTS_IN_SECOND_PAGE = 2;
+    private static final Long CORRECT_POST_ID = 1L;
+    private static final Long CORRECT_FIRST_COMMENT_ID = 1L;
+    private static final Long CORRECT_COMMENT_DELETE_ID = 5L;
+    private static final Long CORRECT_COMMENT_CHECK_ID = 1L;
+    private static final Long INCORRECT_COMMENT_ID = 15L;
+    private static final Long CORRECT_COMMENT_ID = 2L;
+    private static final Long CORRECT_POST_ID_ADDED_COMMENT = 3L;
+    private static final Long COUNT_COMMENTS_IN_POST3 = 2L;
+    private static final Long COMMENTS_SIZE = 2L;
 
-    private static Long INCORRECT_POST_ID = 9L;
-    private static Long CORRECT_USER_ID = 1L;
-    private static Long CORRECT_AUTHOR_ID = 4L;
-    private static Long INCORRECT_USER_ID = 9L;
+    private static final Long INCORRECT_POST_ID = 9L;
+    private static final Long CORRECT_USER_ID = 1L;
+    private static final Long CORRECT_AUTHOR_ID = 4L;
+    private static final Long INCORRECT_USER_ID = 9L;
+    private static final Long ZERO = 0L;
 
-    private static String NEW_COMMENT_TEXT = "newText4";
+    private static final String NEW_COMMENT_TEXT = "newText4";
 
-    private static String UPDATED_COMMENT_TEXT = "updatedTestText1";
+    private static final String UPDATED_COMMENT_TEXT = "updatedTestText1";
 
     private static Comment comment;
 
@@ -46,8 +50,7 @@ public class CommentDaoImplTest {
         comment = new Comment(
                 NEW_COMMENT_TEXT,
                 CORRECT_USER_ID,
-                CORRECT_POST_ID_ADDED_COMMENT
-        );
+                CORRECT_POST_ID_ADDED_COMMENT);
     }
 
     @Autowired
@@ -56,6 +59,8 @@ public class CommentDaoImplTest {
     @Test
     public void getCommentByIdSuccess() {
         Comment comment = commentDao.getCommentById(CORRECT_COMMENT_ID);
+
+        assertNotNull(comment);
         assertEquals(comment.getId(), CORRECT_COMMENT_ID);
     }
 
@@ -66,15 +71,15 @@ public class CommentDaoImplTest {
 
     @Test
     public void getListCommentsByPostIdWithPaginationSuccess() {
-        List<Comment> comments = commentDao.getListCommentsByInitialAndSize(CORRECT_PAGE_ID, 2L, CORRECT_POST_ID);
+        List<Comment> comments = commentDao.getListCommentsByInitialAndSize(CORRECT_PAGE_ID, COMMENTS_SIZE, CORRECT_POST_ID);
         assertNotNull(comments);
-        assertEquals(2, comments.size());
-        assertNotEquals(1L, comments.get(1));
+        assertEquals(COUNT_COMMENTS_IN_SECOND_PAGE, comments.size());
+        assertNotEquals(CORRECT_FIRST_COMMENT_ID, comments.get(1));
     }
 
     @Test
     public void getListCommentsByIncorrectPostIdWithPagination() {
-        List<Comment> comments = commentDao.getListCommentsByInitialAndSize(CORRECT_PAGE_ID, 2L, INCORRECT_POST_ID);
+        List<Comment> comments = commentDao.getListCommentsByInitialAndSize(CORRECT_PAGE_ID, COMMENTS_SIZE, INCORRECT_POST_ID);
         assertTrue(comments.isEmpty());
     }
 
@@ -171,7 +176,7 @@ public class CommentDaoImplTest {
 
     @Test
     public void getCountOfCommentsWithIncorrectPostId() {
-        assertEquals(Long.valueOf(0), commentDao.getCountOfCommentsByPostId(INCORRECT_POST_ID));
+        assertEquals(ZERO, commentDao.getCountOfCommentsByPostId(INCORRECT_POST_ID));
     }
 
     @Test

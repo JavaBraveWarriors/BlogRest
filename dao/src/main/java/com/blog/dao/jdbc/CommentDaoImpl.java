@@ -7,7 +7,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -19,9 +18,18 @@ import java.util.List;
 
 import static com.blog.dao.jdbc.mapper.CommentRowMapper.*;
 
+/**
+ * This interface implementation {CommentDao} allows operations to easily manage a database for an Comment object.
+ * Use this class if you want to access the Comment database.
+ *
+ * @author Aliaksandr Yeutushenka
+ * @see CommentDao
+ * @see CommentRowMapper
+ * @see Comment
+ */
 @Repository
 public class CommentDaoImpl implements CommentDao {
-    private static final Logger LOGGER = LogManager.getLogger(PostDaoImpl.class);
+    private static final Logger LOGGER = LogManager.getLogger();
 
     @Value("${comment.insert}")
     private String addCommentSql;
@@ -62,13 +70,13 @@ public class CommentDaoImpl implements CommentDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public Comment getCommentById(Long commentId) {
+    public Comment getCommentById(final Long commentId) {
         LOGGER.debug("Get comment by commentId = [{}] from database.", commentId);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(ID, commentId);
         return jdbcTemplate.queryForObject(selectByIdSql, parameterSource, commentRowMapper);
     }
 
-    public List<Comment> getListCommentsByInitialAndSize(Long initial, Long size, Long postId) throws DataAccessException {
+    public List<Comment> getListCommentsByInitialAndSize(final Long initial, final Long size, final Long postId) {
         LOGGER.debug("Get list of comments by initial = [{}], quantity = [{}] and postId = [{}] from database.", initial, size, postId);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue(POST_ID, postId);
@@ -77,7 +85,7 @@ public class CommentDaoImpl implements CommentDao {
         return jdbcTemplate.query(selectByInitialIdAndQuantityCommentSql, parameterSource, (resultSet, i) -> commentRowMapper.mapRow(resultSet, i));
     }
 
-    public Long addComment(Comment comment) throws DataAccessException {
+    public Long addComment(final Comment comment) {
         LOGGER.debug("Add new comment = [{}] to database.", comment);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue(CREATED_DATE, comment.getTimeOfCreation());
@@ -89,13 +97,13 @@ public class CommentDaoImpl implements CommentDao {
         return keyHolder.getKey().longValue();
     }
 
-    public Long getCountOfCommentsByPostId(Long postId) {
+    public Long getCountOfCommentsByPostId(final Long postId) {
         LOGGER.debug("Get count of comments by postId = [{}] to database.", postId);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(POST_ID, postId);
         return jdbcTemplate.queryForObject(getCountOfCommentsSql, parameterSource, Long.class);
     }
 
-    public boolean updateComment(Comment comment) throws DataAccessException {
+    public boolean updateComment(final Comment comment) {
         LOGGER.debug("Update comment [{}] in database.", comment);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue(ID, comment.getId());
@@ -103,29 +111,28 @@ public class CommentDaoImpl implements CommentDao {
         return jdbcTemplate.update(updateCommentSql, parameterSource) == 1;
     }
 
-    public boolean deleteComment(Long commentId) throws DataAccessException {
+    public boolean deleteComment(final Long commentId) {
         LOGGER.debug("Delete comment id = [{}] from database.", commentId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, commentId);
         return jdbcTemplate.update(deleteCommentSql, parameterSource) == 1;
     }
 
-    public boolean checkCommentInPostById(Long commentId, Long postId) {
+    public boolean checkCommentInPostById(final Long commentId, final Long postId) {
         LOGGER.debug("Check comment by id = [{}] in post id = [{}] from database.", commentId, postId);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(ID, commentId);
         parameterSource.addValue(POST_ID, postId);
         return jdbcTemplate.queryForObject(checkCommentInPostSql, parameterSource, boolean.class);
     }
 
-    public boolean checkCommentById(Long commentId) {
+    public boolean checkCommentById(final Long commentId) {
         LOGGER.debug("Check comment by id = [{}] in database.", commentId);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(ID, commentId);
         return jdbcTemplate.queryForObject(checkCommentSql, parameterSource, boolean.class);
     }
 
-    public Long getAuthorIdByCommentId(Long commentId) {
+    public Long getAuthorIdByCommentId(final Long commentId) {
         LOGGER.debug("Get authorId by commentId = [{}] from database.", commentId);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(ID, commentId);
         return jdbcTemplate.queryForObject(getAuthorIdByCommentIdSql, parameterSource, Long.class);
     }
-
 }

@@ -19,12 +19,16 @@
                 <value>classpath:message.properties</value>
                 <value>classpath:test-database-it.properties</value>
                 <value>classpath:activeMQ-test.properties</value>
+                <value>classpath:controller.properties</value>
             </list>
         </property>
     </bean>
 
     <context:annotation-config/>
-    <context:component-scan base-package="com.blog"/>
+    <context:component-scan base-package="com.blog">
+        <context:exclude-filter type="assignable" expression="com.blog.config.MessagingConfiguration"/>
+        <context:exclude-filter type="assignable" expression="com.blog.controller.config.ControllerTestConfiguration"/>
+    </context:component-scan>
     <mvc:annotation-driven/>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -46,7 +50,7 @@
         <constructor-arg ref="dataSource"/>
     </bean>
 
-    <bean class="com.blog.it.config.JmsTestConfig"/>
+    <bean class="com.blog.it.config.JmsTestConfiguration"/>
     <bean class="com.blog.it.config.BrokerServiceConfig"/>
 
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">

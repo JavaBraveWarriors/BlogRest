@@ -6,15 +6,17 @@ import com.blog.model.PostListWrapper;
 import com.blog.model.RequestPostDto;
 import com.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
+import java.util.Optional;
 
 /**
- * The type Post rest controller.
+ * The Post rest controller provides an interface to interact with our rest-API service to Post model.
  *
  * @author Aliaksandr Yeutushenka
  * @see PostService
@@ -22,9 +24,16 @@ import javax.validation.ValidationException;
 @RestController
 @RequestMapping("/posts")
 public class PostRestController {
-    private static final Long DEFAULT_RESPONSE_POST_SIZE = 10L;
-    private static final Long DEFAULT_RESPONSE_POST_PAGE = 1L;
-    private static final String DEFAULT_RESPONSE_POST_SORT = "created_date";
+
+    @Value("${postController.defaultResponsePostSize}")
+    private Long DEFAULT_RESPONSE_POST_SIZE;
+
+    @Value("${postController.defaultResponsePostPage}")
+    private Long DEFAULT_RESPONSE_POST_PAGE;
+
+    @Value("${postController.defaultResponsePostSort}")
+    private String DEFAULT_RESPONSE_POST_SORT;
+
     private PostService postService;
 
     /**
@@ -63,18 +72,11 @@ public class PostRestController {
     public PostListWrapper getPostsWithPagination(
             @RequestParam(value = "page", required = false) Long page,
             @RequestParam(value = "size", required = false) Long size,
-            @RequestParam(value = "sort", required = false) String sort
-    ) {
-        if (page == null) {
-            page = DEFAULT_RESPONSE_POST_PAGE;
-        }
-        if (size == null) {
-            size = DEFAULT_RESPONSE_POST_SIZE;
-        }
-        if (sort == null) {
-            sort = DEFAULT_RESPONSE_POST_SORT;
-        }
-        return postService.getPostsWithPaginationAndSorting(page, size, sort);
+            @RequestParam(value = "sort", required = false) String sort) {
+        return postService.getPostsWithPaginationAndSorting(
+                Optional.ofNullable(page).orElse(DEFAULT_RESPONSE_POST_PAGE),
+                Optional.ofNullable(size).orElse(DEFAULT_RESPONSE_POST_SIZE),
+                Optional.ofNullable(sort).orElse(DEFAULT_RESPONSE_POST_SORT));
     }
 
     /**

@@ -24,11 +24,14 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class CommentServiceImplTest {
 
-    public static final long CORRECT_COMMENT_ID = 1L;
-    public static final long CORRECT_PAGE = 2L;
-    public static final long SIZE_PAGES = 10L;
-    public static final long CORRECT_POST_ID = 1L;
-    public static final long INCORRECT_PAGE = -2L;
+    private static final Long CORRECT_COMMENT_ID = 1L;
+    private static final Long CORRECT_PAGE = 2L;
+    private static final Long SIZE_PAGES = 10L;
+    private static final Long CORRECT_POST_ID = 1L;
+    private static final Long INCORRECT_PAGE = -2L;
+    private static List<Comment> COMMENTS = new ArrayList<>();
+    private static Comment COMMENT = new Comment();
+
     @Mock
     private CommentDao commentDao;
 
@@ -37,10 +40,6 @@ public class CommentServiceImplTest {
 
     @InjectMocks
     private CommentServiceImpl commentService;
-
-    private static List<Comment> COMMENTS = new ArrayList<>();
-
-    private static Comment COMMENT = new Comment();
 
     @BeforeClass
     public static void setUp() {

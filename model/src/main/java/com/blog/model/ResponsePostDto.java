@@ -85,7 +85,6 @@ public class ResponsePostDto extends Post {
         this.comments = comments;
     }
 
-    @Override
     public String toString() {
         return "ResponsePostDto{" +
                 "  id=" + id +

@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 /**
- * The type Author rest controller.
+ * The Author rest controller provides an interface to interact with our rest-API service to Author model.
  *
  * @author Aliaksandr Yeutushenka
  * @see AuthorService

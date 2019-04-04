@@ -19,29 +19,30 @@ import static org.junit.Assert.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class ViewDaoImplTest {
 
-    private static Long NOT_EXIST_USER_ID = 123L;
-    private static Long CORRECT_USER_ID = 1L;
-    private static Long CORRECT_POST_ID = 1L;
+    private static final int ZERO = 0;
+    private static final Long NOT_EXIST_USER_ID = 123L;
+    private static final Long CORRECT_USER_ID = 1L;
+    private static final Long CORRECT_POST_ID = 1L;
 
-    private static Long LIMIT_COUNT_VIEWS_IN_DB = 1000L;
-    private static Long INITIAL_VIEW_ID = 1L;
+    private static final Long LIMIT_COUNT_VIEWS_IN_DB = 1000L;
+    private static final Long INITIAL_VIEW_ID = 1L;
 
-    private static int COUNT_VIEWS_OF_FIRST_USER = 2;
-    private static int COUNT_VIEWS_OF_FIRST_POST = 5;
+    private static final int COUNT_VIEWS_OF_FIRST_USER = 2;
+    private static final int COUNT_VIEWS_OF_FIRST_POST = 5;
 
-    private static Long INCORRECT_USER_ID = -112L;
-    private static Long NOT_EXIST_POST_ID = 121L;
+    private static final Long INCORRECT_USER_ID = -112L;
+    private static final Long NOT_EXIST_POST_ID = 121L;
 
-    private static Long DELETED_VIEW_ID = 4L;
-    private static Long INCORRECT_VIEW_ID = 214L;
-    private static Long INCORRECT_POST_ID = -12L;
+    private static final Long DELETED_VIEW_ID = 4L;
+    private static final Long INCORRECT_VIEW_ID = 214L;
+    private static final Long INCORRECT_POST_ID = -12L;
 
-    private static View correctView = new View(
+    private static final View correctView = new View(
             null,
             CORRECT_USER_ID,
             CORRECT_POST_ID);
 
-    private static View incorrectView = new View(
+    private static final View incorrectView = new View(
             null,
             INCORRECT_USER_ID,
             NOT_EXIST_POST_ID);
@@ -130,7 +131,7 @@ public class ViewDaoImplTest {
         List<View> views = viewDao.getListViewsOfUser(INITIAL_VIEW_ID, LIMIT_COUNT_VIEWS_IN_DB, NOT_EXIST_USER_ID);
 
         assertNotNull(views);
-        assertEquals(0, views.size());
+        assertEquals(ZERO, views.size());
     }
 
     @Test
@@ -138,7 +139,7 @@ public class ViewDaoImplTest {
         List<View> views = viewDao.getListViewsOfUser(INITIAL_VIEW_ID, LIMIT_COUNT_VIEWS_IN_DB, INCORRECT_USER_ID);
 
         assertNotNull(views);
-        assertEquals(0, views.size());
+        assertEquals(ZERO, views.size());
     }
 
     @Test

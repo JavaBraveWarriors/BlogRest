@@ -17,7 +17,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -68,7 +71,6 @@ public class PostServiceImpl implements PostService {
         this.viewDao = viewDao;
     }
 
-    // refactored with pagination
     public PostListWrapper getAllPostsByAuthorId(Long authorId) {
         LOGGER.debug("Gets all posts by author id = [{}].", authorId);
         validator.validateAuthorId(authorId);
@@ -127,9 +129,6 @@ public class PostServiceImpl implements PostService {
         view.setPostId(postId);
         // TODO: refactor when will be security(add userId from)
         //view.setUserId();
-        // TODO: refactor this !!!
-        //validator.validateAuthorId(1L);
-        //view.setUserId(1L);
         //if (!viewDao.checkViewByPostIdAndUserId(postId, view.getUserId())) {
         //  viewDao.addView(view);
         //  postDao.addViewToPost(postId);
@@ -190,21 +189,27 @@ public class PostServiceImpl implements PostService {
     }
 
     private void removeTagInPost(Long postId) {
-        postDao.deleteAllTagsInPost(postId);
+        postDao.deleteAllTags(postId);
     }
 
     private void addTagsToPost(RequestPostDto post) {
-        postDao.addTagsToPost(post.getId(), post.getTags());
+        postDao.addTags(post.getId(), post.getTags());
     }
 
     private void addTagsToPosts(List<ResponsePostDto> posts) {
-        Set<Long> postsId = new HashSet<>();
-        posts.forEach(responsePostDto -> postsId.add(responsePostDto.getId()));
+        Set<Long> postsId = posts.stream().map(ResponsePostDto::getId).collect(Collectors.toSet());
+
         List<TagDto> tagDtoList = tagService.getAllTagsByPostsId(postsId);
-        posts.forEach(post -> {
-            List<Tag> postTags = new ArrayList<>();
-            tagDtoList.stream().filter(tagDto -> post.getId().equals(tagDto.getPostId())).forEach(tagDto -> postTags.add(tagDto.getTag()));
-            post.setTags(postTags);
-        });
+
+        posts.forEach(post ->
+                post.setTags(getPostTags(post.getId(), tagDtoList))
+        );
+    }
+
+    private List<Tag> getPostTags(Long postId, List<TagDto> allTagsDto) {
+        return allTagsDto.stream()
+                .filter(tagDto -> postId.equals(tagDto.getPostId()))
+                .map(TagDto::getTag)
+                .collect(Collectors.toList());
     }
 }

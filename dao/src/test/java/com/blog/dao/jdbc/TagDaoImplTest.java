@@ -21,19 +21,23 @@ import static org.junit.Assert.*;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class TagDaoImplTest {
 
-    private static Long CORRECT_TAG_ID = 1L;
-    private static Long CORRECT_TAG_UPDATED_ID = 2L;
-    private static Long INCORRECT_TAG_ID = 7L;
-    private static Long CORRECT_POST_ID = 1L;
-    private static int COUNT_TAGS_IN_DB = 5;
+    private static final long NOT_EXIST_TAG_ID = 6L;
+    private static final String CORRECT_TAG_TITLE = "cats";
+    private static final String INCORRECT_TAG_TITLE = "not";
+    private static final Long CORRECT_TAG_ID = 1L;
+    private static final Long CORRECT_TAG_UPDATED_ID = 2L;
+    private static final Long INCORRECT_TAG_ID = 7L;
+    private static final Long CORRECT_POST_ID = 1L;
+    private static final int COUNT_TAGS_IN_FIRST_POST = 2;
+    private static final int COUNT_TAGS_IN_DB = 5;
 
-    private static Long NEW_TAG_ID = 6L;
-    private static String NEW_TAG_TITLE = "newTitle4";
-    private static String NEW_TAG_PATH_IMAGE = "newPathImage4";
+    private static final Long NEW_TAG_ID = 6L;
+    private static final String NEW_TAG_TITLE = "newTitle4";
+    private static final String NEW_TAG_PATH_IMAGE = "newPathImage4";
 
-    private static String UPDATED_TAG_TITLE = "updatedTestTitle1";
+    private static final String UPDATED_TAG_TITLE = "updatedTestTitle1";
 
-    private static Tag tag = new Tag(
+    private static final Tag tag = new Tag(
             null,
             NEW_TAG_TITLE,
             NEW_TAG_PATH_IMAGE
@@ -54,18 +58,18 @@ public class TagDaoImplTest {
     public void getAllTagsByCorrectPostId() {
         List<TagDto> tags = tagDao.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID));
         assertNotNull(tags);
-        assertEquals(2, tags.size());
+        assertEquals(COUNT_TAGS_IN_FIRST_POST, tags.size());
     }
 
     @Test
     public void getTagByCorrectId() {
-        Tag tag = tagDao.getTagById(1L);
-        assertEquals("life", tag.getTitle());
+        Tag tag = tagDao.getTagById(CORRECT_TAG_ID);
+        assertEquals(CORRECT_TAG_ID, tag.getId());
     }
 
     @Test(expected = DataAccessException.class)
     public void getTagByIncorrectId() {
-        assertNull(tagDao.getTagById(6L));
+        assertNull(tagDao.getTagById(NOT_EXIST_TAG_ID));
     }
 
     @Test
@@ -114,7 +118,6 @@ public class TagDaoImplTest {
         tags = tagDao.getAllTags();
         assertNotNull(tags);
         assertEquals(initialSize - 1, tags.size());
-
     }
 
     @Test
@@ -129,14 +132,12 @@ public class TagDaoImplTest {
 
     @Test
     public void checkTagByCorrectTitle() {
-        assertTrue(tagDao.checkTagByTitle("cats"));
-
+        assertTrue(tagDao.checkTagByTitle(CORRECT_TAG_TITLE));
     }
 
     @Test
     public void checkTagByIncorrectTitle() {
-        assertFalse(tagDao.checkTagByTitle("not"));
+        assertFalse(tagDao.checkTagByTitle(INCORRECT_TAG_TITLE));
 
     }
-
 }

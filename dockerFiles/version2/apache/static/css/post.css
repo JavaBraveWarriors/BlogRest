@@ -1,0 +1,18 @@
+.container {
+    margin-top: 10rem;
+}
+
+.navbar {
+    background-color: #191517;
+}
+
+.title-picture {
+    height: 20rem;
+    background: url("http://mdbootstrap.com/img/Photos/Slides/img%20(144).jpg") center center no-repeat;
+    background-size: cover;
+}
+
+.card-comments img {
+    width: 4rem;
+}
+

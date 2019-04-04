@@ -56,7 +56,6 @@ public class Tag implements Serializable {
         this.pathImage = pathImage;
     }
 
-    // Override, because I use the "contains" method in the list.
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Tag)) return false;

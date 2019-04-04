@@ -4,17 +4,28 @@ import com.blog.model.Comment;
 import com.blog.model.CommentListWrapper;
 import com.blog.service.CommentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
+/**
+ * The Comment rest controller provides an interface to interact with our rest-API service to Comment model.
+ *
+ * @author Aliaksandr Yeutushenka
+ * @see CommentService
+ */
 @RestController
 @RequestMapping("/comments")
 public class CommentRestController {
 
-    private static Long DEFAULT_RESPONSE_COMMENT_PAGE = 1L;
-    private static Long DEFAULT_RESPONSE_COMMENT_SIZE = 10L;
+    @Value("${commentController.defaultResponseCommentPage}")
+    private Long DEFAULT_RESPONSE_COMMENT_PAGE;
+
+    @Value("${commentController.defaultResponseCommentSize}")
+    private Long DEFAULT_RESPONSE_COMMENT_SIZE;
 
     private CommentService commentService;
 
@@ -26,7 +37,7 @@ public class CommentRestController {
     @GetMapping("/{commentId}")
     @ResponseStatus(value = HttpStatus.OK)
     public Comment getCommentById(
-            @PathVariable(value = "commentId") Long commentId){
+            @PathVariable(value = "commentId") Long commentId) {
         return commentService.getCommentById(commentId);
     }
 
@@ -36,26 +47,23 @@ public class CommentRestController {
             @RequestParam(value = "page", required = false) Long page,
             @RequestParam(value = "size", required = false) Long size,
             @RequestParam(value = "postId") Long postId) {
-        if (page == null) {
-            page = DEFAULT_RESPONSE_COMMENT_PAGE;
-        }
-        if (size == null) {
-            size = DEFAULT_RESPONSE_COMMENT_SIZE;
-        }
-        return commentService.getListCommentsByPostIdWithPagination(page, size, postId);
+        return commentService.getListCommentsByPostIdWithPagination(
+                Optional.ofNullable(page).orElse(DEFAULT_RESPONSE_COMMENT_PAGE),
+                Optional.ofNullable(size).orElse(DEFAULT_RESPONSE_COMMENT_SIZE),
+                postId);
     }
 
-    @GetMapping("/count")
+    @GetMapping("/countPages")
     @ResponseStatus(value = HttpStatus.OK)
     public Long getCountOfCommentsByPostId(
             @RequestParam(value = "size") Long size,
-            @RequestParam(value = "postId") Long postId){
+            @RequestParam(value = "postId") Long postId) {
         return commentService.getCountOfPagesWithPagination(postId, size);
     }
 
     @PutMapping("")
     @ResponseStatus(value = HttpStatus.OK)
-    public void updateComment(@Valid @RequestBody Comment comment){
+    public void updateComment(@Valid @RequestBody Comment comment) {
         commentService.updateComment(comment);
     }
 }

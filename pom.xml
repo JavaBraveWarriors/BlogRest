@@ -24,13 +24,15 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <properties>
-                <spring.profiles.active>dev</spring.profiles.active>
+                <spring.log4j.level>DEBUG</spring.log4j.level>
+                <profiles.active>dev</profiles.active>
             </properties>
         </profile>
         <profile>
             <id>prod</id>
             <properties>
-                <spring.profiles.active>prod</spring.profiles.active>
+                <spring.log4j.level>ERROR</spring.log4j.level>
+                <profiles.active>prod</profiles.active>
             </properties>
         </profile>
     </profiles>
@@ -68,11 +70,15 @@
         <activemq.version>5.8.0</activemq.version>
         <javax.jms.version>2.0</javax.jms.version>
         <server.deploy.port>8888</server.deploy.port>
+        <HikariCP.version>3.3.1</HikariCP.version>
+        <hamcrest-library.version>2.1</hamcrest-library.version>
+        <javax.el-api.version>3.0.0</javax.el-api.version>
+        <javax.el.version>2.2.4</javax.el.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!--modules-->
+            <!--custom modules-->
             <dependency>
                 <groupId>com.blog</groupId>
                 <artifactId>model</artifactId>
@@ -137,6 +143,12 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-library</artifactId>
+                <version>${hamcrest-library.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-test</artifactId>
                 <version>${spring-boot.version}</version>
@@ -152,6 +164,18 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>${mockito-all.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>javax.el</groupId>
+                <artifactId>javax.el-api</artifactId>
+                <version>${javax.el-api.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.web</groupId>
+                <artifactId>javax.el</artifactId>
+                <version>${javax.el.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -210,6 +234,12 @@
                 <version>${mysql-connector-java.version}</version>
                 <scope>runtime</scope>
             </dependency>
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>${HikariCP.version}</version>
+                <scope>runtime</scope>
+            </dependency>
             <!-- Run server-->
             <dependency>
                 <groupId>org.glassfish.jersey.containers</groupId>
@@ -237,7 +267,6 @@
                 <artifactId>javax.persistence-api</artifactId>
                 <version>${persistence-api.version}</version>
             </dependency>
-
             <!--jms-->
             <dependency>
                 <groupId>org.springframework</groupId>

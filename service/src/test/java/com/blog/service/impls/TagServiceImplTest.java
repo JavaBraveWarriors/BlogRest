@@ -26,8 +26,13 @@ import static org.mockito.Mockito.*;
 public class TagServiceImplTest {
 
     private static final Long CORRECT_TAG_ID = 21L;
-    public static final long INCORRECT_TAG_ID = -12L;
-    public static final long NOT_EXIST_TAG_ID = 123L;
+    private static final Long INCORRECT_TAG_ID = -12L;
+    private static final Long NOT_EXIST_TAG_ID = 123L;
+    private static List<TagDto> POST_TAGS = new ArrayList<>();
+    private static List<Tag> TEST_TAGS = new ArrayList<>();
+    private static Tag testTag = new Tag(4L, "4", "4");
+    private static Long CORRECT_POST_ID = 1L;
+
     @Mock
     private Validator validator;
 
@@ -36,11 +41,6 @@ public class TagServiceImplTest {
 
     @InjectMocks
     private TagServiceImpl tagService;
-
-    private static List<TagDto> POST_TAGS = new ArrayList<>();
-    private static List<Tag> TEST_TAGS = new ArrayList<>();
-    private static Tag testTag = new Tag(4L, "4", "4");
-    private static Long CORRECT_POST_ID = 1L;
 
     @BeforeClass
     public static void setUp() {
