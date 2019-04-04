@@ -4,6 +4,7 @@ import com.blog.model.Comment;
 import com.blog.service.CommentService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.support.JmsHeaders;
 import org.springframework.messaging.Message;
@@ -20,6 +21,7 @@ public class CommentConsumer {
 
     private CommentService commentService;
 
+    @Autowired
     public CommentConsumer(CommentService commentService) {
         this.commentService = commentService;
     }

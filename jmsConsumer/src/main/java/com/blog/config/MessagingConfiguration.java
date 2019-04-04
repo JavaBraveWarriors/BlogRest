@@ -1,37 +1,42 @@
 package com.blog.config;
 
-import com.blog.model.Tag;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.activemq.command.ActiveMQQueue;
 import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
-import org.springframework.jms.support.converter.MessageType;
 import org.springframework.jms.support.destination.DestinationResolver;
 import org.springframework.jms.support.destination.DynamicDestinationResolver;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 @EnableJms
 @PropertySource({
-        "classpath:queue.properties",
-        "classpath:dev/activeMQ.properties"
+        "classpath:jmsConsumer.properties",
 })
 public class MessagingConfiguration {
+
+    private static final int SESSION_CACHE_SIZE = 10;
+
+    @Profile("dev")
+    @Configuration
+    @PropertySource("classpath:dev/activeMQ.properties")
+    static class Dev {
+    }
+
+    @Profile("prod")
+    @Configuration
+    @PropertySource("classpath:prod/activeMQ.properties")
+    static class Prod {
+    }
 
     @Value("${jms.service.address}")
     private String BROKER_URL;
@@ -119,20 +124,8 @@ public class MessagingConfiguration {
     public ConnectionFactory cachingConnectionFactory() {
         CachingConnectionFactory connectionFactory = new CachingConnectionFactory();
         connectionFactory.setTargetConnectionFactory(connectionFactory());
-        connectionFactory.setSessionCacheSize(10);
+        connectionFactory.setSessionCacheSize(SESSION_CACHE_SIZE);
         return connectionFactory;
-    }
-
-    @Bean
-    @Autowired
-    public MappingJackson2MessageConverter getMappingJackson2MessageConverter(ObjectMapper objectMapper) {
-        MappingJackson2MessageConverter messageConverter = new MappingJackson2MessageConverter();
-        messageConverter.setObjectMapper(objectMapper);
-        Map<String, Class<?>> typeIdMappings = getClassSerializationId();
-        messageConverter.setTypeIdMappings(typeIdMappings);
-        messageConverter.setTargetType(MessageType.TEXT);
-        messageConverter.setTypeIdPropertyName("_type");
-        return messageConverter;
     }
 
     @Bean
@@ -141,12 +134,4 @@ public class MessagingConfiguration {
         objectMapper.registerModule(new JavaTimeModule());
         return objectMapper;
     }
-
-    private Map<String, Class<?>> getClassSerializationId() {
-        Map<String, Class<?>> typeIdMappings = new HashMap<>();
-        typeIdMappings.put(Tag.class.getName(), Tag.class);
-        return typeIdMappings;
-    }
-
 }
-
