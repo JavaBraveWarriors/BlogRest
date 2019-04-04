@@ -71,7 +71,6 @@ public class PostServiceImpl implements PostService {
         this.viewDao = viewDao;
     }
 
-    // refactored with pagination
     public PostListWrapper getAllPostsByAuthorId(Long authorId) {
         LOGGER.debug("Gets all posts by author id = [{}].", authorId);
         validator.validateAuthorId(authorId);
@@ -130,9 +129,6 @@ public class PostServiceImpl implements PostService {
         view.setPostId(postId);
         // TODO: refactor when will be security(add userId from)
         //view.setUserId();
-        // TODO: refactor this !!!
-        //validator.validateAuthorId(1L);
-        //view.setUserId(1L);
         //if (!viewDao.checkViewByPostIdAndUserId(postId, view.getUserId())) {
         //  viewDao.addView(view);
         //  postDao.addViewToPost(postId);
