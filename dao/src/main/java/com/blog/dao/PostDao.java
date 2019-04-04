@@ -1,114 +1,106 @@
 package com.blog.dao;
 
-import com.blog.Post;
-import com.blog.dao.jdbc.PostDaoImpl;
-import org.springframework.dao.DataAccessException;
+import com.blog.model.Post;
+import com.blog.model.ResponsePostDto;
 
 import java.util.List;
 
 /**
- * This interface defines various operations for easy database management for the Post object.
- * Use this interface if you want to access the Post database.
+ * This interface defines various operations for easy management for the Post object.
+ * Use this interface if you want to access the Post.
  *
  * @author Aliaksandr Yeutushenka
  * @see Post
- * @see PostDaoImpl
  */
 public interface PostDao {
 
     /**
-     * Gets the list of objects of the all posts that belong to the author from database.
+     * Gets the list of objects of the all posts that belong to the author.
      *
-     * @return {List<Post>} is a list of all posts that belong to the author from the database.
-     * @throws DataAccessException Will throw an error if the data is not access or the table post does not contain posts with this author ID.
+     * @param authorId the author id
+     * @return {List<Post>} is a list of all posts that belong to the author.
      */
-    List<Post> getAllPostsByAuthorId(Long authorId) throws DataAccessException;
+    List<ResponsePostDto> getAllPostsByAuthorId(Long authorId);
 
     /**
-     * Gets the list of objects of the all posts from database.
-     *
-     * @return {List<Post>} is a list of all posts from the database.
-     * @throws DataAccessException Will throw an error if the data is not access.
-     */
-    List<Post> getAllPosts() throws DataAccessException;
-
-    /**
-     * Gets a list of post objects from a specific item, a specific amount from the database.
+     * Gets a list of post objects from a specific item, a specific amount.
      *
      * @param initial  is {Long} value ID of the post from which you want to get objects.
      * @param quantity is {Long} value the number of required objects.
-     * @return {List<Post>} is a list of posts from the database.
-     * @throws DataAccessException Will throw an error if the data is not access.
+     * @return {List<Post>} is a list of posts.
      */
-    List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws DataAccessException;
+    List<ResponsePostDto> getPostsByInitialIdAndQuantity(Long initial, Long quantity);
 
     /**
-     * Gets a list of post objects where is this tag from the database.
+     * Gets a list of post objects from a specific item, a specific amount and sort.
+     *
+     * @param initial  is {Long} value ID of the post from which you want to get objects.
+     * @param quantity is {Long} value the number of required objects.
+     * @param sort     is {String} value the sort field.
+     * @return {List<Post>} is a list of posts.
+     */
+    List<ResponsePostDto> getPostsByInitialIdAndQuantity(Long initial, Long quantity, String sort);
+
+    /**
+     * Gets a list of post objects where is this tag.
      *
      * @param tagId is {Long} value tag ID
-     * @return {List<Post>} is a list of posts from the database.
-     * @throws DataAccessException Will throw an error if the data is not access.
+     * @return {List<Post>} is a list of posts.
      */
-    List<Post> getAllPostsByTagId(Long tagId) throws DataAccessException;
+    List<ResponsePostDto> getAllPostsByTagId(Long tagId);
 
     /**
      * Gets a {Post} object where id is equal to argument parameter
      *
      * @param id {Long} value the ID of the post you want to get
      * @return {Post} is a object which has this ID.
-     * @throws DataAccessException Will throw an error if the data is not access.
      */
-    Post getPostById(Long id) throws DataAccessException;
+    ResponsePostDto getPostById(Long id);
 
     /**
-     * Adds new post in database.
+     * Adds new post .
      *
-     * @param post {Post} to be added to the database.
+     * @param post {Post} to be added.
      * @return {Long} is the value that is the id of the new post.
-     * @throws DataAccessException Will throw an error if the data is not access.
      */
-    Long addPost(final Post post) throws DataAccessException;
+    Long addPost(final Post post);
 
     /**
-     * Adds tag to post to database.
+     * Adds tag to post.
      *
      * @param id    is {Long} the value of post ID.
      * @param tagId id is {Long} the value of tag ID.
      * @return {boolean} value, if add was successful - returned true, if not - false.
-     * @throws DataAccessException Will throw an error if the data is not access.
      */
-    boolean addTagToPost(Long id, Long tagId) throws DataAccessException;
+    boolean addTagToPost(Long id, Long tagId);
 
     /**
-     * Updates post in database.
+     * Updates post.
      *
-     * @param post {Post} to be updated in the database.
+     * @param post {Post} to be updated.
      * @return {boolean} value, if update was successful - returned true, if not - false.
-     * @throws DataAccessException Will throw an error if the data is not access.
      */
-    boolean updatePost(final Post post) throws DataAccessException;
+    boolean updatePost(final Post post);
 
     /**
-     * Deletes post in database using post ID.
+     * Deletes post using post ID.
      *
      * @param id is {Long} value which identifies the post ID.
      * @return {boolean} value, if delete was successful - returned true, if not - false
-     * @throws DataAccessException Will throw an error if the data is not access.
      */
-    boolean deletePost(Long id) throws DataAccessException;
+    boolean deletePost(Long id);
 
     /**
-     * Deletes tag from post in database using post ID and tag ID.
+     * Deletes tag from post using post ID and tag ID.
      *
      * @param id    is {Long} the value of post ID.
      * @param tagId id is {Long} the value of tag ID.
      * @return {boolean} value, if delete was successful - returned true, if not - false.
-     * @throws DataAccessException Will throw an error if the data is not access.
      */
-    boolean deleteTagInPost(Long id, Long tagId) throws DataAccessException;
+    boolean deleteTagInPost(Long id, Long tagId);
 
     /**
-     * Checks for the presence in the post's database with this identifier.
+     * Checks for the presence in the post's with this identifier.
      *
      * @param id is {Long} value which identifies the post ID.
      * @return {boolean} value, if there is an post with this identifier - returned true, if not - false
@@ -116,7 +108,7 @@ public interface PostDao {
     boolean checkPostById(Long id);
 
     /**
-     * Checks if there is a tag in the database for this post.
+     * Checks if there is a tag for this post.
      *
      * @param id    is {Long} value which identifies the post ID.
      * @param tagId is {Long} value which identifies the tag ID.
@@ -125,10 +117,58 @@ public interface PostDao {
     boolean checkTagInPostById(Long id, Long tagId);
 
     /**
-     * Checks the presence in the database of posts by the author
+     * Checks the presence of posts by the author
      *
      * @param authorId is {Long} value which identifies the author ID.
      * @return {boolean} value, if the post has a given tag - returns true, if not - false
      */
     boolean checkPostByAuthorId(Long authorId);
+
+    /**
+     * Gets count of posts.
+     *
+     * @return the count of posts
+     */
+    Long getCountOfPosts();
+
+    /**
+     * Add comment in this post.
+     *
+     * @param postId is {Long} value which identifies the post ID.
+     * @return {boolean} value, if comment was added - returns true, if not - false
+     */
+    boolean addComment(Long postId);
+
+    /**
+     * Delete comment in this post.
+     *
+     * @param postId is {Long} value which identifies the post ID.
+     * @return {boolean} value, if comment was deleted - returns true, if not - false
+     */
+    boolean deleteComment(Long postId);
+
+    /**
+     * Add view to post.
+     *
+     * @param postId is {Long} value which identifies the post ID.
+     * @return {boolean} value, if view was added - returns true, if not - false
+     */
+    boolean addViewToPost(Long postId);
+
+    /**
+     * Delete all tags in post by post ID.
+     *
+     * @param postId is {Long} value which identifies the post ID.
+     * @return {boolean} value, if tags was deleted - returns true, if not - false
+     */
+    boolean deleteAllTags(Long postId);
+
+    /**
+     * Add tags boolean.
+     *
+     * @param postId is {Long} value which identifies the post ID.
+     * @param tags   is {List<Long>} value determines which tags to add to this post.
+     * @return {boolean} value, if tags were added - returns true, if not - false
+     */
+    boolean addTags(Long postId, List<Long> tags);
 }

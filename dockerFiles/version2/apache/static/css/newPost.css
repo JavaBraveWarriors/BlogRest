@@ -1,0 +1,28 @@
+.navbar {
+    background-color: #191517;
+}
+
+.form-post {
+    margin-top: 6rem;
+}
+
+.shadow-textarea textarea.form-control::placeholder {
+    font-weight: 300;
+}
+
+.shadow-textarea textarea.form-control {
+    padding-left: 0.8rem;
+}
+
+.btn-add {
+    position: relative;
+    display: inline-block;
+    height: 3rem;
+    width: 3rem;
+    border-radius: 50%;
+}
+
+.btn-add i {
+    position: relative;
+    transform: translateX(-50%);
+}

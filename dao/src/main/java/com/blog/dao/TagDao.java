@@ -1,31 +1,31 @@
 package com.blog.dao;
 
-import com.blog.Tag;
-import com.blog.dao.jdbc.TagDaoImpl;
+import com.blog.dto.TagDto;
+import com.blog.model.Tag;
 import org.springframework.dao.DataAccessException;
 
 import java.util.List;
+import java.util.Set;
 
 /**
- * This interface defines various operations for easy database management for the Post object.
- * Use this interface if you want to access the Post database.
+ * This interface defines various operations for easy management for the Post object.
+ * Use this interface if you want to access the Post.
  *
  * @author Aliaksandr Yeutushenka
  * @see Tag
- * @see TagDaoImpl
  */
 public interface TagDao {
 
     /**
-     * Gets the list of objects of the all tags from database.
+     * Gets the list of objects of the all tags.
      *
-     * @return {List<Tag>} is a list of all tags from the database.
+     * @return {List<Tag>} is a list of all tags.
      * @throws DataAccessException Will throw an error if the data is not access.
      */
     List<Tag> getAllTags();
 
     /**
-     * Gets a {Tag} object where id is equal to argument parameter
+     * Gets a {Tag} object where id is equal to argument parameter.
      *
      * @param id {Long} value the ID of the tag you want to get.
      * @return {Tag} is a object which has this ID.
@@ -34,43 +34,39 @@ public interface TagDao {
     Tag getTagById(final Long id);
 
     /**
-     * Gets a list of tags objects where is this post from the database.
+     * Gets a list of tags objects where is this post.
      *
-     * @param postId is {Long} value post ID
-     * @return {List<Tag>} is a list of tags from the database.
-     * @throws DataAccessException Will throw an error if the data is not access.
+     * @param postsId is {Set<Long>} value posts ID which need to get tags.
+     * @return {List<TagDto>} is a list of tags.
      */
-    List<Tag> getAllTagsByPostId(final Long postId) throws DataAccessException;
+    List<TagDto> getAllTagsByPostsId(final Set<Long> postsId);
 
     /**
-     * Adds new tag in database.
+     * Adds new tag.
      *
-     * @param tag {Tag} to be added to the database.
+     * @param tag {Tag} to be added.
      * @return {Long} is the value that is the id of the new tag.
-     * @throws DataAccessException Will throw an error if the data is not access.
      */
-    Long addTag(final Tag tag) throws DataAccessException;
+    Long addTag(final Tag tag);
 
     /**
-     * Updates tag in database.
+     * Updates tag.
      *
-     * @param tag {Tag} to be updated in the database.
+     * @param tag {Tag} to be updated.
      * @return {boolean} value, if update was successful - returned true, if not - false.
-     * @throws DataAccessException Will throw an error if the data is not access.
      */
-    boolean updateTag(final Tag tag) throws DataAccessException;
+    boolean updateTag(final Tag tag);
 
     /**
-     * Deletes tag in database using tag ID.
+     * Deletes tag using tag ID.
      *
      * @param id is {Long} value which identifies the tag ID.
      * @return {boolean} value, if delete was successful - returned true, if not - false
-     * @throws DataAccessException Will throw an error if the data is not access.
      */
-    boolean deleteTag(final Long id) throws DataAccessException;
+    boolean deleteTag(final Long id);
 
     /**
-     * Checks for the presence in the tag's database with this identifier.
+     * Checks for the presence in the tag's with this identifier.
      *
      * @param id is {Long} value which identifies the tag ID.
      * @return {boolean} value, if there is an tag with this identifier - returned true, if not - false
@@ -78,7 +74,7 @@ public interface TagDao {
     boolean checkTagById(final Long id);
 
     /**
-     * Checks for the presence in the tag's database with this title.
+     * Checks for the presence in the tag's with this title.
      *
      * @param title is {String} value which identifies the tag title.
      * @return {boolean} value, if there is an tag with this identifier - returned true, if not - false

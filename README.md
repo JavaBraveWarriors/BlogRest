@@ -1,13 +1,10 @@
 # BlogRest
-[![Build Status](https://travis-ci.org/JavaBraveWarriors/BlogRest.svg?branch=master)](https://travis-ci.org/JavaBraveWarriors/BlogRest)
-[![Coverage Status](https://coveralls.io/repos/github/JavaBraveWarriors/BlogRest/badge.svg?branch=refactoringApi)](https://coveralls.io/github/JavaBraveWarriors/BlogRest?branch=refactoringApi)
-
 This application is used to create and manage a blog.
-The technical task is described in [Technical Task][1]
+The technical task is described in [Technical Task][1]. You can see the specification [here][8]
 
 ## Necessary tools
-* [Maven][2]
-* [Java][4]
+* [Maven 3][2]
+* [Java 8 or latest version][4]
 
 ## Getting started
 Clone this repo to your local machine using:
@@ -42,22 +39,27 @@ mvn -Pdev jetty:tun
 > *Node*: server identifier in the settings.xml file must match the identifier in pom.xml in the root of the plugin project "tomcat7-maven-plugin".
 * When the settings are completed, run the following commands:
 ```
-mvn -Pprod clean install
-mvn -Pprod tomcat7:deploy
+mvn -Pprod clean install tomcat7:deploy -Dserver.deploy.port=${YOUR_CUSTOM_PORT}
+
 ```
 * If you want to redeploy the project:
 ```
-mvn -Pprod clean install
-mvn -Pprod tomcat7:redeploy
+mvn -Pprod clean install tomcat7:redeploy -Dserver.deploy.port=${YOUR_CUSTOM_PORT}
 ```
-
+> *Node*: ${YOUR_CUSTOM_PORT} is the port on which tomcat is running.
 ## Technology stack
-* [Spring Framework(5.1.3.RELEASE)][5]
-* [Maven][6]
-* [Docker][7]
+* [Spring Framework 5.1.3.RELEASE][5]
+* [Maven 3][6]
+* [Docker 17.05.0-ce][7]
+* [Docker-compose 1.23.2][9]
+* [Java 8][4]
+* [ActiveMQ 5.15.8][10]
+* [Apache 2.4][12]
+
 
 ### Links
 * How setup deploy a real environment [Docker Containers Setup][3]
+* Performance tests [results][11]
 
 [1]: docs/TechnicalTask.md
 [2]: https://maven.apache.org/install.html
@@ -66,3 +68,8 @@ mvn -Pprod tomcat7:redeploy
 [5]: https://docs.spring.io/spring-framework/docs/5.1.3.RELEASE/spring-framework-reference/
 [6]: https://maven.apache.org/guides/
 [7]: https://docs.docker.com/
+[8]: docs/Specification.md
+[9]: https://docs.docker.com/compose/
+[10]: http://activemq.apache.org/
+[11]: docs/PerformanceTests.md
+[12]: https://httpd.apache.org/docs/2.4/

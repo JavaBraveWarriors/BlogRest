@@ -1,12 +1,14 @@
 package com.blog.service;
 
-import com.blog.Tag;
 import com.blog.dao.jdbc.TagDaoImpl;
+import com.blog.dto.TagDto;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
+import com.blog.model.Tag;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * This interface defines various ways to manage object tag with the correct business model.
@@ -37,12 +39,12 @@ public interface TagService {
     /**
      * Gets all tags by post id.
      *
-     * @param postId {Long} value the ID of the post.
+     * @param postsId {Long} value the ID of the post.
      * @return {List<Tag>} is the all tags by post id.
      * @throws ValidationException Will throw an error if postId is not valid.
      * @throws NotFoundException   Will throw an error if not found post with this postId in database.
      */
-    List<Tag> getAllTagsByPostId(Long postId) throws ValidationException, NotFoundException;
+    List<TagDto> getAllTagsByPostsId(final Set<Long> postsId) throws ValidationException, NotFoundException;
 
     /**
      * Add new tag.
@@ -51,7 +53,7 @@ public interface TagService {
      * @return {Long} is the value that is the id of the new tag.
      * @throws ValidationException Will throw an error if tag exist with this title.
      */
-    Long addTag(Tag tag)  throws ValidationException;
+    Long addTag(Tag tag) throws ValidationException;
 
     /**
      * Update tag.

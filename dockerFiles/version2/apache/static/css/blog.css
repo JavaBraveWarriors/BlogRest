@@ -1,0 +1,30 @@
+.font-up-bold .breadcrumb-item + .breadcrumb-item::before {
+    content: none;
+}
+
+.font-up-bold .breadcrumb-item a h5::after {
+    content: "/";
+    margin-left: 1rem;
+    color: #868e96;
+}
+
+.breadcrumb {
+    height: 1rem;
+    background-color: #ffffff;
+}
+
+.breadcrumb-header {
+    margin-top: 4rem;
+}
+
+.btn-primary {
+    background-color: #00a4f2 !important;
+}
+
+.navbar {
+    background-color: #191517;
+}
+
+.container {
+    margin-top: 7rem;
+}

@@ -1,7 +1,11 @@
 package com.blog.dao.jdbc;
 
-import com.blog.Post;
 import com.blog.dao.PostDao;
+import com.blog.dao.TagDao;
+import com.blog.dto.TagDto;
+import com.blog.model.Post;
+import com.blog.model.ResponsePostDto;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,37 +16,49 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = {"classpath*:test-spring-dao.xml"})
+@ContextConfiguration(locations = {"classpath:test-spring-dao.xml"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class PostDaoImplTest {
 
-    private static Long CORRECT_POST_ID = 1L;
-    private static Long CORRECT_POST_CHECK_ID = 4L;
-    private static Long CORRECT_POST_DELETE_ID = 5L;
+    private static final int ZERO_VALUE = 0;
+    private static final String SORTED_FIELD = "id";
+    private static final int COUNT_POSTS_IN_CORRECT_TAG = 3;
+    private static final Long CORRECT_POST_ID = 1L;
+    private static final Long CORRECT_POST_ID_2 = 5L;
+    private static final Long CORRECT_SECOND_POST_ID = 2L;
+    private static final Long CORRECT_THIRD_POST_ID = 3L;
+    private static final Long CORRECT_FOURTH_POST_ID = 4L;
+    private static final Long CORRECT_POST_CHECK_ID = 4L;
+    private static final Long CORRECT_POST_DELETE_ID = 5L;
+    private static final Long COUNT_NECESSARY_POSTS = 3L;
 
-    private static Long INCORRECT_POST_ID = 9L;
-    private static Long CORRECT_USER_ID = 1L;
-    private static Long INCORRECT_USER_ID = 9L;
-    private static Long CORRECT_TAG_ID = 3L;
-    private static Long CORRECT_TAG_ID_2 = 2L;
-    private static Long INCORRECT_TAG_ID = 5L;
-    private static Long INCORRECT_NEGATIVE_ID = -3L;
+    private static final Long INCORRECT_POST_ID = 9L;
+    private static final Long CORRECT_USER_ID = 1L;
+    private static final Long COUNT_POSTS_IN_FIRST_USER = 2L;
+    private static final Long INCORRECT_USER_ID = 9L;
+    private static final Long CORRECT_TAG_ID = 3L;
+    private static final Long CORRECT_TAG_ID_2 = 2L;
+    private static final Long INCORRECT_TAG_ID = 5L;
+    private static final Long INCORRECT_NEGATIVE_ID = -3L;
 
-    private static Long NEW_POST_ID = 6L;
-    private static String NEW_POST_TITLE = "newTitle4";
-    private static String NEW_POST_DESCRIPTION = "newDescription4";
-    private static String NEW_POST_TEXT = "newText4";
-    private static String NEW_POST_PATH_IMAGE = "newPathImage4";
-    private static Long NEW_POST_AUTHOR_ID = 2L;
+    private static final Long NEW_POST_ID = 6L;
+    private static final String NEW_POST_TITLE = "newTitle4";
+    private static final String NEW_POST_DESCRIPTION = "newDescription4";
+    private static final String NEW_POST_TEXT = "newText4";
+    private static final String NEW_POST_PATH_IMAGE = "newPathImage4";
+    private static final Long NEW_POST_AUTHOR_ID = 2L;
 
-    private static String UPDATED_POST_TITLE = "updatedTestTitle1";
-    private static String UPDATED_POST_TEXT = "updatedTestText1";
-    private static String UPDATED_POST_DESCRIPTION = "updatedTestDescription1";
+    private static final String UPDATED_POST_TITLE = "updatedTestTitle1";
+    private static final String UPDATED_POST_TEXT = "updatedTestText1";
+    private static final String UPDATED_POST_DESCRIPTION = "updatedTestDescription1";
+    private static List<Long> ADDED_TAGS_ID = new ArrayList<>();
 
     private static Post post = new Post(
             null,
@@ -55,11 +71,13 @@ public class PostDaoImplTest {
     @Autowired
     private PostDao postDao;
 
-    @Test
-    public void getAllPostsSuccess() {
-        List<Post> posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        assertEquals(5, posts.size());
+    @Autowired
+    private TagDao tagDao;
+
+    @BeforeClass
+    public static void setup() {
+        ADDED_TAGS_ID.add(CORRECT_TAG_ID);
+        ADDED_TAGS_ID.add(CORRECT_TAG_ID_2);
     }
 
     @Test
@@ -81,33 +99,65 @@ public class PostDaoImplTest {
 
     @Test
     public void getAllPostsByAuthorIdSuccess() {
-        List<Post> posts = postDao.getAllPostsByAuthorId(CORRECT_USER_ID);
+        List<ResponsePostDto> posts = postDao.getAllPostsByAuthorId(CORRECT_USER_ID);
         assertNotNull(posts);
-        assertEquals(2, posts.size());
+        assertEquals(COUNT_POSTS_IN_FIRST_USER.intValue(), posts.size());
     }
 
     @Test
     public void getAllPostsByIncorrectAuthorId() {
-        List<Post> posts = postDao.getAllPostsByAuthorId(INCORRECT_USER_ID);
+        List<ResponsePostDto> posts = postDao.getAllPostsByAuthorId(INCORRECT_USER_ID);
         assertNotNull(posts);
-        assertEquals(0, posts.size());
+        assertEquals(ZERO_VALUE, posts.size());
     }
 
     @Test
     public void getAllPostsByNullAuthorId() {
-        List<Post> posts = postDao.getAllPostsByAuthorId(null);
+        List<ResponsePostDto> posts = postDao.getAllPostsByAuthorId(null);
         assertNotNull(posts);
-        assertEquals(0, posts.size());
+        assertEquals(ZERO_VALUE, posts.size());
+    }
+
+    @Test
+    public void addCommentSuccess() {
+        ResponsePostDto newPost = postDao.getPostById(CORRECT_POST_ID);
+        Long initialComments = newPost.getCommentsCount();
+
+        postDao.addComment(CORRECT_POST_ID);
+
+        newPost = postDao.getPostById(CORRECT_POST_ID);
+        assertEquals(initialComments + 1L, newPost.getCommentsCount().longValue());
+    }
+
+    @Test
+    public void deleteCommentSuccess() {
+        ResponsePostDto newPost = postDao.getPostById(CORRECT_POST_ID);
+        Long initialComments = newPost.getCommentsCount();
+
+        postDao.deleteComment(CORRECT_POST_ID);
+
+        newPost = postDao.getPostById(CORRECT_POST_ID);
+        assertEquals(initialComments - 1L, newPost.getCommentsCount().longValue());
     }
 
     @Test
     public void getPostsByInitialIdAndQuantitySuccess() {
-        List<Post> posts = postDao.getPostsByInitialIdAndQuantity(2L, 3L);
+        List<ResponsePostDto> posts = postDao.getPostsByInitialIdAndQuantity(CORRECT_SECOND_POST_ID, COUNT_NECESSARY_POSTS);
         assertNotNull(posts);
-        assertEquals(3, posts.size());
-        assertEquals((Long) 2L, posts.get(0).getId());
-        assertEquals((Long) 3L, posts.get(1).getId());
-        assertEquals((Long) 4L, posts.get(2).getId());
+        assertEquals(COUNT_NECESSARY_POSTS.intValue(), posts.size());
+        assertEquals(CORRECT_SECOND_POST_ID, posts.get(0).getId());
+        assertEquals(CORRECT_THIRD_POST_ID, posts.get(1).getId());
+        assertEquals(CORRECT_FOURTH_POST_ID, posts.get(2).getId());
+    }
+
+    @Test
+    public void getPostsByInitialIdAndQuantityWithSortSuccess() {
+        List<ResponsePostDto> posts = postDao.getPostsByInitialIdAndQuantity(CORRECT_SECOND_POST_ID, COUNT_NECESSARY_POSTS, SORTED_FIELD);
+        assertNotNull(posts);
+        assertEquals(COUNT_NECESSARY_POSTS.intValue(), posts.size());
+        assertEquals(CORRECT_FOURTH_POST_ID, posts.get(0).getId());
+        assertEquals(CORRECT_THIRD_POST_ID, posts.get(1).getId());
+        assertEquals(CORRECT_SECOND_POST_ID, posts.get(2).getId());
     }
 
     @Test(expected = NullPointerException.class)
@@ -117,30 +167,30 @@ public class PostDaoImplTest {
 
     @Test
     public void getAllPostsByTagIdSuccess() {
-        List<Post> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID);
+        List<ResponsePostDto> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID);
         assertNotNull(posts);
-        assertEquals(3, posts.size());
+        assertEquals(COUNT_POSTS_IN_CORRECT_TAG, posts.size());
     }
 
     @Test
     public void getAllPostsByNullTagId() {
-        List<Post> posts = postDao.getAllPostsByTagId(null);
+        List<ResponsePostDto> posts = postDao.getAllPostsByTagId(null);
         assertNotNull(posts);
-        assertEquals(0, posts.size());
+        assertEquals(ZERO_VALUE, posts.size());
     }
 
     @Test
     public void getAllPostsByIncorrectTagId() {
-        List<Post> posts = postDao.getAllPostsByTagId(INCORRECT_NEGATIVE_ID);
+        List<ResponsePostDto> posts = postDao.getAllPostsByTagId(INCORRECT_NEGATIVE_ID);
         assertNotNull(posts);
-        assertEquals(0, posts.size());
+        assertEquals(ZERO_VALUE, posts.size());
     }
 
     @Test
     public void addPostSuccess() {
-        List<Post> posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        int initialSize = posts.size();
+        Long countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        Long initialSize = countOfPosts;
 
         Long newPostId = postDao.addPost(post);
         assertNotNull(newPostId);
@@ -152,9 +202,9 @@ public class PostDaoImplTest {
         assertEquals(NEW_POST_PATH_IMAGE, newPost.getPathImage());
         assertEquals(NEW_POST_AUTHOR_ID, newPost.getAuthorId());
 
-        posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        assertEquals(initialSize + 1, posts.size());
+        countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        assertEquals(initialSize + 1L, countOfPosts.longValue());
     }
 
     @Test(expected = NullPointerException.class)
@@ -162,14 +212,13 @@ public class PostDaoImplTest {
         assertNull(postDao.addPost(null));
     }
 
-
     @Test
     public void addTagToPostSuccess() {
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
         post.setTimeOfCreation(LocalDateTime.now());
 
-        List<Post> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID);
+        List<ResponsePostDto> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID);
         int initialSize = posts.size();
 
         assertTrue(postDao.addTagToPost(post.getId(), CORRECT_TAG_ID));
@@ -230,50 +279,68 @@ public class PostDaoImplTest {
 
     @Test
     public void deletePostSuccess() {
-        List<Post> posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        int initialSize = posts.size();
+        Long countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        Long initialSize = countOfPosts;
 
         Post post = postDao.getPostById(CORRECT_POST_DELETE_ID);
         assertNotNull(post);
 
         assertTrue(postDao.deletePost(CORRECT_POST_DELETE_ID));
 
-        posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        assertEquals(initialSize - 1, posts.size());
+        countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        assertEquals(initialSize - 1L, countOfPosts.longValue());
     }
 
     @Test
     public void deletePostByIncorrectId() {
-        List<Post> posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        int initialSize = posts.size();
+        Long countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        Long initialSize = countOfPosts;
 
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
 
         assertFalse(postDao.deletePost(INCORRECT_POST_ID));
 
-        posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        assertEquals(initialSize, posts.size());
+        countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        assertEquals(initialSize, countOfPosts);
     }
 
     @Test
     public void deletePostByNullId() {
-        List<Post> posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        int initialSize = posts.size();
+        Long countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        Long initialSize = countOfPosts;
 
         Post post = postDao.getPostById(CORRECT_POST_ID);
         assertNotNull(post);
 
         assertFalse(postDao.deletePost(null));
 
-        posts = postDao.getAllPosts();
-        assertNotNull(posts);
-        assertEquals(initialSize, posts.size());
+        countOfPosts = postDao.getCountOfPosts();
+        assertNotNull(countOfPosts);
+        assertEquals(initialSize, countOfPosts);
+    }
+
+    @Test
+    public void addViewToPostSuccess() {
+        ResponsePostDto postBeforeAddingView = postDao.getPostById(CORRECT_POST_ID);
+        assertNotNull(postBeforeAddingView);
+
+        postDao.addViewToPost(CORRECT_POST_ID);
+
+        ResponsePostDto postAfterAddingView = postDao.getPostById(CORRECT_POST_ID);
+        assertNotNull(postBeforeAddingView);
+
+        assertEquals(postBeforeAddingView.getViewsCount() + 1L, postAfterAddingView.getViewsCount().longValue());
+    }
+
+    @Test
+    public void addViewToIncorrectPost() {
+        assertFalse(postDao.addViewToPost(INCORRECT_POST_ID));
     }
 
     @Test
@@ -282,7 +349,7 @@ public class PostDaoImplTest {
         assertNotNull(post);
         post.setTimeOfCreation(LocalDateTime.now());
 
-        List<Post> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID_2);
+        List<ResponsePostDto> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID_2);
         int initialSize = posts.size();
 
         assertTrue(postDao.deleteTagInPost(post.getId(), CORRECT_TAG_ID_2));
@@ -296,7 +363,7 @@ public class PostDaoImplTest {
         assertNotNull(post);
         post.setTimeOfCreation(LocalDateTime.now());
 
-        List<Post> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID_2);
+        List<ResponsePostDto> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID_2);
         int initialSize = posts.size();
 
         assertFalse(postDao.deleteTagInPost(post.getId(), INCORRECT_NEGATIVE_ID));
@@ -311,13 +378,54 @@ public class PostDaoImplTest {
         assertNotNull(post);
         post.setTimeOfCreation(LocalDateTime.now());
 
-        List<Post> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID_2);
+        List<ResponsePostDto> posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID_2);
         int initialSize = posts.size();
 
         assertFalse(postDao.deleteTagInPost(post.getId(), null));
 
         posts = postDao.getAllPostsByTagId(CORRECT_TAG_ID_2);
         assertEquals(initialSize, posts.size());
+    }
+
+    @Test
+    public void deleteAllTagsInPostSuccess() {
+        List<TagDto> tagsBeforeDeleting = tagDao.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID));
+        assertNotNull(tagsBeforeDeleting);
+        assertTrue(tagsBeforeDeleting.size() > 0);
+
+        assertTrue(postDao.deleteAllTags(CORRECT_POST_ID));
+
+        List<TagDto> tagsAfterDeleting = tagDao.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID));
+        assertNotNull(tagsAfterDeleting);
+        assertEquals(ZERO_VALUE, tagsAfterDeleting.size());
+    }
+
+    @Test()
+    public void deleteAllTagsInIncorrectPost() {
+        assertFalse(postDao.deleteAllTags(INCORRECT_POST_ID));
+    }
+
+    @Test()
+    public void deleteAllTagsInNullPost() {
+        assertFalse(postDao.deleteAllTags(null));
+    }
+
+    @Test
+    public void addTagsToPostSuccess() {
+        List<TagDto> tagsBeforeAdding = tagDao.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID_2));
+        assertNotNull(tagsBeforeAdding);
+
+        assertTrue(postDao.addTags(CORRECT_POST_ID_2, ADDED_TAGS_ID));
+
+        List<TagDto> tagsAfterAdding = tagDao.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID_2));
+        assertNotNull(tagsAfterAdding);
+
+        assertEquals(tagsBeforeAdding.size() + ADDED_TAGS_ID.size(), tagsAfterAdding.size());
+    }
+
+    @Test(expected = DataIntegrityViolationException.class)
+    public void addTagsToIncorrectPost() {
+        assertFalse(postDao.addTags(INCORRECT_POST_ID, ADDED_TAGS_ID));
     }
 
     @Test

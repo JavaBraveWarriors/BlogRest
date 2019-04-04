@@ -1,0 +1,62 @@
+version: '2'
+services:
+  apache:
+    build: ./apache/
+    container_name: apache-proxy
+    ports:
+      - "5555:5555"
+    links:
+      - tomcat_rest_1
+      - tomcat_rest_2
+      - tomcat_front_3
+      - tomcat_front_4
+
+  tomcat_rest_1:
+    build: ./tomcatSetupInstance1/
+    container_name: yam_tomcat_1-th_instance
+    ports:
+      - "8888:8080"
+      - "8008:8008"
+    links:
+      - db
+      - activemq
+  tomcat_rest_2:
+    build: ./tomcatSetupInstance1/
+    container_name: yam_tomcat_2-th_instance
+    ports:
+      - "8881:8080"
+      - "8009:8009"
+
+    links:
+      - db
+      - activemq
+  tomcat_front_3:
+    build: ./tomcatSetupInstance3/
+    container_name: yam_tomcat_3-th_instance
+    ports:
+      - "8883:8080"
+      - "8010:8010"
+    links:
+      - activemq
+  tomcat_front_4:
+    build: ./tomcatSetupInstance4/
+    container_name: yam_tomcat_4-th_instance
+    ports:
+      - "8884:8080"
+      - "8011:8011"
+    links:
+      - activemq
+  db:
+    build: ./dbSetup/
+    container_name: yam_mysql
+    ports:
+      - "3333:3306"
+    environment:
+      MYSQL_REMOTE_HOST: db
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+  activemq:
+    build: ./activeMQSetup/
+    container_name: yam_activeMQ
+    ports:
+      - "61616:61616"
+      - "8161:8161"

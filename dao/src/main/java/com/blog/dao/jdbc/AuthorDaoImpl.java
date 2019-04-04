@@ -1,13 +1,12 @@
 package com.blog.dao.jdbc;
 
-import com.blog.Author;
 import com.blog.dao.AuthorDao;
 import com.blog.dao.jdbc.mapper.AuthorRowMapper;
+import com.blog.model.Author;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
@@ -79,52 +78,50 @@ public class AuthorDaoImpl implements AuthorDao {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Author> getAllAuthors() throws DataAccessException {
+    public List<Author> getAllAuthors() {
         LOGGER.debug("Get all authors from database.");
         return jdbcTemplate.query(getAllAuthorsSql, authorRowMapper);
-
     }
 
-    public Author getAuthorById(Long id) throws DataAccessException {
+    public Author getAuthorById(final Long id) {
         LOGGER.debug("Get author by id = [{}] from database.", id);
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.queryForObject(getAuthorByIdSql, parameterSource, authorRowMapper);
     }
 
-
-    public Author getAuthorByLogin(String login) throws DataAccessException {
+    public Author getAuthorByLogin(final String login) {
         LOGGER.debug("Get author by Login = {} from database.", login);
         SqlParameterSource parameterSource = new MapSqlParameterSource(LOGIN, login);
         return jdbcTemplate.queryForObject(getAuthorByLoginSql, parameterSource, authorRowMapper);
     }
 
-    public Long addAuthor(final Author author) throws DataAccessException {
+    public Long addAuthor(final Author author) {
         LOGGER.debug("Add new author [{}] in database.", author);
         KeyHolder keyHolder = new GeneratedKeyHolder();
         MapSqlParameterSource parameterSource = getParameterSourceAuthor(author);
-        jdbcTemplate.update(addAuthorSql, parameterSource, keyHolder);
+        jdbcTemplate.update(addAuthorSql, parameterSource, keyHolder, new String[]{ID});
         return keyHolder.getKey().longValue();
     }
 
-    public boolean updateAuthor(final Author author) throws DataAccessException {
+    public boolean updateAuthor(final Author author) {
         LOGGER.debug("Update author [{}] in database.", author);
         MapSqlParameterSource parameterSource = getParameterSourceAuthor(author);
         return jdbcTemplate.update(updateAuthorSql, parameterSource) == 1;
     }
 
-    public boolean deleteAuthor(Long id) throws DataAccessException {
+    public boolean deleteAuthor(final Long id) {
         LOGGER.debug("Delete author by id = [{}] from database.", id);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.update(deleteAuthorSql, parameterSource) == 1;
     }
 
-    public boolean checkAuthorById(Long id) {
+    public boolean checkAuthorById(final Long id) {
         LOGGER.debug("Check author by id = [{}] from database.", id);
         SqlParameterSource parameterSource = new MapSqlParameterSource(ID, id);
         return jdbcTemplate.queryForObject(checkAuthorByIdSql, parameterSource, boolean.class);
     }
 
-    public boolean checkAuthorByLogin(String login) {
+    public boolean checkAuthorByLogin(final String login) {
         LOGGER.debug("Check author by id = [{}] from database.", login);
         SqlParameterSource parameterSource = new MapSqlParameterSource(LOGIN, login);
         return jdbcTemplate.queryForObject(checkAuthorByLoginSql, parameterSource, boolean.class);
@@ -143,5 +140,4 @@ public class AuthorDaoImpl implements AuthorDao {
         parameterSource.addValue(DESCRIPTION, author.getDescription());
         return parameterSource;
     }
-
 }

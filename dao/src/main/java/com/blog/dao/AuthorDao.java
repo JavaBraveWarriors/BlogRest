@@ -1,76 +1,67 @@
 package com.blog.dao;
 
-import com.blog.Author;
-import com.blog.dao.jdbc.AuthorDaoImpl;
-import org.springframework.dao.DataAccessException;
+import com.blog.model.Author;
 
 import java.util.List;
 
 /**
- * This interface defines various operations for easy database management for the Author object.
- * Use this interface if you want to access the Author database.
+ * This interface defines various operations for easy management for the Author object.
+ * Use this interface if you want to access the Author.
  *
  * @author Aliaksandr Yeutushenka
- * @see AuthorDaoImpl
  * @see Author
  */
 public interface AuthorDao {
 
     /**
-     * Gets the list of objects of the all authors from database.
+     * Gets the list of objects of the all authors.
      *
-     * @return {List<Author>} is a list of all authors in the database.
-     * @throws DataAccessException Will throw an error if the data is not access.
+     * @return {List<Author>} is a list of all authors.
      */
-    List<Author> getAllAuthors() throws DataAccessException;
+    List<Author> getAllAuthors();
 
     /**
-     * Gets the Author object from database using author ID.
+     * Gets the Author object using author ID.
      *
      * @param authorId is {Long} value which identifies the author ID.
      * @return {Author} is a object which has this ID.
-     * @throws DataAccessException Will throw an error if the data is not access or the object is not exist in the database with such ID.
      */
-    Author getAuthorById(final Long authorId) throws DataAccessException;
+    Author getAuthorById(final Long authorId);
 
     /**
-     * Gets the Author object from database using author login.
+     * Gets the Author object using author login.
      *
      * @param login is {String} value which identifies the author login.
      * @return {Author} is a object which has this login.
-     * @throws DataAccessException Will throw an error if the data is not access or the object is not exist in the database with such login.
      */
-    Author getAuthorByLogin(final String login) throws DataAccessException;
+    Author getAuthorByLogin(final String login);
 
     /**
-     * Adds new author in database.
+     * Adds new author.
      *
-     * @param author {Author} to be added to the database.
+     * @param author {Author} to be added.
      * @return {Long} is the value that is the id of the new author.
-     * @throws DataAccessException Will throw an error if the data is not access.
      */
-    Long addAuthor(final Author author) throws DataAccessException;
+    Long addAuthor(final Author author);
 
     /**
-     * Updates author in database.
+     * Updates author.
      *
-     * @param author {Author} to be updated in the database.
+     * @param author {Author} to be updated.
      * @return {boolean} value, if update was successful - returned true, if not - false.
-     * @throws DataAccessException Will throw an error if the data is not access.
      */
-    boolean updateAuthor(final Author author) throws DataAccessException;
+    boolean updateAuthor(final Author author);
 
     /**
-     * Deletes author in database using author ID.
+     * Deletes author using author ID.
      *
      * @param authorId is {Long} value which identifies the author ID.
      * @return {boolean} value, if delete was successful - returned true, if not - false
-     * @throws DataAccessException Will throw an error if the data is not access.
      */
-    boolean deleteAuthor(final Long authorId) throws DataAccessException;
+    boolean deleteAuthor(final Long authorId);
 
     /**
-     * Checks for the presence in the author's database with this identifier.
+     * Checks for the presence in the author's with this identifier.
      *
      * @param authorId is {Long} value which identifies the author ID.
      * @return {boolean} value, if there is an author with this identifier - returned true, if not - false
@@ -78,7 +69,7 @@ public interface AuthorDao {
     boolean checkAuthorById(final Long authorId);
 
     /**
-     * Checks for the presence in the author's database with this login.
+     * Checks for the presence in the author's with this login.
      *
      * @param login is {String} value which identifies the author login.
      * @return {boolean} value, if there is an author with this login - returned true, if not - false

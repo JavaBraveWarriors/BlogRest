@@ -1,27 +1,33 @@
 package com.blog.it;
 
-import com.blog.Post;
-import com.blog.Tag;
+import com.blog.JsonConverter;
+import com.blog.controller.config.ControllerTestConfiguration;
+import com.blog.model.Post;
+import com.blog.model.PostListWrapper;
+import com.blog.model.RequestPostDto;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.blog.JsonConverter.convertToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ControllerTestConfiguration.class)
 public class PostRestIT extends AbstractTestIT {
-
 
     private static String CORRECT_INITIAL_NUMBER = "1";
     private static String INCORRECT_INITIAL_NUMBER = "-3";
     private static String CORRECT_QUANTITY_NUMBER = "1";
     private static String INCORRECT_QUANTITY_NUMBER = "-3";
-
 
     private static String CORRECT_POST_ID = "1";
     private static String DELETED_POST_ID = "4";
@@ -35,11 +41,11 @@ public class PostRestIT extends AbstractTestIT {
     private static String INCORRECT_TAG_ID = "-5";
     private static String NOT_EXIST_TAG_ID = "51";
 
-    private static List<Tag> tags = new ArrayList<>();
-    private static List<Tag> incorrectTags = new ArrayList<>();
+    private static List<Long> tags = new ArrayList<>();
 
+    private static List<Long> incorrectTags = new ArrayList<>();
 
-    private static Post correctPost = new Post(
+    private static RequestPostDto correctPost = new RequestPostDto(
             null,
             "testTitle",
             "testDescription",
@@ -48,7 +54,7 @@ public class PostRestIT extends AbstractTestIT {
             1L
     );
 
-    private static Post existPost = new Post(
+    private static RequestPostDto existPost = new RequestPostDto(
             1L,
             "title1",
             "testDescription1",
@@ -57,7 +63,7 @@ public class PostRestIT extends AbstractTestIT {
             1L
     );
 
-    private static Post authorIdIncorrectPost = new Post(
+    private static RequestPostDto authorIdIncorrectPost = new RequestPostDto(
             null,
             "testTitle",
             "testDescription",
@@ -66,7 +72,7 @@ public class PostRestIT extends AbstractTestIT {
             -2L
     );
 
-    private static Post authorNotExistIncorrectPost = new Post(
+    private static RequestPostDto authorNotExistIncorrectPost = new RequestPostDto(
             null,
             "testTitle",
             "testDescription",
@@ -75,26 +81,16 @@ public class PostRestIT extends AbstractTestIT {
             22L
     );
 
+    @Autowired
+    private JsonConverter jsonConverter;
+
     @BeforeClass
     public static void setUp() {
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
         endpoint = "posts";
-        tags.add(new Tag(2L, "dogs", "path_2"));
-        tags.add(new Tag(3L, "cats", "path_3"));
-        incorrectTags.add(new Tag(21L, "notExist", "path_1212"));
-    }
-
-
-    @Test
-    public void getAllPosts() {
-        HttpEntity<String> entity = new HttpEntity<>(null, headers);
-
-        ResponseEntity<List> response = restTemplate.exchange(
-                createURLWithPort(NULL),
-                HttpMethod.GET, entity, List.class);
-
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
+        tags.add(3L);
+        tags.add(5L);
+        incorrectTags.add(21L);
     }
 
     @Test
@@ -131,9 +127,9 @@ public class PostRestIT extends AbstractTestIT {
     public void getPostsByInitialIdAndQuantitySuccess() {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
-        ResponseEntity<List> response = restTemplate.exchange(
-                createURLWithPort("?from=".concat(CORRECT_INITIAL_NUMBER).concat("&quantity=".concat(CORRECT_QUANTITY_NUMBER))),
-                HttpMethod.GET, entity, List.class);
+        ResponseEntity<PostListWrapper> response = restTemplate.exchange(
+                createURLWithPort("?page=".concat(CORRECT_INITIAL_NUMBER).concat("&size=".concat(CORRECT_QUANTITY_NUMBER))),
+                HttpMethod.GET, entity, PostListWrapper.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -144,7 +140,7 @@ public class PostRestIT extends AbstractTestIT {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<List> response = restTemplate.exchange(
-                createURLWithPort("?from=".concat(INCORRECT_INITIAL_NUMBER).concat("&quantity=".concat(INCORRECT_QUANTITY_NUMBER))),
+                createURLWithPort("?page=".concat(INCORRECT_INITIAL_NUMBER).concat("&size=".concat(INCORRECT_QUANTITY_NUMBER))),
                 HttpMethod.GET, entity, List.class);
     }
 
@@ -152,9 +148,9 @@ public class PostRestIT extends AbstractTestIT {
     public void getAllPostsByTagIdSuccess() {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
-        ResponseEntity<List> response = restTemplate.exchange(
+        ResponseEntity<PostListWrapper> response = restTemplate.exchange(
                 createURLWithPort(SLASH.concat("tag".concat(SLASH).concat(CORRECT_TAG_ID))),
-                HttpMethod.GET, entity, List.class);
+                HttpMethod.GET, entity, PostListWrapper.class);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
@@ -187,7 +183,7 @@ public class PostRestIT extends AbstractTestIT {
     @Test
     public void addPostSuccess() {
         correctPost.setTags(tags);
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(correctPost), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(correctPost), headers);
 
         ResponseEntity<Long> response = restTemplate.exchange(
                 createURLWithPort(NULL),
@@ -200,7 +196,7 @@ public class PostRestIT extends AbstractTestIT {
     @Test(expected = HttpClientErrorException.NotFound.class)
     public void addPostWithIncorrectTags() {
         correctPost.setTags(incorrectTags);
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(correctPost), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(correctPost), headers);
 
         ResponseEntity<Long> response = restTemplate.exchange(
                 createURLWithPort(NULL),
@@ -210,11 +206,10 @@ public class PostRestIT extends AbstractTestIT {
         assertNotNull(response.getBody());
     }
 
-
     @Test(expected = HttpClientErrorException.BadRequest.class)
     public void addPostWithIncorrectAuthorId() {
         authorIdIncorrectPost.setTags(tags);
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(authorIdIncorrectPost), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(authorIdIncorrectPost), headers);
 
         ResponseEntity<Long> response = restTemplate.exchange(
                 createURLWithPort(NULL),
@@ -224,7 +219,7 @@ public class PostRestIT extends AbstractTestIT {
     @Test(expected = HttpClientErrorException.NotFound.class)
     public void addPostWithNotExistAuthorId() {
         authorNotExistIncorrectPost.setTags(tags);
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(authorNotExistIncorrectPost), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(authorNotExistIncorrectPost), headers);
 
         ResponseEntity<Long> response = restTemplate.exchange(
                 createURLWithPort(NULL),
@@ -234,7 +229,7 @@ public class PostRestIT extends AbstractTestIT {
     @Test
     public void updatePostSuccess() {
         existPost.setTags(tags);
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(existPost), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(existPost), headers);
 
         ResponseEntity<Long> response = restTemplate.exchange(
                 createURLWithPort(NULL),
@@ -246,7 +241,7 @@ public class PostRestIT extends AbstractTestIT {
     @Test(expected = HttpClientErrorException.NotFound.class)
     public void updatePostWithIncorrectTags() {
         existPost.setTags(incorrectTags);
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(existPost), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(existPost), headers);
 
         ResponseEntity<Long> response = restTemplate.exchange(
                 createURLWithPort(NULL),
@@ -258,7 +253,7 @@ public class PostRestIT extends AbstractTestIT {
     @Test
     public void deletePost() {
         existPost.setTags(tags);
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(existPost), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(existPost), headers);
 
         ResponseEntity<Long> response = restTemplate.exchange(
                 createURLWithPort(SLASH.concat(DELETED_POST_ID)),
@@ -270,7 +265,7 @@ public class PostRestIT extends AbstractTestIT {
     @Test(expected = HttpClientErrorException.BadRequest.class)
     public void deleteIncorrectPost() {
         existPost.setTags(tags);
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(existPost), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(existPost), headers);
 
         ResponseEntity<Long> response = restTemplate.exchange(
                 createURLWithPort(SLASH.concat(INCORRECT_POST_ID)),

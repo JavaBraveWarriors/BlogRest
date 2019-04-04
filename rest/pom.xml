@@ -19,6 +19,10 @@
         </dependency>
         <dependency>
             <groupId>com.blog</groupId>
+            <artifactId>jmsConsumer</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.blog</groupId>
             <artifactId>model</artifactId>
         </dependency>
         <dependency>
@@ -79,6 +83,18 @@
         </dependency>
         <!-- Validation -->
         <dependency>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-library</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.web</groupId>
+            <artifactId>javax.el</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
@@ -112,13 +128,20 @@
             <groupId>org.glassfish.jersey.inject</groupId>
             <artifactId>jersey-hk2</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.zaxxer</groupId>
+            <artifactId>HikariCP</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
 
     </dependencies>
 
     <build>
         <filters>
-            <filter>src/main/resources/${spring.profiles.active}/database.properties </filter>
+            <filter>src/main/resources/${profiles.active}/database.properties</filter>
         </filters>
         <resources>
             <resource>

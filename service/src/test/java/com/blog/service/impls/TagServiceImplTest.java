@@ -1,10 +1,11 @@
 package com.blog.service.impls;
 
-import com.blog.Tag;
 import com.blog.dao.TagDao;
+import com.blog.dto.TagDto;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
+import com.blog.model.Tag;
 import com.blog.validator.Validator;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -22,6 +24,14 @@ import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TagServiceImplTest {
+
+    private static final Long CORRECT_TAG_ID = 21L;
+    private static final Long INCORRECT_TAG_ID = -12L;
+    private static final Long NOT_EXIST_TAG_ID = 123L;
+    private static List<TagDto> POST_TAGS = new ArrayList<>();
+    private static List<Tag> TEST_TAGS = new ArrayList<>();
+    private static Tag testTag = new Tag(4L, "4", "4");
+    private static Long CORRECT_POST_ID = 1L;
 
     @Mock
     private Validator validator;
@@ -32,24 +42,23 @@ public class TagServiceImplTest {
     @InjectMocks
     private TagServiceImpl tagService;
 
-    private static List<Tag> testTags = new ArrayList<>();
-    private static Tag testTag = new Tag(4L, "4", "4");
-
-
     @BeforeClass
     public static void setUp() {
-        testTags.add(new Tag(1L, "1", "1"));
-        testTags.add(new Tag(2L, "2", "2"));
-        testTags.add(new Tag(3L, "3", "3"));
+        TEST_TAGS.add(new Tag(1L, "1", "1"));
+        TEST_TAGS.add(new Tag(2L, "2", "2"));
+        TEST_TAGS.add(new Tag(3L, "3", "3"));
+        POST_TAGS.add(new TagDto(CORRECT_POST_ID, new Tag(1L, "1", "1")));
+        POST_TAGS.add(new TagDto(CORRECT_POST_ID, new Tag(2L, "2", "2")));
+        POST_TAGS.add(new TagDto(CORRECT_POST_ID, new Tag(3L, "3", "3")));
     }
 
     @Test
     public void getAllTagsSuccess() {
-        when(tagDao.getAllTags()).thenReturn(testTags);
+        when(tagDao.getAllTags()).thenReturn(TEST_TAGS);
         List<Tag> tags = tagService.getAllTags();
         verify(tagDao, times(1)).getAllTags();
         assertNotNull(tags);
-        assertEquals(testTags.size(), tags.size());
+        assertEquals(TEST_TAGS.size(), tags.size());
     }
 
     @Test
@@ -78,28 +87,11 @@ public class TagServiceImplTest {
 
     @Test
     public void getAllTagsByPostIdSuccess() {
-        when(tagDao.getAllTagsByPostId(anyLong())).thenReturn(testTags);
-        List<Tag> tags = tagService.getAllTagsByPostId(anyLong());
-        verify(validator, times(1)).validatePostId(anyLong());
-        verify(tagDao, times(1)).getAllTagsByPostId(anyLong());
+        when(tagDao.getAllTagsByPostsId(any())).thenReturn(POST_TAGS);
+        List<TagDto> tags = tagService.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID));
+        verify(tagDao, times(1)).getAllTagsByPostsId(any());
         assertNotNull(tags);
-        assertEquals(tags.size(), testTags.size());
-    }
-
-    @Test(expected = ValidationException.class)
-    public void getAllTagsByIncorrectPostId() {
-        doThrow(ValidationException.class).when(validator).validatePostId(anyLong());
-        tagService.getAllTagsByPostId(anyLong());
-        verify(validator, times(1)).validatePostId(anyLong());
-        verify(tagDao, times(1)).getAllTagsByPostId(anyLong());
-    }
-
-    @Test(expected = NotFoundException.class)
-    public void getAllTagsByNotExistPostId() {
-        doThrow(NotFoundException.class).when(validator).validatePostId(anyLong());
-        tagService.getAllTagsByPostId(anyLong());
-        verify(validator, times(1)).validatePostId(anyLong());
-        verify(tagDao, times(1)).getAllTagsByPostId(anyLong());
+        assertEquals(tags.size(), POST_TAGS.size());
     }
 
     @Test
@@ -150,7 +142,7 @@ public class TagServiceImplTest {
     @Test
     public void deleteTagSuccess() {
         when(tagDao.deleteTag(anyLong())).thenReturn(true);
-        tagService.deleteTag(anyLong());
+        tagService.deleteTag(CORRECT_TAG_ID);
         verify(tagDao, times(1)).deleteTag(anyLong());
         verify(validator, times(1)).validateTagId(anyLong());
     }
@@ -158,21 +150,21 @@ public class TagServiceImplTest {
     @Test(expected = ValidationException.class)
     public void deleteTagByIncorrectId() {
         doThrow(ValidationException.class).when(validator).validateTagId(anyLong());
-        tagService.deleteTag(anyLong());
+        tagService.deleteTag(INCORRECT_TAG_ID);
         verify(validator, times(1)).validateTagId(anyLong());
     }
 
     @Test(expected = InternalServerException.class)
     public void deleteTagWithNotDeletedInDao() {
         when(tagDao.deleteTag(anyLong())).thenReturn(false);
-        tagService.deleteTag(anyLong());
+        tagService.deleteTag(CORRECT_TAG_ID);
         verify(validator, times(1)).validateTagId(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
     public void deleteNotExistenceTag() {
         doThrow(NotFoundException.class).when(validator).validateTagId(anyLong());
-        tagService.deleteTag(anyLong());
+        tagService.deleteTag(NOT_EXIST_TAG_ID);
         verify(validator, times(1)).validateTagId(anyLong());
     }
 }

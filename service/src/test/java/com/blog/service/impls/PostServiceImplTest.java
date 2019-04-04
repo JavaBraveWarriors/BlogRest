@@ -1,11 +1,13 @@
 package com.blog.service.impls;
 
-import com.blog.Post;
-import com.blog.Tag;
 import com.blog.dao.PostDao;
+import com.blog.dao.ViewDao;
+import com.blog.dto.TagDto;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
+import com.blog.model.*;
+import com.blog.service.CommentService;
 import com.blog.service.TagService;
 import com.blog.validator.Validator;
 import org.junit.BeforeClass;
@@ -26,6 +28,37 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class PostServiceImplTest {
 
+    private static final Long CORRECT_TAG_ID = 12L;
+    private static final Long INCORRECT_TAG_ID = -14L;
+    private static List<ResponsePostDto> testPosts = new ArrayList<>();
+    private static List<Tag> tags = new ArrayList<>();
+    private static List<Long> tagUpdated;
+    private static final Long CORRECT_POST_ID = 1L;
+    private static List<TagDto> POST_TAGS = new ArrayList<>();
+    private static Comment CORRECT_COMMENT;
+    private static Comment INCORRECT_COMMENT;
+    private static final String TEST_TEXT = "testText";
+    private static final Long CORRECT_AUTHOR_ID = 21L;
+    private static final Long CORRECT_COMMENT_ID = 13L;
+    private static final Long INCORRECT_COMMENT_ID = -123L;
+
+    private static RequestPostDto testRequestPostDto = new RequestPostDto(
+            1L,
+            TEST_TEXT,
+            TEST_TEXT,
+            TEST_TEXT,
+            "",
+            1L
+    );
+    private static ResponsePostDto testPostGet = new ResponsePostDto(
+            1L,
+            TEST_TEXT,
+            TEST_TEXT,
+            TEST_TEXT,
+            "",
+            1L
+    );
+
     @Mock
     private TagService tagService;
 
@@ -33,61 +66,57 @@ public class PostServiceImplTest {
     private Validator validator;
 
     @Mock
+    private ViewDao viewDao;
+
+    @Mock
+    private CommentService commentService;
+
+    @Mock
     private PostDao postDao;
 
     @InjectMocks
     private PostServiceImpl postService;
 
-
-    private static List<Post> testPosts = new ArrayList<>();
-    private static List<Tag> tags = new ArrayList<>();
-    private static List<Tag> tagUpdated = new ArrayList<>();
-
-    private static Post testPost = new Post(
-            1L,
-            "testTitle",
-            "testDescription",
-            "testText",
-            "",
-            1L
-    );
-
     @BeforeClass
     public static void setUp() {
-
-        testPosts.add(new Post());
-        testPosts.add(new Post());
-        testPosts.add(new Post());
+        testPosts.add(new ResponsePostDto());
+        testPosts.add(new ResponsePostDto());
+        testPosts.add(new ResponsePostDto());
         testPosts.forEach(post -> post.setId(1L));
-        tagUpdated.add(new Tag(2L, "2", "2"));
-        tagUpdated.add(new Tag(3L, "3", "3"));
-        tagUpdated.add(new Tag(5L, "5", "5"));
-        tagUpdated.add(new Tag(6L, "6", "6"));
+        testPosts.forEach(post -> post.setAuthorId(1L));
+
+        tagUpdated = new ArrayList<>();
+        tagUpdated.add(2L);
+        tagUpdated.add(3L);
+        tagUpdated.add(4L);
+        tagUpdated.add(6L);
+
         tags.add(new Tag(1L, "1", "1"));
         tags.add(new Tag(2L, "2", "2"));
         tags.add(new Tag(3L, "3", "3"));
-        testPost.setTags(tags);
-    }
 
-    @Test
-    public void getAllPosts() {
-        when(postDao.getAllPosts()).thenReturn(testPosts);
-        List<Post> posts = postService.getAllPosts();
-        verify(postDao, times(1)).getAllPosts();
-        verify(tagService, times(3)).getAllTagsByPostId(anyLong());
-        assertNotNull(posts);
-        assertEquals(posts.size(), testPosts.size());
+        POST_TAGS.add(new TagDto(CORRECT_POST_ID, new Tag(1L, "1", "1")));
+        POST_TAGS.add(new TagDto(CORRECT_POST_ID, new Tag(2L, "2", "2")));
+        POST_TAGS.add(new TagDto(CORRECT_POST_ID, new Tag(3L, "3", "3")));
+
+        testPostGet.setTags(tags);
+
+        CORRECT_COMMENT = new Comment(
+                TEST_TEXT,
+                CORRECT_AUTHOR_ID,
+                CORRECT_POST_ID);
+        INCORRECT_COMMENT = new Comment(TEST_TEXT, CORRECT_AUTHOR_ID, null);
     }
 
     @Test
     public void getAllPostsByAuthorIdSuccess() {
         when(postDao.getAllPostsByAuthorId(anyLong())).thenReturn(testPosts);
-        List<Post> posts = postService.getAllPostsByAuthorId(anyLong());
+        PostListWrapper posts = postService.getAllPostsByAuthorId(anyLong());
         assertNotNull(posts);
-        assertEquals(posts.size(), testPosts.size());
+        assertEquals(posts.getPosts().size(), testPosts.size());
         verify(validator, times(1)).validateAuthorId(anyLong());
         verify(postDao, times(1)).getAllPostsByAuthorId(anyLong());
-        verify(tagService, times(3)).getAllTagsByPostId(anyLong());
+        verify(tagService, times(1)).getAllTagsByPostsId(any());
     }
 
     @Test(expected = ValidationException.class)
@@ -95,6 +124,7 @@ public class PostServiceImplTest {
         doThrow(ValidationException.class).when(validator).validateAuthorId(anyLong());
         postService.getAllPostsByAuthorId(anyLong());
         verify(validator, times(1)).validateAuthorId(anyLong());
+        verifyNoMoreInteractions(validator);
     }
 
     @Test(expected = NotFoundException.class)
@@ -102,32 +132,77 @@ public class PostServiceImplTest {
         doThrow(NotFoundException.class).when(validator).validateAuthorId(anyLong());
         postService.getAllPostsByAuthorId(anyLong());
         verify(validator, times(1)).validateAuthorId(anyLong());
+        verifyNoMoreInteractions(validator);
     }
 
     @Test
-    public void getPostsByInitialIdAndQuantitySuccess() {
-        when(postDao.getPostsByInitialIdAndQuantity(anyLong(), anyLong())).thenReturn(testPosts);
-        postService.getPostsByInitialIdAndQuantity(anyLong(), anyLong());
-        verify(postDao, times(1)).getPostsByInitialIdAndQuantity(anyLong(), anyLong());
-        verify(tagService, times(testPosts.size())).getAllTagsByPostId(anyLong());
-        verify(validator, times(1)).validateInitialAndQuantity(anyLong(), anyLong());
+    public void getPostsWithPaginationSuccess() {
+        when(postDao.getPostsByInitialIdAndQuantity(anyLong(), anyLong(), anyString())).thenReturn(testPosts);
+        when(postDao.getCountOfPosts()).thenReturn(5L);
+        PostListWrapper postListWrapper = postService.getPostsWithPaginationAndSorting(5L, 5L, "created_date");
+        assertNotNull(postListWrapper);
+        verify(postDao, times(1)).getPostsByInitialIdAndQuantity(anyLong(), anyLong(), anyString());
+        verify(tagService, times(1)).getAllTagsByPostsId(any());
+        verify(validator, times(1)).validatePageAndSize(anyLong(), anyLong());
     }
 
     @Test(expected = ValidationException.class)
-    public void getPostsByIncorrectInitialIdAndIncorrectQuantity() {
-        doThrow(ValidationException.class).when(validator).validateInitialAndQuantity(anyLong(), anyLong());
-        postService.getPostsByInitialIdAndQuantity(anyLong(), anyLong());
-        verify(validator, times(1)).validateInitialAndQuantity(anyLong(), anyLong());
+    public void getPostsWithPaginationByIncorrectSize() {
+        doThrow(ValidationException.class).when(validator).validatePageAndSize(anyLong(), anyLong());
+        postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), "created_date");
+        verify(validator, times(1)).validatePageAndSize(anyLong(), anyLong());
+        verifyNoMoreInteractions(validator);
+    }
+
+    @Test
+    public void addCorrectCommentToPost() {
+        postService.addCommentToPost(CORRECT_COMMENT);
+
+        verify(commentService, times(1)).addComment(any(Comment.class));
+        verify(postDao, times(1)).addComment(CORRECT_COMMENT.getPostId());
+        verifyNoMoreInteractions(commentService, postDao);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void addIncorrectCommentToPost() {
+        doThrow(ValidationException.class).when(commentService).addComment(any(Comment.class));
+        postService.addCommentToPost(INCORRECT_COMMENT);
+
+        verify(commentService, times(1)).addComment(any(Comment.class));
+        verify(postDao, times(0)).addComment(CORRECT_COMMENT.getPostId());
+        verifyNoMoreInteractions(commentService);
+    }
+
+    @Test
+    public void deleteCorrectCommentInPost() {
+        postService.deleteCommentInPost(CORRECT_POST_ID, CORRECT_COMMENT_ID);
+
+        verify(commentService, times(1)).deleteComment(anyLong());
+        verify(validator, times(1)).validateCommentInPost(anyLong(), anyLong());
+        verify(postDao, times(1)).deleteComment(CORRECT_POST_ID);
+        verifyNoMoreInteractions(commentService, validator, postDao);
+    }
+
+    @Test(expected = ValidationException.class)
+    public void deleteIncorrectCommentInPost() {
+        doThrow(ValidationException.class).when(validator).validateCommentInPost(anyLong(), anyLong());
+
+        postService.deleteCommentInPost(CORRECT_POST_ID, INCORRECT_COMMENT_ID);
+
+        verify(commentService, times(0)).deleteComment(anyLong());
+        verify(validator, times(1)).validateCommentInPost(anyLong(), anyLong());
+        verify(postDao, times(0)).deleteComment(anyLong());
+        verifyNoMoreInteractions(validator);
     }
 
     @Test
     public void getAllPostsByTagIdSuccess() {
         when(postDao.getAllPostsByTagId(anyLong())).thenReturn(testPosts);
-        List<Post> posts = postService.getAllPostsByTagId(anyLong());
+        PostListWrapper posts = postService.getAllPostsByTagId(anyLong());
         assertNotNull(posts);
-        assertEquals(posts.size(), testPosts.size());
+        assertEquals(posts.getPosts().size(), testPosts.size());
         verify(postDao, times(1)).getAllPostsByTagId(anyLong());
-        verify(tagService, times(testPosts.size())).getAllTagsByPostId(anyLong());
+        verify(tagService, times(1)).getAllTagsByPostsId(any());
         verify(validator, times(1)).validateTagId(anyLong());
     }
 
@@ -145,15 +220,15 @@ public class PostServiceImplTest {
         verify(validator, times(1)).validateTagId(anyLong());
     }
 
-
     @Test
     public void getPostByIdSuccess() {
-        when(postDao.getPostById(anyLong())).thenReturn(testPost);
+        when(postDao.getPostById(anyLong())).thenReturn(testPostGet);
+        //when(viewDao.checkViewByPostIdAndUserId(anyLong(), anyLong())).thenReturn(false);
         Post post = postService.getPostById(anyLong());
         assertNotNull(post);
-        assertEquals(post.getTitle(), testPost.getTitle());
+        assertEquals(post.getTitle(), testRequestPostDto.getTitle());
         verify(postDao, times(1)).getPostById(anyLong());
-        verify(tagService, times(1)).getAllTagsByPostId(anyLong());
+        verify(tagService, times(1)).getAllTagsByPostsId(any());
         verify(validator, times(1)).validatePostId(anyLong());
     }
 
@@ -174,17 +249,17 @@ public class PostServiceImplTest {
     @Test
     public void addPostSuccess() {
         when(postDao.addPost(any(Post.class))).thenReturn(2L);
-        assertEquals((Long) 2L, postService.addPost(testPost));
+        assertEquals((Long) 2L, postService.addPost(testRequestPostDto));
         verify(postDao, times(1)).addPost(any(Post.class));
-        verify(validator, times(testPost.getTags().size())).validateTagId(anyLong());
+        verify(validator, times(testRequestPostDto.getTags().size())).validateTagId(anyLong());
         verify(validator, times(1)).validateAuthorId(anyLong());
-        verify(postDao, times(testPost.getTags().size())).addTagToPost(anyLong(), anyLong());
+        verify(postDao, times(testRequestPostDto.getTags().size())).addTagToPost(anyLong(), anyLong());
     }
 
     @Test(expected = ValidationException.class)
     public void addPostWithIncorrectAuthorId() {
         doThrow(ValidationException.class).when(validator).validateAuthorId(anyLong());
-        postService.addPost(testPost);
+        postService.addPost(testRequestPostDto);
         verify(validator, times(1)).validateAuthorId(anyLong());
     }
 
@@ -192,7 +267,7 @@ public class PostServiceImplTest {
     public void addPostWithIncorrectTag() {
         doThrow(ValidationException.class).when(validator).validateTagId(anyLong());
         when(postDao.addPost(any(Post.class))).thenReturn(anyLong());
-        postService.addPost(testPost);
+        postService.addPost(testRequestPostDto);
         verify(postDao, times(1)).addPost(any(Post.class));
         verify(validator, times(1)).validateTagId(anyLong());
         verify(validator, times(1)).validateAuthorId(anyLong());
@@ -201,7 +276,7 @@ public class PostServiceImplTest {
     @Test(expected = NotFoundException.class)
     public void addPostWithNotExistAuthor() {
         doThrow(NotFoundException.class).when(validator).validateAuthorId(anyLong());
-        postService.addPost(testPost);
+        postService.addPost(testRequestPostDto);
         verify(validator, times(1)).validateAuthorId(anyLong());
     }
 
@@ -254,75 +329,89 @@ public class PostServiceImplTest {
         verify(validator, times(1)).validateTagId(anyLong());
     }
 
+    @Test(expected = InternalServerException.class)
+    public void addTagToPostWithDataAccessException() {
+        when(postDao.addTagToPost(anyLong(), anyLong())).thenReturn(false);
+        postService.addTagToPost(1L, 1L);
+        verify(validator, times(1)).validatePostId(anyLong());
+        verify(validator, times(1)).validateTagId(anyLong());
+    }
+
+    @Test
+    public void deleteCorrectTagInPost() {
+        when(postDao.deleteTagInPost(anyLong(), anyLong())).thenReturn(true);
+        postService.deleteTagInPost(CORRECT_POST_ID, CORRECT_TAG_ID);
+        verify(validator, times(1)).validatePostId(anyLong());
+        verify(validator, times(1)).validateTagId(anyLong());
+        verify(validator, times(1)).validateTagInPost(anyLong(), anyLong());
+    }
+
+    @Test(expected = InternalServerException.class)
+    public void deleteCorrectTagInPostWithNotDeleted() {
+        when(postDao.deleteTagInPost(anyLong(), anyLong())).thenReturn(false);
+        postService.deleteTagInPost(CORRECT_POST_ID, CORRECT_TAG_ID);
+        verify(validator, times(1)).validatePostId(anyLong());
+        verify(validator, times(1)).validateTagId(anyLong());
+        verify(validator, times(1)).validateTagInPost(anyLong(), anyLong());
+    }
+
+    @Test(expected = ValidationException.class)
+    public void deleteIncorrectTagInPost() {
+        doThrow(ValidationException.class).when(validator).validateTagId(anyLong());
+        postService.deleteTagInPost(CORRECT_POST_ID, INCORRECT_TAG_ID);
+        verify(validator, times(1)).validatePostId(anyLong());
+        verify(validator, times(1)).validateTagId(anyLong());
+    }
+
     @Test
     public void updatePostSuccess() {
-        testPost.setTags(tagUpdated);
+        testRequestPostDto.setTags(tagUpdated);
         when(postDao.updatePost(any(Post.class))).thenReturn(true);
-        when(postDao.checkTagInPostById(anyLong(), eq(2L))).thenReturn(true);
-        when(postDao.checkTagInPostById(anyLong(), eq(3L))).thenReturn(true);
-        when(postDao.checkTagInPostById(anyLong(), eq(5L))).thenReturn(false);
-        when(postDao.checkTagInPostById(anyLong(), eq(6L))).thenReturn(false);
-        when(postDao.addTagToPost(anyLong(), anyLong())).thenReturn(true);
-        when(postDao.deleteTagInPost(anyLong(), anyLong())).thenReturn(true);
-        when(tagService.getAllTagsByPostId(anyLong())).thenReturn(tags);
-        postService.updatePost(testPost);
+        postService.updatePost(testRequestPostDto);
         verify(postDao, times(1)).updatePost(any(Post.class));
         verify(validator, times(1)).checkPost(any(Post.class));
-        verify(tagService, times(1)).getAllTagsByPostId(anyLong());
-        verify(postDao, times(1)).deleteTagInPost(anyLong(), anyLong());
-        verify(postDao, times(2)).addTagToPost(anyLong(), anyLong());
-        verify(validator, times(1)).validateTags(anyList(), any(TagService.class));
+        verify(postDao, times(1)).deleteAllTags(anyLong());
+        verify(postDao, times(1)).addTags(anyLong(), any());
+        verify(validator, times(1)).validateTags(anyList());
     }
 
     @Test(expected = InternalServerException.class)
     public void updatePostWithNotUpdatedInDao() {
-        testPost.setTags(tagUpdated);
+        testRequestPostDto.setTags(tagUpdated);
         when(postDao.updatePost(any(Post.class))).thenReturn(false);
-        when(postDao.checkTagInPostById(anyLong(), eq(2L))).thenReturn(true);
-        when(postDao.checkTagInPostById(anyLong(), eq(3L))).thenReturn(true);
-        when(postDao.checkTagInPostById(anyLong(), eq(5L))).thenReturn(false);
-        when(postDao.checkTagInPostById(anyLong(), eq(6L))).thenReturn(false);
-        when(postDao.addTagToPost(anyLong(), anyLong())).thenReturn(true);
-        when(postDao.deleteTagInPost(anyLong(), anyLong())).thenReturn(true);
-        when(tagService.getAllTagsByPostId(anyLong())).thenReturn(tags);
-        postService.updatePost(testPost);
+        postService.updatePost(testRequestPostDto);
         verify(postDao, times(1)).updatePost(any(Post.class));
         verify(validator, times(1)).checkPost(any(Post.class));
-        verify(tagService, times(1)).getAllTagsByPostId(anyLong());
+        verify(tagService, times(1)).getAllTagsByPostsId(any());
         verify(postDao, times(1)).deleteTagInPost(anyLong(), anyLong());
         verify(postDao, times(2)).addTagToPost(anyLong(), anyLong());
-        verify(validator, times(1)).validateTags(anyList(), any(TagService.class));
+        verify(validator, times(1)).validateTags(anyList());
     }
 
     @Test(expected = InternalServerException.class)
     public void updatePostWithNotAddedTagToPost() {
-        testPost.setTags(tagUpdated);
-        when(tagService.getAllTagsByPostId(anyLong())).thenReturn(tags);
-        when(postDao.deleteTagInPost(anyLong(), anyLong())).thenReturn(true);
-        when(postDao.addTagToPost(anyLong(), anyLong())).thenReturn(false);
+        testRequestPostDto.setTags(tagUpdated);
 
-        postService.updatePost(testPost);
+        postService.updatePost(testRequestPostDto);
 
         verify(postDao, times(1)).updatePost(any(Post.class));
         verify(validator, times(1)).checkPost(any(Post.class));
-        verify(tagService, times(1)).getAllTagsByPostId(anyLong());
+        verify(tagService, times(1)).getAllTagsByPostsId(any());
         verify(postDao, times(1)).deleteTagInPost(anyLong(), anyLong());
         verify(postDao, times(2)).addTagToPost(anyLong(), anyLong());
-        verify(validator, times(1)).validateTags(anyList(), any(TagService.class));
+        verify(validator, times(1)).validateTags(anyList());
     }
 
     @Test(expected = InternalServerException.class)
     public void updatePostWithNotDeletedTagFromPost() {
-        testPost.setTags(tagUpdated);
-        when(postDao.deleteTagInPost(anyLong(), anyLong())).thenReturn(false);
-        when(tagService.getAllTagsByPostId(anyLong())).thenReturn(tags);
-        postService.updatePost(testPost);
+        testRequestPostDto.setTags(tagUpdated);
+        postService.updatePost(testRequestPostDto);
         verify(postDao, times(1)).updatePost(any(Post.class));
         verify(validator, times(1)).checkPost(any(Post.class));
-        verify(tagService, times(1)).getAllTagsByPostId(anyLong());
+        verify(tagService, times(1)).getAllTagsByPostsId(any());
         verify(postDao, times(1)).deleteTagInPost(anyLong(), anyLong());
         verify(postDao, times(2)).addTagToPost(anyLong(), anyLong());
-        verify(validator, times(1)).validateTags(anyList(), any(TagService.class));
+        verify(validator, times(1)).validateTags(anyList());
     }
 
     @Test

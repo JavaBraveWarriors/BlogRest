@@ -19,13 +19,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import java.util.Collections;
 
 /**
- * The type Rest error handler.
+ * The Rest error handler tracks and catches all errors that occur in the {com.blog} package.
  *
  * @see ResponseEntityExceptionHandler
  */
 @ControllerAdvice("com.blog")
 public class RestErrorHandler extends ResponseEntityExceptionHandler {
-
 
     /**
      * Handle data access exception. Throw if an error occurred with data access in dao.
@@ -36,7 +35,7 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(DataAccessException.class)
     public final @ResponseBody
-    ResponseEntity<Object> handleDataAccessException(DataAccessException ex, WebRequest request) {
+    ResponseEntity<ExceptionResponse> handleDataAccessException(DataAccessException ex, WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 Collections.singletonList(ex.getMessage()),
                 request.getDescription(true));
@@ -75,7 +74,6 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
     }
 
-
     /**
      * Handle validation exception. Throw if there was an error validating the data of the object supplied in the request body.
      *
@@ -108,7 +106,6 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-
     /**
      * Handle data integrity violation exception. Throw if it is wrong to add links to the database (tag_id or post_id does not exist).
      *
@@ -122,7 +119,7 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 Collections.singletonList(ex.getMessage()),
                 request.getDescription(false));
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(exceptionResponse, HttpStatus.CONFLICT);
     }
 
     /**

@@ -1,18 +1,22 @@
 package com.blog.controller;
 
-import com.blog.Post;
+import com.blog.model.Comment;
+import com.blog.model.Post;
+import com.blog.model.PostListWrapper;
+import com.blog.model.RequestPostDto;
 import com.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
-import java.util.List;
+import java.util.Optional;
 
 /**
- * The type Post rest controller.
+ * The Post rest controller provides an interface to interact with our rest-API service to Post model.
  *
  * @author Aliaksandr Yeutushenka
  * @see PostService
@@ -20,7 +24,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/posts")
 public class PostRestController {
-    private static final Long DEFAULT_RESPONSE_POST_SIZE = 10L;
+
+    @Value("${postController.defaultResponsePostSize}")
+    private Long DEFAULT_RESPONSE_POST_SIZE;
+
+    @Value("${postController.defaultResponsePostPage}")
+    private Long DEFAULT_RESPONSE_POST_PAGE;
+
+    @Value("${postController.defaultResponsePostSort}")
+    private String DEFAULT_RESPONSE_POST_SORT;
+
     private PostService postService;
 
     /**
@@ -32,7 +45,6 @@ public class PostRestController {
     public PostRestController(PostService postService) {
         this.postService = postService;
     }
-
 
     /**
      * Gets a {Post} object where id is equal to argument parameter.
@@ -47,24 +59,24 @@ public class PostRestController {
     }
 
     /**
-     * Gets a list of post objects from a specific item, a specific amount. If initial is null will be returned all posts.
-     * If initial is not null and quantity is null - 10 items will be returned by default.
+     * Gets a list of post objects from a specific page, a specific size. If page is null will be returned first page by default.
+     * If page is not null and size is null - 10 items will be returned by default.
      *
-     * @param initial  is {Long} value ID of the post from which you want to get objects.
-     * @param quantity is {Long} value the number of required objects.
+     * @param page is {Long} value ID of the post from which you want to get objects.
+     * @param size is {Long} value the number of required objects.
+     * @param sort is {String} value which determines which field will be sorted, by default - by date.
      * @return {List<Post>} is a list of posts.
      */
     @GetMapping("")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<Post> getPostsByInitialIdAndQuantity(
-            @RequestParam(value = "from", required = false) Long initial,
-            @RequestParam(value = "quantity", required = false) Long quantity) {
-        if (initial == null) {
-            return postService.getAllPosts();
-        } else if (quantity == null) {
-            return postService.getPostsByInitialIdAndQuantity(initial, DEFAULT_RESPONSE_POST_SIZE);
-        }
-        return postService.getPostsByInitialIdAndQuantity(initial, quantity);
+    public PostListWrapper getPostsWithPagination(
+            @RequestParam(value = "page", required = false) Long page,
+            @RequestParam(value = "size", required = false) Long size,
+            @RequestParam(value = "sort", required = false) String sort) {
+        return postService.getPostsWithPaginationAndSorting(
+                Optional.ofNullable(page).orElse(DEFAULT_RESPONSE_POST_PAGE),
+                Optional.ofNullable(size).orElse(DEFAULT_RESPONSE_POST_SIZE),
+                Optional.ofNullable(sort).orElse(DEFAULT_RESPONSE_POST_SORT));
     }
 
     /**
@@ -75,7 +87,7 @@ public class PostRestController {
      */
     @GetMapping("/tag/{id}")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<Post> getAllPostsByTagId(@PathVariable(value = "id") Long tagId) {
+    public PostListWrapper getAllPostsByTagId(@PathVariable(value = "id") Long tagId) {
         return postService.getAllPostsByTagId(tagId);
     }
 
@@ -115,11 +127,27 @@ public class PostRestController {
      */
     @PostMapping("")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public Long addPost(@Valid @RequestBody Post post, BindingResult validationResults) {
+    public Long addPost(@Valid @RequestBody RequestPostDto post, BindingResult validationResults) {
         if (validationResults.hasErrors()) {
             throw new ValidationException(validationResults.getFieldErrors().toString());
         } else {
             return postService.addPost(post);
+        }
+    }
+
+    /**
+     * Add comment to post.
+     *
+     * @param comment           {Comment} to be added.
+     * @param validationResults the validation results
+     */
+    @PostMapping("/comment")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    public void addCommentToPost(@Valid @RequestBody Comment comment, BindingResult validationResults) {
+        if (validationResults.hasErrors()) {
+            throw new ValidationException(validationResults.getFieldErrors().toString());
+        } else {
+            postService.addCommentToPost(comment);
         }
     }
 
@@ -131,7 +159,7 @@ public class PostRestController {
      */
     @PutMapping("")
     @ResponseStatus(value = HttpStatus.OK)
-    public void updatePost(@Valid @RequestBody Post post, BindingResult validationResults) {
+    public void updatePost(@Valid @RequestBody RequestPostDto post, BindingResult validationResults) {
         if (validationResults.hasErrors()) {
             throw new ValidationException(validationResults.getFieldErrors().toString());
         } else {
@@ -148,5 +176,19 @@ public class PostRestController {
     @ResponseStatus(value = HttpStatus.OK)
     public void deletePost(@PathVariable(value = "id") Long id) {
         postService.deletePost(id);
+    }
+
+    /**
+     * Delete comment in post.
+     *
+     * @param id        is {Long} value which identifies the post ID.
+     * @param commentId is {Long} value which identifies the comment ID.
+     */
+    @DeleteMapping("/{id}/comment/{commentId}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void deleteCommentInPost(
+            @PathVariable(value = "id") Long id,
+            @PathVariable(value = "commentId") Long commentId) {
+        postService.deleteCommentInPost(id, commentId);
     }
 }

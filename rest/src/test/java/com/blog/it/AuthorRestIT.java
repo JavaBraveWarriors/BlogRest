@@ -1,21 +1,27 @@
 package com.blog.it;
 
-import com.blog.Author;
+import com.blog.JsonConverter;
+import com.blog.controller.config.ControllerTestConfiguration;
+import com.blog.model.Author;
+import com.blog.model.PostListWrapper;
 import com.blog.response.ExceptionResponse;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 
-import static com.blog.JsonConverter.convertToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ControllerTestConfiguration.class)
 public class AuthorRestIT extends AbstractTestIT {
-
 
     private static String CORRECT_AUTHOR_ID = "1";
     private static String DELETED_AUTHOR_ID = "4";
@@ -82,6 +88,9 @@ public class AuthorRestIT extends AbstractTestIT {
             null
     );
 
+    @Autowired
+    private JsonConverter jsonConverter;
+
     @BeforeClass
     public static void setUp() {
         headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
@@ -120,9 +129,9 @@ public class AuthorRestIT extends AbstractTestIT {
     public void getAllPostsByAuthorIdSuccess() {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
-        ResponseEntity<List> response = restTemplate.exchange(
+        ResponseEntity<PostListWrapper> response = restTemplate.exchange(
                 createURLWithPort(SLASH.concat(CORRECT_AUTHOR_ID).concat("/posts")),
-                HttpMethod.GET, entity, List.class);
+                HttpMethod.GET, entity, PostListWrapper.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertNotNull(response.getBody());
     }
@@ -177,7 +186,7 @@ public class AuthorRestIT extends AbstractTestIT {
 
     @Test
     public void addAuthorSuccess() {
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(author), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(author), headers);
 
         ResponseEntity<Long> response = restTemplate.exchange(
                 createURLWithPort(NULL),
@@ -188,7 +197,7 @@ public class AuthorRestIT extends AbstractTestIT {
 
     @Test(expected = HttpClientErrorException.BadRequest.class)
     public void addIncorrectAuthor() {
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(incorrectAuthor), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(incorrectAuthor), headers);
 
         ResponseEntity<Long> response = restTemplate.exchange(
                 createURLWithPort(NULL),
@@ -197,7 +206,7 @@ public class AuthorRestIT extends AbstractTestIT {
 
     @Test
     public void updateAuthorSuccess() {
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(authorExist), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(authorExist), headers);
 
         ResponseEntity<Author> response = restTemplate.exchange(
                 createURLWithPort(NULL),
@@ -207,7 +216,7 @@ public class AuthorRestIT extends AbstractTestIT {
 
     @Test(expected = HttpClientErrorException.BadRequest.class)
     public void updateIncorrectAuthor() {
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(incorrectUpdatedAuthor), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(incorrectUpdatedAuthor), headers);
 
         ResponseEntity<Author> response = restTemplate.exchange(
                 createURLWithPort(NULL),
@@ -216,7 +225,7 @@ public class AuthorRestIT extends AbstractTestIT {
 
     @Test(expected = HttpClientErrorException.NotFound.class)
     public void updateNotExistAuthor() {
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(authorNotExist), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(authorNotExist), headers);
 
         ResponseEntity<Author> response = restTemplate.exchange(
                 createURLWithPort(NULL),

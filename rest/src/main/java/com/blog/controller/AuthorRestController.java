@@ -1,7 +1,7 @@
 package com.blog.controller;
 
-import com.blog.Author;
-import com.blog.Post;
+import com.blog.model.Author;
+import com.blog.model.PostListWrapper;
 import com.blog.service.AuthorService;
 import com.blog.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +11,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
-import java.util.List;
 
 /**
- * The type Author rest controller.
+ * The Author rest controller provides an interface to interact with our rest-API service to Author model.
  *
  * @author Aliaksandr Yeutushenka
  * @see AuthorService
@@ -59,7 +58,7 @@ public class AuthorRestController {
      */
     @GetMapping("/{id}/posts")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<Post> getAllPostsByAuthorId(@PathVariable(value = "id") Long userId) {
+    public PostListWrapper getAllPostsByAuthorId(@PathVariable(value = "id") Long userId) {
         return postService.getAllPostsByAuthorId(userId);
     }
 

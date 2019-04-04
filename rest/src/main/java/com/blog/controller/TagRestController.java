@@ -1,6 +1,6 @@
 package com.blog.controller;
 
-import com.blog.Tag;
+import com.blog.model.Tag;
 import com.blog.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,7 @@ import javax.validation.ValidationException;
 import java.util.List;
 
 /**
- * The type Tag rest controller.
+ * The Tag rest controller provides an interface to interact with our rest-API service to Tag model.
  *
  * @author Aliaksandr Yeutushenka
  * @see TagService

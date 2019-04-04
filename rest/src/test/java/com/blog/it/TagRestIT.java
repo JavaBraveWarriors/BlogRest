@@ -1,30 +1,40 @@
 package com.blog.it;
 
-import com.blog.Tag;
+import com.blog.JsonConverter;
+import com.blog.controller.config.ControllerTestConfiguration;
+import com.blog.model.Tag;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.List;
 
-import static com.blog.JsonConverter.convertToJson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ControllerTestConfiguration.class)
 public class TagRestIT extends AbstractTestIT {
 
     private static String CORRECT_TAG_ID = "1";
     private static String DELETED_TAG_ID = "4";
-    private static String NOT_EXIST_TAG_ID = "8";
+    private static String NOT_EXIST_TAG_ID = "1238";
     private static String INCORRECT_TAG_ID = "-1";
     private static String NULL = "";
     private static String SLASH = "/";
 
-    private static Tag correctTag = new Tag(null, "test4", "test4");
-    private static Tag incorrectTag = new Tag(null, "t", "test1");
-    private static Tag notExistTag = new Tag(20L, "t21221", "test1");
-    private static Tag updatedTag = new Tag(1L, "updatedData", "path_4");
+    private static Tag CORRECT_TAG = new Tag(null, "test4", "test4");
+    private static Tag INCORRECT_TAG = new Tag(null, "t", "test1");
+    private static Tag NOT_EXIST_TAG = new Tag(20L, "t21221", "test1");
+    private static Tag UPDATED_TAG = new Tag(1L, "updatedData", "path_4");
+
+    @Autowired
+    private JsonConverter jsonConverter;
 
     @BeforeClass
     public static void setUp() {
@@ -76,7 +86,7 @@ public class TagRestIT extends AbstractTestIT {
 
     @Test
     public void addTagSuccess() {
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(correctTag), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(CORRECT_TAG), headers);
 
         ResponseEntity<Long> response = restTemplate.exchange(
                 createURLWithPort(NULL),
@@ -88,7 +98,7 @@ public class TagRestIT extends AbstractTestIT {
 
     @Test(expected = HttpClientErrorException.BadRequest.class)
     public void addIncorrectTag() {
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(incorrectTag), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(INCORRECT_TAG), headers);
 
         ResponseEntity<Long> response = restTemplate.exchange(
                 createURLWithPort(NULL),
@@ -97,7 +107,7 @@ public class TagRestIT extends AbstractTestIT {
 
     @Test
     public void updateTagSuccess() {
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(updatedTag), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(UPDATED_TAG), headers);
 
         ResponseEntity<Tag> response = restTemplate.exchange(
                 createURLWithPort(NULL),
@@ -108,7 +118,7 @@ public class TagRestIT extends AbstractTestIT {
 
     @Test(expected = HttpClientErrorException.BadRequest.class)
     public void updateIncorrectTag() {
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(incorrectTag), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(INCORRECT_TAG), headers);
 
         ResponseEntity<Tag> response = restTemplate.exchange(
                 createURLWithPort(NULL),
@@ -119,7 +129,7 @@ public class TagRestIT extends AbstractTestIT {
 
     @Test(expected = HttpClientErrorException.NotFound.class)
     public void updateNotExistTag() {
-        HttpEntity<String> entity = new HttpEntity<>(convertToJson(notExistTag), headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonConverter.convertToJson(NOT_EXIST_TAG), headers);
 
         ResponseEntity<Tag> response = restTemplate.exchange(
                 createURLWithPort(NULL),
@@ -129,7 +139,7 @@ public class TagRestIT extends AbstractTestIT {
     }
 
     @Test
-    public void deleteTagSuccess() throws Exception {
+    public void deleteTagSuccess() {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<Tag> response = restTemplate.exchange(
@@ -139,7 +149,7 @@ public class TagRestIT extends AbstractTestIT {
     }
 
     @Test(expected = HttpClientErrorException.BadRequest.class)
-    public void deleteTagByIncorrectId() throws Exception {
+    public void deleteTagByIncorrectId() {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<Tag> response = restTemplate.exchange(
@@ -150,7 +160,7 @@ public class TagRestIT extends AbstractTestIT {
     }
 
     @Test(expected = HttpClientErrorException.NotFound.class)
-    public void deleteNotExistTag() throws Exception {
+    public void deleteNotExistTag() {
         HttpEntity<String> entity = new HttpEntity<>(null, headers);
 
         ResponseEntity<Tag> response = restTemplate.exchange(

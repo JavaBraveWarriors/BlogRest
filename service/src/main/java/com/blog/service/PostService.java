@@ -1,12 +1,10 @@
 package com.blog.service;
 
-import com.blog.Post;
 import com.blog.dao.jdbc.PostDaoImpl;
 import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
-
-import java.util.List;
+import com.blog.model.*;
 
 /**
  * This interface defines various ways to manage object post with the correct business model.
@@ -25,24 +23,17 @@ public interface PostService {
      * @throws ValidationException Will throw an error if authorId is not valid.
      * @throws NotFoundException   Will throw an error if not found author with this authorId in database.
      */
-    List<Post> getAllPostsByAuthorId(Long authorId) throws ValidationException, NotFoundException;
-
-    /**
-     * Gets the list of objects of the all posts.
-     *
-     * @return {List<Post>} is a list of all posts.
-     */
-    List<Post> getAllPosts();
+    PostListWrapper getAllPostsByAuthorId(Long authorId) throws ValidationException, NotFoundException;
 
     /**
      * Gets a list of post objects from a specific item, a specific amount.
      *
-     * @param initial  is {Long} value ID of the post from which you want to get objects.
-     * @param quantity is {Long} value the number of required objects.
+     * @param page is {Long} value ID of the page from which you want to get objects.
+     * @param size is {Long} value the number of required objects.
      * @return {List<Post>} is a list of posts.
      * @throws ValidationException Will throw an error if initial or quantity is not valid.
      */
-    List<Post> getPostsByInitialIdAndQuantity(Long initial, Long quantity) throws ValidationException;
+    PostListWrapper getPostsWithPaginationAndSorting(Long page, Long size, String sort) throws ValidationException;
 
     /**
      * Gets a list of post objects where is this tag.
@@ -52,27 +43,27 @@ public interface PostService {
      * @throws ValidationException Will throw an error if tagId is not valid.
      * @throws NotFoundException   Will throw an error if not found tag with this Id in database.
      */
-    List<Post> getAllPostsByTagId(Long tagId) throws ValidationException, NotFoundException;
+    PostListWrapper getAllPostsByTagId(Long tagId) throws ValidationException, NotFoundException;
 
     /**
-     * Gets a {Post} object where id is equal to argument parameter.
+     * Gets a {ResponsePostDto} object where id is equal to argument parameter.
      *
      * @param postId {Long} value the ID of the post you want to get.
      * @return {Post} is a object which has this ID.
      * @throws ValidationException Will throw an error if postId is not valid.
      * @throws NotFoundException   Will throw an error if not found post with this postId in database.
      */
-    Post getPostById(Long postId) throws ValidationException, NotFoundException;
+    ResponsePostDto getPostById(Long postId) throws ValidationException, NotFoundException;
 
     /**
      * Add new post.
      *
-     * @param post {Post} to be added.
+     * @param post {RequestPostDto} to be added.
      * @return {Long} is the value that is the id of the new post.
      * @throws ValidationException Will throw an error if authorId or list of tags is not valid.
      * @throws NotFoundException   Will throw an error if not found author or one of the tag list items in database.
      */
-    Long addPost(Post post) throws ValidationException, NotFoundException;
+    Long addPost(RequestPostDto post) throws ValidationException, NotFoundException;
 
     /**
      * Add tag to post.
@@ -88,12 +79,12 @@ public interface PostService {
     /**
      * Update post.
      *
-     * @param post {Post} to be updated.
+     * @param post {RequestPostDto} to be updated.
      * @throws ValidationException     Will throw an error if authorId or list of tags is not valid.
      * @throws NotFoundException       Will throw an error if not found post or one of the tag list items in database.
      * @throws InternalServerException Will throw an error if post or tags in post is not updated.
      */
-    void updatePost(Post post) throws ValidationException, NotFoundException, InternalServerException;
+    void updatePost(RequestPostDto post) throws ValidationException, NotFoundException, InternalServerException;
 
     /**
      * Deletes post using post ID.
@@ -115,4 +106,8 @@ public interface PostService {
      * @throws InternalServerException Will throw an error if tag is not deleted in post.
      */
     void deleteTagInPost(Long postId, Long tagId) throws ValidationException, NotFoundException, InternalServerException;
+
+    void addCommentToPost(Comment comment);
+
+    void deleteCommentInPost(Long postId, Long commentId);
 }
