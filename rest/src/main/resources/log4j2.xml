@@ -8,10 +8,11 @@
         </File>
     </Appenders>
     <Loggers>
-        <Root name="com.blog" level="DEBUG">
+        <Root name="com.blog" level="${spring.log4j.level}">
             <appender-ref ref="File"/>
             <appender-ref ref="Console"/>
         </Root>
-        <Logger name="com.blog" level="DEBUG"/>
+        <Logger name="com.blog" level="${spring.log4j.level}"/>
+        <Logger name="org.springframework" level="${spring.log4j.level}"/>
     </Loggers>
 </Configuration>
