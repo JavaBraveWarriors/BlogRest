@@ -16,6 +16,9 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * The Comment dao impl test.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:test-spring-dao.xml"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -71,7 +74,8 @@ public class CommentDaoImplTest {
 
     @Test
     public void getListCommentsByPostIdWithPaginationSuccess() {
-        List<Comment> comments = commentDao.getListCommentsByInitialAndSize(CORRECT_PAGE_ID, COMMENTS_SIZE, CORRECT_POST_ID);
+        List<Comment> comments =
+                commentDao.getListCommentsByInitialAndSize(CORRECT_PAGE_ID, COMMENTS_SIZE, CORRECT_POST_ID);
         assertNotNull(comments);
         assertEquals(COUNT_COMMENTS_IN_SECOND_PAGE, comments.size());
         assertNotEquals(CORRECT_FIRST_COMMENT_ID, comments.get(1));
@@ -79,7 +83,8 @@ public class CommentDaoImplTest {
 
     @Test
     public void getListCommentsByIncorrectPostIdWithPagination() {
-        List<Comment> comments = commentDao.getListCommentsByInitialAndSize(CORRECT_PAGE_ID, COMMENTS_SIZE, INCORRECT_POST_ID);
+        List<Comment> comments =
+                commentDao.getListCommentsByInitialAndSize(CORRECT_PAGE_ID, COMMENTS_SIZE, INCORRECT_POST_ID);
         assertTrue(comments.isEmpty());
     }
 

@@ -22,6 +22,9 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * The Post dao impl test.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:test-spring-dao.xml"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -58,7 +61,7 @@ public class PostDaoImplTest {
     private static final String UPDATED_POST_TITLE = "updatedTestTitle1";
     private static final String UPDATED_POST_TEXT = "updatedTestText1";
     private static final String UPDATED_POST_DESCRIPTION = "updatedTestDescription1";
-    private static List<Long> ADDED_TAGS_ID = new ArrayList<>();
+    private static List<Long> addedTagsToPost = new ArrayList<>();
 
     private static Post post = new Post(
             null,
@@ -76,8 +79,8 @@ public class PostDaoImplTest {
 
     @BeforeClass
     public static void setup() {
-        ADDED_TAGS_ID.add(CORRECT_TAG_ID);
-        ADDED_TAGS_ID.add(CORRECT_TAG_ID_2);
+        addedTagsToPost.add(CORRECT_TAG_ID);
+        addedTagsToPost.add(CORRECT_TAG_ID_2);
     }
 
     @Test
@@ -142,7 +145,8 @@ public class PostDaoImplTest {
 
     @Test
     public void getPostsByInitialIdAndQuantitySuccess() {
-        List<ResponsePostDto> posts = postDao.getPostsByInitialIdAndQuantity(CORRECT_SECOND_POST_ID, COUNT_NECESSARY_POSTS);
+        List<ResponsePostDto> posts =
+                postDao.getPostsByInitialIdAndQuantity(CORRECT_SECOND_POST_ID, COUNT_NECESSARY_POSTS);
         assertNotNull(posts);
         assertEquals(COUNT_NECESSARY_POSTS.intValue(), posts.size());
         assertEquals(CORRECT_SECOND_POST_ID, posts.get(0).getId());
@@ -152,7 +156,8 @@ public class PostDaoImplTest {
 
     @Test
     public void getPostsByInitialIdAndQuantityWithSortSuccess() {
-        List<ResponsePostDto> posts = postDao.getPostsByInitialIdAndQuantity(CORRECT_SECOND_POST_ID, COUNT_NECESSARY_POSTS, SORTED_FIELD);
+        List<ResponsePostDto> posts =
+                postDao.getPostsByInitialIdAndQuantity(CORRECT_SECOND_POST_ID, COUNT_NECESSARY_POSTS, SORTED_FIELD);
         assertNotNull(posts);
         assertEquals(COUNT_NECESSARY_POSTS.intValue(), posts.size());
         assertEquals(CORRECT_FOURTH_POST_ID, posts.get(0).getId());
@@ -415,17 +420,17 @@ public class PostDaoImplTest {
         List<TagDto> tagsBeforeAdding = tagDao.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID_2));
         assertNotNull(tagsBeforeAdding);
 
-        assertTrue(postDao.addTags(CORRECT_POST_ID_2, ADDED_TAGS_ID));
+        assertTrue(postDao.addTags(CORRECT_POST_ID_2, addedTagsToPost));
 
         List<TagDto> tagsAfterAdding = tagDao.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID_2));
         assertNotNull(tagsAfterAdding);
 
-        assertEquals(tagsBeforeAdding.size() + ADDED_TAGS_ID.size(), tagsAfterAdding.size());
+        assertEquals(tagsBeforeAdding.size() + addedTagsToPost.size(), tagsAfterAdding.size());
     }
 
     @Test(expected = DataIntegrityViolationException.class)
     public void addTagsToIncorrectPost() {
-        assertFalse(postDao.addTags(INCORRECT_POST_ID, ADDED_TAGS_ID));
+        assertFalse(postDao.addTags(INCORRECT_POST_ID, addedTagsToPost));
     }
 
     @Test

@@ -10,6 +10,9 @@ import java.sql.Timestamp;
 
 import static com.blog.dao.jdbc.mapper.PostRowMapper.*;
 
+/**
+ * The Post short row mapper.
+ */
 @Component
 public class PostShortRowMapper implements RowMapper<ResponsePostDto> {
 

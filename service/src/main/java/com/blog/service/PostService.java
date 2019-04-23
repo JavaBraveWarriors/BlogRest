@@ -105,7 +105,8 @@ public interface PostService {
      * @throws NotFoundException       Will throw an error if not found post or tag in database.
      * @throws InternalServerException Will throw an error if tag is not deleted in post.
      */
-    void deleteTagInPost(Long postId, Long tagId) throws ValidationException, NotFoundException, InternalServerException;
+    void deleteTagInPost(Long postId, Long tagId)
+            throws ValidationException, NotFoundException, InternalServerException;
 
     void addCommentToPost(Comment comment);
 

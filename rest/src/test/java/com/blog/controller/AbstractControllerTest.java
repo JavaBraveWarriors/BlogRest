@@ -5,6 +5,9 @@ import com.blog.controller.config.ControllerTestConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 
+/**
+ * The Abstract controller test.
+ */
 @ContextConfiguration(classes = ControllerTestConfiguration.class)
 public abstract class AbstractControllerTest {
     @Autowired

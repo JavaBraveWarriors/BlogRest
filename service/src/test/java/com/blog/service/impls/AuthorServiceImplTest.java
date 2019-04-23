@@ -5,12 +5,17 @@ import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
 import com.blog.model.Author;
+import com.blog.service.AuthorService;
+import com.blog.service.impls.config.ServiceTestConfiguration;
 import com.blog.validator.Validator;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,7 +24,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+/**
+ * The Author service impl test.
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ServiceTestConfiguration.class)
 public class AuthorServiceImplTest {
 
     private static final Long CORRECT_AUTHOR_ID = 21L;
@@ -29,7 +38,7 @@ public class AuthorServiceImplTest {
     private static final String NOT_EXIST_LOGIN = "not_exist_LOG";
     private static final String EMPTY_LOGIN = "";
 
-    private static Author CORRECT_AUTHOR = new Author(
+    private static final Author CORRECT_AUTHOR = new Author(
             1L,
             "test@mail.ru",
             "testLogin",
@@ -38,7 +47,7 @@ public class AuthorServiceImplTest {
             "testLastName",
             "testDescription",
             "testPhone");
-    private static Author INCORRECT_AUTHOR = new Author(
+    private static final Author INCORRECT_AUTHOR = new Author(
             1L,
             null,
             "testLogin",
@@ -47,16 +56,22 @@ public class AuthorServiceImplTest {
             "testLastName",
             "testDescription",
             "testPhone");
-    private static List<Author> LIST_CORRECT_AUTHORS = Collections.singletonList(CORRECT_AUTHOR);
+    private static final List<Author> LIST_CORRECT_AUTHORS = Collections.singletonList(CORRECT_AUTHOR);
 
-    @Mock
+    @Autowired
     private AuthorDao authorDao;
 
-    @Mock
+    @Autowired
+    @Qualifier("mockValidator")
     private Validator validator;
 
-    @InjectMocks
-    private AuthorServiceImpl authorService;
+    @Autowired
+    private AuthorService authorService;
+
+    @After
+    public void updateData() {
+        Mockito.reset(authorDao, validator);
+    }
 
     @Test
     public void getAllAuthorsSuccess() {

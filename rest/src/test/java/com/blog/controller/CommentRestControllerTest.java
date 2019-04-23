@@ -24,7 +24,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -33,6 +32,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * The Comment rest controller test.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = ControllerTestConfiguration.class)
 public class CommentRestControllerTest extends AbstractControllerTest {
@@ -44,9 +46,9 @@ public class CommentRestControllerTest extends AbstractControllerTest {
     private CommentRestController commentRestController;
 
     private MockMvc mockMvc;
-    private static Comment CORRECT_COMMENT;
-    private static Comment INCORRECT_COMMENT;
-    private static String COMMENT_TEXT = "testText";
+    private static Comment correctComment;
+    private static Comment incorrectComment;
+    private static final String COMMENT_TEXT = "testText";
     private static final Long CORRECT_AUTHOR_ID = 2L;
     private static final Long CORRECT_POST_ID = 10L;
     private static final Long CORRECT_COMMENT_ID = 13L;
@@ -55,27 +57,27 @@ public class CommentRestControllerTest extends AbstractControllerTest {
     private static final Long COUNT_COMMENTS_PAGES = 2L;
     private static final Long COUNT_COMMENTS_IN_POST = 12L;
     private static final Long INCORRECT_POST_ID = -12L;
-    private static CommentListWrapper COMMENT_LIST_WRAPPER = new CommentListWrapper();
+    private static CommentListWrapper commentListWrapper = new CommentListWrapper();
 
     private static final Long REQUIRED_PAGE = 2L;
     private static final Long REQUIRED_SIZE = 5L;
 
     @Value("${commentController.defaultResponseCommentPage}")
-    private Long DEFAULT_COMMENT_PAGE;
+    private Long defaultCommentPage;
 
     @Value("${commentController.defaultResponseCommentSize}")
-    private Long DEFAULT_COMMENT_SIZE;
+    private Long defaultCommentSize;
 
     @BeforeClass
     public static void setData() {
-        CORRECT_COMMENT = new Comment(
+        correctComment = new Comment(
                 COMMENT_TEXT,
                 CORRECT_AUTHOR_ID,
                 CORRECT_POST_ID);
-        INCORRECT_COMMENT = new Comment(COMMENT_TEXT, CORRECT_AUTHOR_ID, null);
-        COMMENT_LIST_WRAPPER.setCommentsPage(Collections.singletonList(CORRECT_COMMENT));
-        COMMENT_LIST_WRAPPER.setCountCommentsInPost(COUNT_COMMENTS_PAGES);
-        COMMENT_LIST_WRAPPER.setCountCommentsInPost(COUNT_COMMENTS_IN_POST);
+        incorrectComment = new Comment(COMMENT_TEXT, CORRECT_AUTHOR_ID, null);
+        commentListWrapper.setCommentsPage(Collections.singletonList(correctComment));
+        commentListWrapper.setCountCommentsInPost(COUNT_COMMENTS_PAGES);
+        commentListWrapper.setCountCommentsInPost(COUNT_COMMENTS_IN_POST);
     }
 
     @After
@@ -93,10 +95,10 @@ public class CommentRestControllerTest extends AbstractControllerTest {
 
     @Test
     public void getCommentByIdSuccess() throws Exception {
-        given(commentService.getCommentById(anyLong())).willReturn(CORRECT_COMMENT);
+        given(commentService.getCommentById(anyLong())).willReturn(correctComment);
         mockMvc.perform(get(getEndpoint().concat("/{id}"), CORRECT_COMMENT_ID))
                 .andExpect(status().isOk())
-                .andExpect(content().json(jsonConverter.convertToJson(CORRECT_COMMENT)));
+                .andExpect(content().json(jsonConverter.convertToJson(correctComment)));
         verify(commentService, times(1)).getCommentById(anyLong());
         verifyNoMoreInteractions(commentService);
     }
@@ -122,14 +124,14 @@ public class CommentRestControllerTest extends AbstractControllerTest {
     @Test
     public void getListCommentsByPostIdWithPaginationSuccess() throws Exception {
         given(commentService.getListCommentsByPostIdWithPagination(anyLong(), anyLong(), anyLong()))
-                .willReturn(COMMENT_LIST_WRAPPER);
+                .willReturn(commentListWrapper);
         mockMvc.perform(get(getEndpoint())
                 .param("page", REQUIRED_PAGE.toString())
                 .param("size", REQUIRED_SIZE.toString())
                 .param("postId", CORRECT_POST_ID.toString()))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(content().json(jsonConverter.convertToJson(COMMENT_LIST_WRAPPER)));
+                .andExpect(content().json(jsonConverter.convertToJson(commentListWrapper)));
         verify(commentService, times(1))
                 .getListCommentsByPostIdWithPagination(REQUIRED_PAGE, REQUIRED_SIZE, CORRECT_POST_ID);
         verifyNoMoreInteractions(commentService);
@@ -138,35 +140,35 @@ public class CommentRestControllerTest extends AbstractControllerTest {
     @Test
     public void getListCommentsByPostIdWithPaginationWithoutPageSuccess() throws Exception {
         given(commentService.getListCommentsByPostIdWithPagination(anyLong(), anyLong(), anyLong()))
-                .willReturn(COMMENT_LIST_WRAPPER);
+                .willReturn(commentListWrapper);
         mockMvc.perform(get(getEndpoint())
                 .param("size", REQUIRED_SIZE.toString())
                 .param("postId", CORRECT_POST_ID.toString()))
                 .andExpect(status().isOk())
-                .andExpect(content().json(jsonConverter.convertToJson(COMMENT_LIST_WRAPPER)));
+                .andExpect(content().json(jsonConverter.convertToJson(commentListWrapper)));
         verify(commentService, times(1))
-                .getListCommentsByPostIdWithPagination(DEFAULT_COMMENT_PAGE, REQUIRED_SIZE, CORRECT_POST_ID);
+                .getListCommentsByPostIdWithPagination(defaultCommentPage, REQUIRED_SIZE, CORRECT_POST_ID);
         verifyNoMoreInteractions(commentService);
     }
 
     @Test
     public void getListCommentsByPostIdWithPaginationWithoutSizeSuccess() throws Exception {
         given(commentService.getListCommentsByPostIdWithPagination(anyLong(), anyLong(), anyLong()))
-                .willReturn(COMMENT_LIST_WRAPPER);
+                .willReturn(commentListWrapper);
         mockMvc.perform(get(getEndpoint())
                 .param("page", REQUIRED_PAGE.toString())
                 .param("postId", CORRECT_POST_ID.toString()))
                 .andExpect(status().isOk())
-                .andExpect(content().json(jsonConverter.convertToJson(COMMENT_LIST_WRAPPER)));
+                .andExpect(content().json(jsonConverter.convertToJson(commentListWrapper)));
         verify(commentService, times(1))
-                .getListCommentsByPostIdWithPagination(REQUIRED_PAGE, DEFAULT_COMMENT_SIZE, CORRECT_POST_ID);
+                .getListCommentsByPostIdWithPagination(REQUIRED_PAGE, defaultCommentSize, CORRECT_POST_ID);
         verifyNoMoreInteractions(commentService);
     }
 
     @Test
     public void getListCommentsByPostIdWithPaginationWithoutPostId() throws Exception {
         given(commentService.getListCommentsByPostIdWithPagination(anyLong(), anyLong(), anyLong()))
-                .willReturn(COMMENT_LIST_WRAPPER);
+                .willReturn(commentListWrapper);
         mockMvc.perform(get(getEndpoint())
                 .param("page", REQUIRED_PAGE.toString())
                 .param("size", REQUIRED_SIZE.toString()))
@@ -182,7 +184,8 @@ public class CommentRestControllerTest extends AbstractControllerTest {
                 .param("postId", CORRECT_POST_ID.toString()))
                 .andExpect(status().isOk())
                 .andExpect(content().string(is(COUNT_COMMENTS_IN_POST.toString())));
-        verify(commentService, times(1)).getCountOfPagesWithPagination(CORRECT_POST_ID, REQUIRED_SIZE);
+        verify(commentService, times(1))
+                .getCountOfPagesWithPagination(CORRECT_POST_ID, REQUIRED_SIZE);
         verifyNoMoreInteractions(commentService);
     }
 
@@ -202,7 +205,8 @@ public class CommentRestControllerTest extends AbstractControllerTest {
                 .param("size", REQUIRED_SIZE.toString())
                 .param("postId", INCORRECT_POST_ID.toString()))
                 .andExpect(status().isBadRequest());
-        verify(commentService, times(1)).getCountOfPagesWithPagination(INCORRECT_POST_ID, REQUIRED_SIZE);
+        verify(commentService, times(1))
+                .getCountOfPagesWithPagination(INCORRECT_POST_ID, REQUIRED_SIZE);
         verifyNoMoreInteractions(commentService);
     }
 
@@ -210,7 +214,7 @@ public class CommentRestControllerTest extends AbstractControllerTest {
     public void updateCommentSuccess() throws Exception {
         mockMvc.perform(put(getEndpoint())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(jsonConverter.convertToJson(CORRECT_COMMENT)))
+                .content(jsonConverter.convertToJson(correctComment)))
                 .andExpect(status().isOk());
         verify(commentService, times(1)).updateComment(any(Comment.class));
         verifyNoMoreInteractions(commentService);
@@ -220,7 +224,7 @@ public class CommentRestControllerTest extends AbstractControllerTest {
     public void updateIncorrectCommentSuccess() throws Exception {
         mockMvc.perform(put(getEndpoint())
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(jsonConverter.convertToJson(INCORRECT_COMMENT)))
+                .content(jsonConverter.convertToJson(incorrectComment)))
                 .andExpect(status().isBadRequest());
         verifyNoMoreInteractions(commentService);
     }

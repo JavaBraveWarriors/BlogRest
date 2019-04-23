@@ -1,0 +1,27 @@
+def globalConf = rootProject.ext
+
+test {
+  testLogging.showStandardStreams = true
+}
+
+dependencies {
+  Map<String, String> dependencies = globalConf.commonDependencies
+
+  compile project(':model')
+  compile project(':dao')
+
+  compile dependencies.springContext
+  compile dependencies.springTx
+  compile dependencies.servletApi
+  compile dependencies.springWeb
+  compile dependencies.springWebMvc
+  compile dependencies.jacksonDatabind
+  compile dependencies.log4jApi
+  compile dependencies.log4jCore
+  compile dependencies.log4jJcl
+  testCompile dependencies.springContext
+  testCompile dependencies.springTest
+  testCompile dependencies.junit
+  testCompile dependencies.mockito
+  testCompile dependencies.jsonassert
+}

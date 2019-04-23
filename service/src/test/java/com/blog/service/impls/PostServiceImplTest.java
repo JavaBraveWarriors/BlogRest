@@ -8,24 +8,32 @@ import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
 import com.blog.model.*;
 import com.blog.service.CommentService;
+import com.blog.service.PostService;
 import com.blog.service.TagService;
+import com.blog.service.impls.config.ServiceTestConfiguration;
 import com.blog.validator.Validator;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+/**
+ * The Post service impl test.
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ServiceTestConfiguration.class)
 public class PostServiceImplTest {
 
     private static final Long CORRECT_TAG_ID = 12L;
@@ -34,9 +42,9 @@ public class PostServiceImplTest {
     private static List<Tag> tags = new ArrayList<>();
     private static List<Long> tagUpdated;
     private static final Long CORRECT_POST_ID = 1L;
-    private static List<TagDto> POST_TAGS = new ArrayList<>();
-    private static Comment CORRECT_COMMENT;
-    private static Comment INCORRECT_COMMENT;
+    private static List<TagDto> postTags = new ArrayList<>();
+    private static Comment correctComment;
+    private static Comment incorrectComment;
     private static final String TEST_TEXT = "testText";
     private static final Long CORRECT_AUTHOR_ID = 21L;
     private static final Long CORRECT_COMMENT_ID = 13L;
@@ -59,23 +67,32 @@ public class PostServiceImplTest {
             1L
     );
 
-    @Mock
+    @Autowired
+    @Qualifier("tagServiceMock")
     private TagService tagService;
 
-    @Mock
+    @Autowired
+    @Qualifier("mockValidator")
     private Validator validator;
 
-    @Mock
+    @Autowired
     private ViewDao viewDao;
 
-    @Mock
+    @Autowired
+    @Qualifier("commentServiceMock")
     private CommentService commentService;
 
-    @Mock
+    @Autowired
     private PostDao postDao;
 
-    @InjectMocks
-    private PostServiceImpl postService;
+    @Autowired
+    @Qualifier("testPostService")
+    private PostService postService;
+
+    @After
+    public void updateData() {
+        Mockito.reset(tagService, validator, viewDao, commentService, postDao);
+    }
 
     @BeforeClass
     public static void setUp() {
@@ -95,17 +112,17 @@ public class PostServiceImplTest {
         tags.add(new Tag(2L, "2", "2"));
         tags.add(new Tag(3L, "3", "3"));
 
-        POST_TAGS.add(new TagDto(CORRECT_POST_ID, new Tag(1L, "1", "1")));
-        POST_TAGS.add(new TagDto(CORRECT_POST_ID, new Tag(2L, "2", "2")));
-        POST_TAGS.add(new TagDto(CORRECT_POST_ID, new Tag(3L, "3", "3")));
+        postTags.add(new TagDto(CORRECT_POST_ID, new Tag(1L, "1", "1")));
+        postTags.add(new TagDto(CORRECT_POST_ID, new Tag(2L, "2", "2")));
+        postTags.add(new TagDto(CORRECT_POST_ID, new Tag(3L, "3", "3")));
 
         testPostGet.setTags(tags);
 
-        CORRECT_COMMENT = new Comment(
+        correctComment = new Comment(
                 TEST_TEXT,
                 CORRECT_AUTHOR_ID,
                 CORRECT_POST_ID);
-        INCORRECT_COMMENT = new Comment(TEST_TEXT, CORRECT_AUTHOR_ID, null);
+        incorrectComment = new Comment(TEST_TEXT, CORRECT_AUTHOR_ID, null);
     }
 
     @Test
@@ -156,20 +173,20 @@ public class PostServiceImplTest {
 
     @Test
     public void addCorrectCommentToPost() {
-        postService.addCommentToPost(CORRECT_COMMENT);
+        postService.addCommentToPost(correctComment);
 
         verify(commentService, times(1)).addComment(any(Comment.class));
-        verify(postDao, times(1)).addComment(CORRECT_COMMENT.getPostId());
+        verify(postDao, times(1)).addComment(correctComment.getPostId());
         verifyNoMoreInteractions(commentService, postDao);
     }
 
     @Test(expected = ValidationException.class)
     public void addIncorrectCommentToPost() {
         doThrow(ValidationException.class).when(commentService).addComment(any(Comment.class));
-        postService.addCommentToPost(INCORRECT_COMMENT);
+        postService.addCommentToPost(incorrectComment);
 
         verify(commentService, times(1)).addComment(any(Comment.class));
-        verify(postDao, times(0)).addComment(CORRECT_COMMENT.getPostId());
+        verify(postDao, times(0)).addComment(correctComment.getPostId());
         verifyNoMoreInteractions(commentService);
     }
 

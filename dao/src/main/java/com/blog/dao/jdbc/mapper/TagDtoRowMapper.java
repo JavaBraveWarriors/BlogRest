@@ -8,12 +8,23 @@ import org.springframework.stereotype.Component;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * The Tag dto row mapper.
+ */
 @Component
 public class TagDtoRowMapper implements RowMapper<TagDto> {
+    /**
+     * The constant POST_ID.
+     */
     public static final String POST_ID = "post_id";
 
     private TagRowMapper tagRowMapper;
 
+    /**
+     * Instantiates a new Tag dto row mapper.
+     *
+     * @param tagRowMapper the tag row mapper
+     */
     @Autowired
     public TagDtoRowMapper(TagRowMapper tagRowMapper) {
         this.tagRowMapper = tagRowMapper;

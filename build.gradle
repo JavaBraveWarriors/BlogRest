@@ -1,0 +1,32 @@
+plugins {
+    id 'checkstyle'
+}
+apply plugin:'java'
+apply from: 'gradle/dependencies.gradle'
+
+allprojects {
+    group = 'com.blog'
+    version = '1.0-SNAPSHOT'
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'checkstyle'
+    sourceCompatibility = project.property('javaVersion')
+    targetCompatibility = project.property('javaVersion')
+    tasks.withType(JavaCompile) {
+        options.encoding = project.property('projectBuildSourceEncoding')
+        options.compilerArgs << "-Xlint:unchecked"
+    }
+    checkstyle {
+        toolVersion = '8.2'
+        configDir = file("$rootProject.projectDir/config/checkstyle")
+        showViolations = true
+    }
+    dependencies {
+    }
+    repositories {
+        mavenLocal()
+        maven { url "https://repo.maven.apache.org/maven2" }
+    }
+}

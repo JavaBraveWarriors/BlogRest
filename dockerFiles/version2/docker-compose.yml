@@ -5,11 +5,11 @@ services:
     container_name: apache-proxy
     ports:
       - "5555:5555"
-    links:
-      - tomcat_rest_1
-      - tomcat_rest_2
-      - tomcat_front_3
-      - tomcat_front_4
+#    links:
+#      - tomcat_rest_1
+#      - tomcat_rest_2
+#      - tomcat_front_3
+#      - tomcat_front_4
 
   tomcat_rest_1:
     build: ./tomcatSetupInstance1/

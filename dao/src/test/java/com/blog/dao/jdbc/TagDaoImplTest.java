@@ -16,6 +16,9 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * The Tag dao impl test.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:test-spring-dao.xml"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)

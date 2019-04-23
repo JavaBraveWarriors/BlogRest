@@ -17,6 +17,9 @@ import org.springframework.jms.support.destination.DynamicDestinationResolver;
 import javax.jms.ConnectionFactory;
 import javax.jms.Queue;
 
+/**
+ * The Messaging configuration.
+ */
 @Configuration
 @EnableJms
 @PropertySource({
@@ -39,32 +42,32 @@ public class MessagingConfiguration {
     }
 
     @Value("${jms.service.address}")
-    private String BROKER_URL;
+    private String brokerUrl;
 
     @Value("${jms.service.username}")
-    private String BROKER_USERNAME;
+    private String brokerUsername;
 
     @Value("${jms.service.password}")
-    private String BROKER_PASSWORD;
+    private String brokerPassword;
 
     @Value("${queue.tag}")
-    private String TAG_QUEUE;
+    private String tagQueue;
 
     @Value("${queue.comment}")
-    private String COMMENT_QUEUE;
+    private String commentQueue;
 
     @Value("${queue.default}")
-    private String DEFAULT_QUEUE;
+    private String defaultQueue;
 
     @Value("${queue.responseComment}")
-    private String COMMENT_RESPONSE_QUEUE;
+    private String commentResponseQueue;
 
     @Bean
     public ActiveMQConnectionFactory connectionFactory() {
         ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory();
-        connectionFactory.setBrokerURL(BROKER_URL);
-        connectionFactory.setPassword(BROKER_USERNAME);
-        connectionFactory.setUserName(BROKER_PASSWORD);
+        connectionFactory.setBrokerURL(brokerUrl);
+        connectionFactory.setPassword(brokerUsername);
+        connectionFactory.setUserName(brokerPassword);
         return connectionFactory;
     }
 
@@ -78,23 +81,23 @@ public class MessagingConfiguration {
 
     @Bean("default")
     public Queue defaultQueue() {
-        return new ActiveMQQueue(DEFAULT_QUEUE);
+        return new ActiveMQQueue(defaultQueue);
     }
 
     @Bean("responseComment")
     @Lazy
     public Queue responseComment() {
-        return new ActiveMQQueue(COMMENT_RESPONSE_QUEUE);
+        return new ActiveMQQueue(commentResponseQueue);
     }
 
     @Bean("tag")
     public Queue tagQueue() {
-        return new ActiveMQQueue(TAG_QUEUE);
+        return new ActiveMQQueue(tagQueue);
     }
 
     @Bean("comment")
     public Queue commentQueue() {
-        return new ActiveMQQueue(COMMENT_QUEUE);
+        return new ActiveMQQueue(commentQueue);
     }
 
     @Bean(name = "jmsTopicTemplate")

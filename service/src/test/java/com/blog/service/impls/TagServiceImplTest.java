@@ -6,13 +6,18 @@ import com.blog.exception.InternalServerException;
 import com.blog.exception.NotFoundException;
 import com.blog.exception.ValidationException;
 import com.blog.model.Tag;
+import com.blog.service.TagService;
+import com.blog.service.impls.config.ServiceTestConfiguration;
 import com.blog.validator.Validator;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -22,43 +27,54 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+/**
+ * The Tag service impl test.
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ServiceTestConfiguration.class)
 public class TagServiceImplTest {
 
     private static final Long CORRECT_TAG_ID = 21L;
     private static final Long INCORRECT_TAG_ID = -12L;
     private static final Long NOT_EXIST_TAG_ID = 123L;
-    private static List<TagDto> POST_TAGS = new ArrayList<>();
-    private static List<Tag> TEST_TAGS = new ArrayList<>();
+    private static List<TagDto> postTags = new ArrayList<>();
+    private static List<Tag> testTags = new ArrayList<>();
     private static Tag testTag = new Tag(4L, "4", "4");
-    private static Long CORRECT_POST_ID = 1L;
+    private static final Long CORRECT_POST_ID = 1L;
 
-    @Mock
+    @Autowired
+    @Qualifier("mockValidator")
     private Validator validator;
 
-    @Mock
+    @Autowired
     private TagDao tagDao;
 
-    @InjectMocks
-    private TagServiceImpl tagService;
+    @Autowired
+    @Qualifier("testTagService")
+    private TagService tagService;
 
     @BeforeClass
     public static void setUp() {
-        TEST_TAGS.add(new Tag(1L, "1", "1"));
-        TEST_TAGS.add(new Tag(2L, "2", "2"));
-        TEST_TAGS.add(new Tag(3L, "3", "3"));
-        POST_TAGS.add(new TagDto(CORRECT_POST_ID, new Tag(1L, "1", "1")));
-        POST_TAGS.add(new TagDto(CORRECT_POST_ID, new Tag(2L, "2", "2")));
-        POST_TAGS.add(new TagDto(CORRECT_POST_ID, new Tag(3L, "3", "3")));
+        testTags.add(new Tag(1L, "1", "1"));
+        testTags.add(new Tag(2L, "2", "2"));
+        testTags.add(new Tag(3L, "3", "3"));
+        postTags.add(new TagDto(CORRECT_POST_ID, new Tag(1L, "1", "1")));
+        postTags.add(new TagDto(CORRECT_POST_ID, new Tag(2L, "2", "2")));
+        postTags.add(new TagDto(CORRECT_POST_ID, new Tag(3L, "3", "3")));
+    }
+
+    @After
+    public void updateData() {
+        Mockito.reset(tagDao, validator);
     }
 
     @Test
     public void getAllTagsSuccess() {
-        when(tagDao.getAllTags()).thenReturn(TEST_TAGS);
+        when(tagDao.getAllTags()).thenReturn(testTags);
         List<Tag> tags = tagService.getAllTags();
         verify(tagDao, times(1)).getAllTags();
         assertNotNull(tags);
-        assertEquals(TEST_TAGS.size(), tags.size());
+        assertEquals(testTags.size(), tags.size());
     }
 
     @Test
@@ -87,11 +103,11 @@ public class TagServiceImplTest {
 
     @Test
     public void getAllTagsByPostIdSuccess() {
-        when(tagDao.getAllTagsByPostsId(any())).thenReturn(POST_TAGS);
+        when(tagDao.getAllTagsByPostsId(any())).thenReturn(postTags);
         List<TagDto> tags = tagService.getAllTagsByPostsId(Collections.singleton(CORRECT_POST_ID));
         verify(tagDao, times(1)).getAllTagsByPostsId(any());
         assertNotNull(tags);
-        assertEquals(tags.size(), POST_TAGS.size());
+        assertEquals(tags.size(), postTags.size());
     }
 
     @Test

@@ -21,8 +21,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -30,6 +28,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * The Post rest controller test.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 public class PostRestControllerTest extends AbstractControllerTest {
 
@@ -47,13 +48,13 @@ public class PostRestControllerTest extends AbstractControllerTest {
     private static final String REQUIRED_SORT = "id";
 
     @Value("${postController.defaultResponsePostSize}")
-    private Long DEFAULT_RESPONSE_POST_SIZE;
+    private Long defaultResponsePostSize;
     @Value("${postController.defaultResponsePostPage}")
-    private Long DEFAULT_RESPONSE_POST_PAGE;
+    private Long defaultResponsePostPage;
     @Value("${postController.defaultResponsePostSort}")
-    private String DEFAULT_RESPONSE_POST_SORT;
+    private String defaultResponsePostSort;
 
-    private static PostListWrapper POST_LIST_WRAPPER = new PostListWrapper();
+    private static PostListWrapper postListWrapper = new PostListWrapper();
 
     private static final Long COUNT_PAGES = 1L;
     private static final Long COUNT_POSTS = 12L;
@@ -103,7 +104,7 @@ public class PostRestControllerTest extends AbstractControllerTest {
             CORRECT_AUTHOR_ID,
             CORRECT_POST_ID
     );
-    private static Comment INCORRECT_COMMENT = new Comment(
+    private static final Comment INCORRECT_COMMENT = new Comment(
             null,
             CORRECT_AUTHOR_ID,
             CORRECT_POST_ID);
@@ -111,9 +112,9 @@ public class PostRestControllerTest extends AbstractControllerTest {
     @BeforeClass
     public static void setData() {
         ArrayList<Tag> tags = new ArrayList<>();
-        POST_LIST_WRAPPER.setPosts(Collections.singletonList(post));
-        POST_LIST_WRAPPER.setCountPages(COUNT_PAGES);
-        POST_LIST_WRAPPER.setCountPosts(COUNT_POSTS);
+        postListWrapper.setPosts(Collections.singletonList(post));
+        postListWrapper.setCountPages(COUNT_PAGES);
+        postListWrapper.setCountPosts(COUNT_POSTS);
         tags.add(new Tag(1L, "", "asd"));
         post.setTags(tags);
     }
@@ -240,87 +241,101 @@ public class PostRestControllerTest extends AbstractControllerTest {
     @Test
     public void deleteCommentInIncorrectPost() throws Exception {
         doThrow(ValidationException.class).when(postService).deleteCommentInPost(anyLong(), anyLong());
-        mockMvc.perform(delete(getEndpoint().concat("/{id}/comment/{commentId}"), INCORRECT_POST_ID, CORRECT_COMMENT_ID))
+        mockMvc.perform(
+                delete(getEndpoint().concat("/{id}/comment/{commentId}"), INCORRECT_POST_ID, CORRECT_COMMENT_ID))
                 .andExpect(status().isBadRequest());
-        verify(postService, times(1)).deleteCommentInPost(INCORRECT_POST_ID, CORRECT_COMMENT_ID);
+        verify(postService, times(1))
+                .deleteCommentInPost(INCORRECT_POST_ID, CORRECT_COMMENT_ID);
         verifyNoMoreInteractions(postService);
     }
 
     @Test
     public void deleteIncorrectCommentInPost() throws Exception {
         doThrow(ValidationException.class).when(postService).deleteCommentInPost(anyLong(), anyLong());
-        mockMvc.perform(delete(getEndpoint().concat("/{id}/comment/{commentId}"), CORRECT_POST_ID, INCORRECT_COMMENT_ID))
+        mockMvc.perform(
+                delete(getEndpoint().concat("/{id}/comment/{commentId}"), CORRECT_POST_ID, INCORRECT_COMMENT_ID))
                 .andExpect(status().isBadRequest());
-        verify(postService, times(1)).deleteCommentInPost(CORRECT_POST_ID, INCORRECT_COMMENT_ID);
+        verify(postService, times(1))
+                .deleteCommentInPost(CORRECT_POST_ID, INCORRECT_COMMENT_ID);
         verifyNoMoreInteractions(postService);
     }
 
     @Test
     public void getPostsByInitialIdAndQuantitySuccess() throws Exception {
-        given(postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class))).willReturn(POST_LIST_WRAPPER);
+        given(postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class)))
+                .willReturn(postListWrapper);
         mockMvc.perform(get(getEndpoint())
                 .param("page", REQUIRED_PAGE.toString())
                 .param("size", REQUIRED_SIZE.toString())
                 .param("sort", REQUIRED_SORT))
                 .andExpect(status().isOk())
-                .andExpect(content().json(jsonConverter.convertToJson(POST_LIST_WRAPPER)));
-        verify(postService, times(1)).getPostsWithPaginationAndSorting(REQUIRED_PAGE, REQUIRED_SIZE, REQUIRED_SORT);
+                .andExpect(content().json(jsonConverter.convertToJson(postListWrapper)));
+        verify(postService, times(1))
+                .getPostsWithPaginationAndSorting(REQUIRED_PAGE, REQUIRED_SIZE, REQUIRED_SORT);
         verifyNoMoreInteractions(postService);
     }
 
     @Test
     public void getPostsByInitialIdAndQuantityWithoutPageSuccess() throws Exception {
-        given(postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class))).willReturn(POST_LIST_WRAPPER);
+        given(postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class)))
+                .willReturn(postListWrapper);
         mockMvc.perform(get(getEndpoint())
                 .param("size", REQUIRED_SIZE.toString())
                 .param("sort", REQUIRED_SORT))
                 .andExpect(status().isOk())
-                .andExpect(content().json(jsonConverter.convertToJson(POST_LIST_WRAPPER)));
-        verify(postService, times(1)).getPostsWithPaginationAndSorting(DEFAULT_RESPONSE_POST_PAGE, REQUIRED_SIZE, REQUIRED_SORT);
+                .andExpect(content().json(jsonConverter.convertToJson(postListWrapper)));
+        verify(postService, times(1))
+                .getPostsWithPaginationAndSorting(defaultResponsePostPage, REQUIRED_SIZE, REQUIRED_SORT);
         verifyNoMoreInteractions(postService);
     }
 
     @Test
     public void getPostsByInitialIdAndQuantityWithoutSizeSuccess() throws Exception {
-        given(postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class))).willReturn(POST_LIST_WRAPPER);
+        given(postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class)))
+                .willReturn(postListWrapper);
         mockMvc.perform(get(getEndpoint())
                 .param("page", REQUIRED_PAGE.toString())
                 .param("sort", REQUIRED_SORT))
                 .andExpect(status().isOk())
-                .andExpect(content().json(jsonConverter.convertToJson(POST_LIST_WRAPPER)));
-        verify(postService, times(1)).getPostsWithPaginationAndSorting(REQUIRED_PAGE, DEFAULT_RESPONSE_POST_SIZE, REQUIRED_SORT);
+                .andExpect(content().json(jsonConverter.convertToJson(postListWrapper)));
+        verify(postService, times(1))
+                .getPostsWithPaginationAndSorting(REQUIRED_PAGE, defaultResponsePostSize, REQUIRED_SORT);
         verifyNoMoreInteractions(postService);
     }
 
     @Test
     public void getPostsByInitialIdAndQuantityWithoutSortSuccess() throws Exception {
-        given(postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class))).willReturn(POST_LIST_WRAPPER);
+        given(postService.getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class)))
+                .willReturn(postListWrapper);
         mockMvc.perform(get(getEndpoint())
                 .param("page", REQUIRED_PAGE.toString())
                 .param("size", REQUIRED_SIZE.toString()))
                 .andExpect(status().isOk())
-                .andExpect(content().json(jsonConverter.convertToJson(POST_LIST_WRAPPER)));
-        verify(postService, times(1)).getPostsWithPaginationAndSorting(REQUIRED_PAGE, REQUIRED_SIZE, DEFAULT_RESPONSE_POST_SORT);
+                .andExpect(content().json(jsonConverter.convertToJson(postListWrapper)));
+        verify(postService, times(1))
+                .getPostsWithPaginationAndSorting(REQUIRED_PAGE, REQUIRED_SIZE, defaultResponsePostSort);
         verifyNoMoreInteractions(postService);
     }
 
     @Test
     public void getPostsByIncorrectInitialIdAndIncorrectQuantity() throws Exception {
-        given(postService.getPostsWithPaginationAndSorting(anyLong(), eq(INCORRECT_REQUIRED_SIZE), any(String.class))).willThrow(ValidationException.class);
+        given(postService.getPostsWithPaginationAndSorting(anyLong(), eq(INCORRECT_REQUIRED_SIZE), any(String.class)))
+                .willThrow(ValidationException.class);
         mockMvc.perform(get(getEndpoint())
                 .param("page", REQUIRED_PAGE.toString())
                 .param("size", INCORRECT_REQUIRED_SIZE.toString()))
                 .andExpect(status().isBadRequest());
-        verify(postService, times(1)).getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class));
+        verify(postService, times(1))
+                .getPostsWithPaginationAndSorting(anyLong(), anyLong(), any(String.class));
         verifyNoMoreInteractions(postService);
     }
 
     @Test
     public void getAllPostsByTagIdSuccess() throws Exception {
-        given(postService.getAllPostsByTagId(anyLong())).willReturn(POST_LIST_WRAPPER);
+        given(postService.getAllPostsByTagId(anyLong())).willReturn(postListWrapper);
         mockMvc.perform(get(getEndpoint().concat("/tag/{id}"), CORRECT_TAG_ID))
                 .andExpect(status().isOk())
-                .andExpect(content().json(jsonConverter.convertToJson(POST_LIST_WRAPPER)));
+                .andExpect(content().json(jsonConverter.convertToJson(postListWrapper)));
         verify(postService, times(1)).getAllPostsByTagId(anyLong());
         verifyNoMoreInteractions(postService);
     }

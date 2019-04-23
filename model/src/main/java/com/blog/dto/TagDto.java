@@ -4,6 +4,9 @@ import com.blog.model.Tag;
 
 import javax.persistence.Entity;
 
+/**
+ * The Tag dto.
+ */
 @Entity
 public class TagDto {
 

@@ -72,13 +72,16 @@ public class TagDaoImpl implements TagDao {
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     /**
-     * Create a new TagDaoImpl for the given {@link TagRowMapper} and {@link NamedParameterJdbcTemplate }
+     * Create a new TagDaoImpl for the given {@link TagRowMapper} and {@link NamedParameterJdbcTemplate }.
      *
      * @param tagRowMapper the tag row mapper
      * @param jdbcTemplate the jdbc template
      */
     @Autowired
-    public TagDaoImpl(TagRowMapper tagRowMapper, TagDtoRowMapper tagDtoRowMapper, NamedParameterJdbcTemplate jdbcTemplate) {
+    public TagDaoImpl(
+            TagRowMapper tagRowMapper,
+            TagDtoRowMapper tagDtoRowMapper,
+            NamedParameterJdbcTemplate jdbcTemplate) {
         this.tagRowMapper = tagRowMapper;
         this.jdbcTemplate = jdbcTemplate;
         this.tagDtoRowMapper = tagDtoRowMapper;
@@ -98,7 +101,10 @@ public class TagDaoImpl implements TagDao {
     public List<TagDto> getAllTagsByPostsId(final Set<Long> postsId) {
         LOGGER.debug("Get all tags by post id = [{}] from database.", postsId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(POST_ID, postsId);
-        return jdbcTemplate.query(selectAllByPostId, parameterSource, ((rs, rowNum) -> tagDtoRowMapper.mapRow(rs, rowNum)));
+        return jdbcTemplate.query(
+                selectAllByPostId,
+                parameterSource,
+                (rs, rowNum) -> tagDtoRowMapper.mapRow(rs, rowNum));
     }
 
     public Long addTag(final Tag tag) {

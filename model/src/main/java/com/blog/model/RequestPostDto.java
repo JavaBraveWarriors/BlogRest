@@ -3,6 +3,9 @@ package com.blog.model;
 import javax.persistence.Entity;
 import java.util.List;
 
+/**
+ * The model Request post dto.
+ */
 @Entity
 public class RequestPostDto extends Post {
 

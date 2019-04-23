@@ -1,0 +1,12 @@
+rootProject.name = 'BlogRest'
+include ':dao'
+include ':service'
+include ':model'
+include ':rest'
+include ':jmsConsumer'
+
+project(':dao').projectDir = "$rootDir/dao" as File
+project(':service').projectDir = "$rootDir/service" as File
+project(':model').projectDir = "$rootDir/model" as File
+project(':rest').projectDir = "$rootDir/rest" as File
+project(':jmsConsumer').projectDir = "$rootDir/jmsConsumer" as File

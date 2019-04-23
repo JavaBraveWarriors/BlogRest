@@ -1,4 +1,4 @@
-package com.blog.jmsConsumer;
+package com.blog.jms.consumer;
 
 import com.blog.model.Tag;
 import com.blog.service.TagService;
@@ -9,6 +9,9 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.messaging.Message;
 import org.springframework.stereotype.Component;
 
+/**
+ * The Tag consumer.
+ */
 @Component
 public class TagConsumer {
 

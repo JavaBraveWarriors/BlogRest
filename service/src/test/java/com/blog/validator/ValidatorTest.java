@@ -10,48 +10,55 @@ import com.blog.model.Author;
 import com.blog.model.Comment;
 import com.blog.model.Post;
 import com.blog.model.Tag;
+import com.blog.service.impls.config.ServiceTestConfiguration;
+import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+/**
+ * The Validator test.
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes = ServiceTestConfiguration.class)
 public class ValidatorTest {
-    private static Long CORRECT_AUTHOR_ID = 1L;
-    private static Long INCORRECT_AUTHOR_ID = -2L;
-    private static String CORRECT_AUTHOR_LOGIN = "testLoginCorrect";
-    private static String INCORRECT_AUTHOR_LOGIN = "";
+    private static final Long CORRECT_AUTHOR_ID = 1L;
+    private static final Long INCORRECT_AUTHOR_ID = -2L;
+    private static final String CORRECT_AUTHOR_LOGIN = "testLoginCorrect";
+    private static final String INCORRECT_AUTHOR_LOGIN = "";
 
-    private static Long NULL_LONG = null;
-    private static Long CORRECT_POST_ID = 1L;
-    private static Long INCORRECT_POST_ID = -2L;
+    private static final Long NULL_LONG = null;
+    private static final Long CORRECT_POST_ID = 1L;
+    private static final Long INCORRECT_POST_ID = -2L;
 
-    private static Long CORRECT_TAG_ID = 1L;
-    private static Long INCORRECT_TAG_ID = -1L;
+    private static final Long CORRECT_TAG_ID = 1L;
+    private static final Long INCORRECT_TAG_ID = -1L;
 
-    private static Long CORRECT_COMMENT_ID = 1L;
-    private static Long INCORRECT_COMMENT_ID = -1L;
+    private static final Long CORRECT_COMMENT_ID = 1L;
+    private static final Long INCORRECT_COMMENT_ID = -1L;
 
-    private static Long CORRECT_INITIAL_NUMBER = 1L;
-    private static Long INCORRECT_INITIAL_NUMBER = -3L;
-    private static Long CORRECT_QUANTITY_NUMBER = 1L;
-    private static Long INCORRECT_QUANTITY_NUMBER = -3L;
-    private static String NULL_STRING = null;
+    private static final Long CORRECT_INITIAL_NUMBER = 1L;
+    private static final Long INCORRECT_INITIAL_NUMBER = -3L;
+    private static final Long CORRECT_QUANTITY_NUMBER = 1L;
+    private static final Long INCORRECT_QUANTITY_NUMBER = -3L;
+    private static final String NULL_STRING = null;
 
-    private static Tag CORRECT_TAG = new Tag(4L, "test4", "test4");
-    private static Tag INCORRECT_TAG = new Tag(-1L, "test1", "test1");
-    private static List<Long> CORRECT_TAGS_ID_LIST = new ArrayList<>();
-    private static List<Long> INCORRECT_TAGS_ID_LIST = new ArrayList<>();
+    private static final Tag CORRECT_TAG = new Tag(4L, "test4", "test4");
+    private static final Tag INCORRECT_TAG = new Tag(-1L, "test1", "test1");
+    private static List<Long> correctTagsIdList = new ArrayList<>();
+    private static List<Long> incorrectTagsIdList = new ArrayList<>();
 
-    private static Post CORRECT_POST = new Post(
+    private static final  Post CORRECT_POST = new Post(
             1L,
             "testTitle",
             "testDescription",
@@ -60,7 +67,7 @@ public class ValidatorTest {
             1L
     );
 
-    private static Post INCORRECT_POST_1 = new Post(
+    private static final Post INCORRECT_POST_1 = new Post(
             -1L,
             "testTitle",
             "testDescription",
@@ -68,7 +75,7 @@ public class ValidatorTest {
             "testPath",
             1L
     );
-    private static Post INCORRECT_POST_2 = new Post(
+    private static final Post INCORRECT_POST_2 = new Post(
             1L,
             "testTitle",
             "testDescription",
@@ -76,7 +83,7 @@ public class ValidatorTest {
             "testPath",
             -1L
     );
-    private static Author CORRECT_AUTHOR = new Author(
+    private static final Author CORRECT_AUTHOR = new Author(
             1L,
             "test@mail.ru",
             "testLogin",
@@ -86,34 +93,39 @@ public class ValidatorTest {
             "testDescription",
             "testPhone");
 
-    private static Comment CORRECT_COMMENT = new Comment(
+    private static final Comment CORRECT_COMMENT = new Comment(
             "text",
             2L,
             CORRECT_POST_ID
     );
 
-    @Mock
+    @Autowired
     private AuthorDao authorDao;
 
-    @Mock
+    @Autowired
     private TagDao tagDao;
 
-    @Mock
+    @Autowired
     private PostDao postDao;
 
-    @Mock
+    @Autowired
     private CommentDao commentDao;
 
-    @InjectMocks
+    @Autowired
+    @Qualifier("testValidator")
     private Validator validator;
 
-
     @BeforeClass
-    public static void setup(){
-        CORRECT_TAGS_ID_LIST.add(4L);
-        CORRECT_TAGS_ID_LIST.add(5L);
-        INCORRECT_TAGS_ID_LIST.add(-2L);
-        INCORRECT_TAGS_ID_LIST.add(0L);
+    public static void setup() {
+        correctTagsIdList.add(4L);
+        correctTagsIdList.add(5L);
+        incorrectTagsIdList.add(-2L);
+        incorrectTagsIdList.add(0L);
+    }
+
+    @After
+    public void updateData() {
+        Mockito.reset(tagDao, commentDao, authorDao, postDao);
     }
 
     @Test
@@ -195,34 +207,34 @@ public class ValidatorTest {
     @Test
     public void validateTagsSuccess() {
         when(tagDao.checkTagById(anyLong())).thenReturn(true);
-        validator.validateTags(CORRECT_TAGS_ID_LIST);
-        verify(tagDao, times(CORRECT_TAGS_ID_LIST.size())).checkTagById(anyLong());
+        validator.validateTags(correctTagsIdList);
+        verify(tagDao, times(correctTagsIdList.size())).checkTagById(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
     public void validateNotExistTags() {
         when(tagDao.checkTagById(anyLong())).thenReturn(false);
-        validator.validateTags(CORRECT_TAGS_ID_LIST);
+        validator.validateTags(correctTagsIdList);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
     @Test(expected = ValidationException.class)
     public void validateIncorrectTags() {
-        validator.validateTags(INCORRECT_TAGS_ID_LIST);
+        validator.validateTags(incorrectTagsIdList);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
     @Test(expected = ValidationException.class)
     public void validateTagsWhereTagHasIdEqualsNull() {
         INCORRECT_TAG.setId(NULL_LONG);
-        validator.validateTags(INCORRECT_TAGS_ID_LIST);
+        validator.validateTags(incorrectTagsIdList);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 
     @Test(expected = NotFoundException.class)
     public void validateTagsWhereTagNotExistInDB() {
         when(tagDao.checkTagById(anyLong())).thenReturn(false);
-        validator.validateTags(CORRECT_TAGS_ID_LIST);
+        validator.validateTags(correctTagsIdList);
         verify(tagDao, times(1)).checkTagById(anyLong());
     }
 

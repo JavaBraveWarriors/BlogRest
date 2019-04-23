@@ -77,12 +77,16 @@ public class CommentDaoImpl implements CommentDao {
     }
 
     public List<Comment> getListCommentsByInitialAndSize(final Long initial, final Long size, final Long postId) {
-        LOGGER.debug("Get list of comments by initial = [{}], quantity = [{}] and postId = [{}] from database.", initial, size, postId);
+        LOGGER.debug("Get list of comments by initial = [{}], quantity = [{}] and postId = [{}] from database.",
+                initial, size, postId);
         MapSqlParameterSource parameterSource = new MapSqlParameterSource();
         parameterSource.addValue(POST_ID, postId);
         parameterSource.addValue(INITIAL, initial - 1L);
         parameterSource.addValue(QUANTITY, size);
-        return jdbcTemplate.query(selectByInitialIdAndQuantityCommentSql, parameterSource, (resultSet, i) -> commentRowMapper.mapRow(resultSet, i));
+        return jdbcTemplate.query(
+                selectByInitialIdAndQuantityCommentSql,
+                parameterSource,
+                (resultSet, i) -> commentRowMapper.mapRow(resultSet, i));
     }
 
     public Long addComment(final Comment comment) {

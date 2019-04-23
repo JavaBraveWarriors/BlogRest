@@ -2,6 +2,9 @@ package com.blog.model;
 
 import javax.persistence.Entity;
 
+/**
+ * The model View.
+ */
 @Entity
 public class View {
     private Long id;

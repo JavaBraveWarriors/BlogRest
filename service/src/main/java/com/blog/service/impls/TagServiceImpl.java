@@ -16,12 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * The Tag service.
+ */
 @Service
 @Transactional
 public class TagServiceImpl implements TagService {
 
     /**
-     * This field used for logging events
+     * This field used for logging events.
      */
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -72,14 +75,16 @@ public class TagServiceImpl implements TagService {
     public void updateTag(Tag tag) {
         LOGGER.debug("Updates tag = [{}].", tag);
         validator.validateTagId(tag.getId());
-        if (!tagDao.updateTag(tag))
+        if (!tagDao.updateTag(tag)) {
             throw new InternalServerException(updateError);
+        }
     }
 
     public void deleteTag(Long tagId) {
         LOGGER.debug("Deletes tag by id = [{}].", tagId);
         validator.validateTagId(tagId);
-        if (!tagDao.deleteTag(tagId))
+        if (!tagDao.deleteTag(tagId)) {
             throw new InternalServerException(deleteError);
+        }
     }
 }

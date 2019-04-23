@@ -6,11 +6,12 @@ import com.blog.exception.ValidationException;
 import com.blog.handler.RestErrorHandler;
 import com.blog.model.Tag;
 import com.blog.service.TagService;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.SQLWarningException;
@@ -21,21 +22,22 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Collections;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * The Tag rest controller test.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 public class TagRestControllerTest extends AbstractControllerTest {
 
-    @Mock
+    @Autowired
     private TagService tagService;
 
-    @InjectMocks
+    @Autowired
     private TagRestController tagRestController;
 
     private MockMvc mockMvc;
@@ -44,9 +46,9 @@ public class TagRestControllerTest extends AbstractControllerTest {
     private static final Long NOT_EXIST_TAG_ID = 121L;
     private static final String TEST_TEXT = "testTitle";
 
-    private Tag CORRECT_TAG = new Tag(CORRECT_TAG_ID, TEST_TEXT, TEST_TEXT);
-    private Tag INCORRECT_TAG = new Tag(null, null, TEST_TEXT);
-    private Tag NOT_EXIST_TAG = new Tag(NOT_EXIST_TAG_ID, TEST_TEXT, TEST_TEXT);
+    private static final Tag CORRECT_TAG = new Tag(CORRECT_TAG_ID, TEST_TEXT, TEST_TEXT);
+    private static final Tag INCORRECT_TAG = new Tag(null, null, TEST_TEXT);
+    private static final Tag NOT_EXIST_TAG = new Tag(NOT_EXIST_TAG_ID, TEST_TEXT, TEST_TEXT);
 
     @Before
     public void setUp() {
@@ -54,6 +56,11 @@ public class TagRestControllerTest extends AbstractControllerTest {
                 .setControllerAdvice(new RestErrorHandler())
                 .alwaysDo(print())
                 .build();
+    }
+
+    @After
+    public void updateData() {
+        Mockito.reset(tagService);
     }
 
     @Test

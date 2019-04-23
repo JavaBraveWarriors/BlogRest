@@ -1,0 +1,50 @@
+apply plugin: 'war'
+
+sourceSets {
+    test {
+        java {
+            srcDir file('src/test/java')
+        }
+    }
+}
+
+test {
+//    testLogging.showStandardStreams = true
+}
+
+
+dependencies {
+    Map<String, String> dependencies = rootProject.ext.commonDependencies
+
+    compile project(':service')
+    compile project(':jmsConsumer')
+    compile project(':model')
+
+    compile dependencies.springContext
+    compile dependencies.springTx
+    compile dependencies.h2
+    compile dependencies.servletApi
+    compile dependencies.springWeb
+    compile dependencies.springWebMvc
+    compile dependencies.log4jApi
+    compile dependencies.log4jCore
+    compile dependencies.log4jJcl
+    compile dependencies.hibernateValidator
+    compile dependencies.javaxApi
+    compile dependencies.javaxPersistenceApi
+    compile dependencies.jacksonCore
+    compile dependencies.jacksonDatabind
+    compile dependencies.jacksonDatatypeJsr310
+    compile dependencies.glassfishCore
+    compile dependencies.glassfishJersey
+    testCompile dependencies.glassfishEl
+    testCompile dependencies.h2
+    testCompile dependencies.junit
+    testCompile dependencies.springTest
+    testCompile dependencies.mockito
+    testCompile dependencies.jsonassert
+    testCompile dependencies.javaxElApi
+    testCompile dependencies.hamcrest
+    testCompile dependencies.javaxElApi
+    testCompile dependencies.jacksonDatabind
+}

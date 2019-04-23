@@ -103,13 +103,15 @@ public class PostDaoImpl implements PostDao {
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     /**
-     * Create a new PostDaoImpl for the given {@link PostRowMapper} and {@link NamedParameterJdbcTemplate }
+     * Create a new PostDaoImpl for the given {@link PostRowMapper} and {@link NamedParameterJdbcTemplate }.
      *
      * @param postRowMapper the post row mapper
      * @param jdbcTemplate  the jdbc template
      */
     @Autowired
-    public PostDaoImpl(PostRowMapper postRowMapper, NamedParameterJdbcTemplate jdbcTemplate, PostShortRowMapper postShortRowMapper) {
+    public PostDaoImpl(PostRowMapper postRowMapper,
+                       NamedParameterJdbcTemplate jdbcTemplate,
+                       PostShortRowMapper postShortRowMapper) {
         this.postRowMapper = postRowMapper;
         this.jdbcTemplate = jdbcTemplate;
         this.postShortRowMapper = postShortRowMapper;
@@ -124,25 +126,41 @@ public class PostDaoImpl implements PostDao {
     public List<ResponsePostDto> getAllPostsByAuthorId(final Long authorId) {
         LOGGER.debug("Get list of posts by author id = [{}] from database.", authorId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(AUTHOR_ID, authorId);
-        return jdbcTemplate.query(getAllPostsByAuthorIdSql, parameterSource, (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
+        return jdbcTemplate.query(
+                getAllPostsByAuthorIdSql,
+                parameterSource,
+                (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
     }
 
     public List<ResponsePostDto> getPostsByInitialIdAndQuantity(final Long initial, final Long quantity) {
         LOGGER.debug("Get list of posts by initial = [{}] and quantity = [{}] from database.", initial, quantity);
         MapSqlParameterSource parameterSource = getParameterSourceForInitialAndQuantity(initial, quantity);
-        return jdbcTemplate.query(getAllPostsByInitialIdAndQuantitySql, parameterSource, (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
+        return jdbcTemplate.query(
+                getAllPostsByInitialIdAndQuantitySql,
+                parameterSource,
+                (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
     }
 
-    public List<ResponsePostDto> getPostsByInitialIdAndQuantity(final Long initial, final Long quantity, final String sort) {
-        LOGGER.debug("Get list of posts by initial = [{}], quantity = [{}] and sort = [{}] from database.", initial, quantity, sort);
+    public List<ResponsePostDto> getPostsByInitialIdAndQuantity(
+            final Long initial,
+            final Long quantity,
+            final String sort) {
+        LOGGER.debug("Get list of posts by initial = [{}], quantity = [{}] and sort = [{}] from database.",
+                initial, quantity, sort);
         MapSqlParameterSource parameterSource = getParameterSourceForInitialAndQuantity(initial, quantity);
-        return jdbcTemplate.query(String.format(getAllPostsByInitialIdQuantityAndSortSql, sort), parameterSource, (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
+        return jdbcTemplate.query(
+                String.format(getAllPostsByInitialIdQuantityAndSortSql, sort),
+                parameterSource,
+                (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
     }
 
     public List<ResponsePostDto> getAllPostsByTagId(final Long tagId) {
         LOGGER.debug("Get list of posts by tag id = [{}] from database.", tagId);
         SqlParameterSource parameterSource = new MapSqlParameterSource(TAG_ID, tagId);
-        return jdbcTemplate.query(getAllPostsByTagSql, parameterSource, (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
+        return jdbcTemplate.query(
+                getAllPostsByTagSql,
+                parameterSource,
+                (resultSet, i) -> postShortRowMapper.mapRow(resultSet, i));
     }
 
     public Long addPost(final Post post) {

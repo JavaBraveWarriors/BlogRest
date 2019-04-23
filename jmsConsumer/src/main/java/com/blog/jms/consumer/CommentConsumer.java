@@ -1,4 +1,4 @@
-package com.blog.jmsConsumer;
+package com.blog.jms.consumer;
 
 import com.blog.model.Comment;
 import com.blog.service.CommentService;
@@ -13,6 +13,9 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 
+/**
+ * The Comment jms consumer.
+ */
 @Component
 public class CommentConsumer {
 

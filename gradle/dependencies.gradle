@@ -1,0 +1,37 @@
+ext {
+    commonDependencies = [
+            springContext           :'org.springframework:spring-context:' + project.property('springVersion'),
+            springCore              :'org.springframework:spring-core:' + project.property('springVersion'),
+            springWeb               :'org.springframework:spring-web:' + project.property('springVersion'),
+            springWebMvc            :'org.springframework:spring-webmvc:' + project.property('springVersion'),
+            springJdbc              :'org.springframework:spring-jdbc:' + project.property('springVersion'),
+            springTx                :'org.springframework:spring-tx:' + project.property('springVersion'),
+            springJms               :'org.springframework:spring-jms:' + project.property('springVersion'),
+            h2                      :'com.h2database:h2:' + project.property('h2Version'),
+            servletApi              :'javax.servlet:javax.servlet-api:' + project.property('servletApiVersion'),
+            jacksonCore             :'com.fasterxml.jackson.core:jackson-core:' + project.property('jacksonDatabindVersion'),
+            jacksonDatabind         :'com.fasterxml.jackson.core:jackson-databind:' + project.property('jacksonDatabindVersion'),
+            jacksonDatatypeJsr310   :'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:' + project.property('jacksonDatabindVersion'),
+            log4jApi                :'org.apache.logging.log4j:log4j-api:' + project.property('log4j2Version'),
+            log4jCore               :'org.apache.logging.log4j:log4j-core:' + project.property('log4j2Version'),
+            log4jJcl                :'org.apache.logging.log4j:log4j-jcl:' + project.property('log4j2Version'),
+            glassfishCore           :'org.glassfish.jersey.containers:jersey-container-servlet-core:' + project.property('jerseyVersion'),
+            glassfishJersey         :'org.glassfish.jersey.inject:jersey-hk2:' + project.property('jerseyVersion'),
+            glassfishEl             :'org.glassfish.web:javax.el:' + project.property('javaxElVersion'),
+            hibernateValidator      :'org.hibernate.validator:hibernate-validator:' + project.property('hibernateValidatorVersion'),
+            javaxApi                :'javax.validation:validation-api:' + project.property('validationApiVersion'),
+            javaxPersistenceApi     :'javax.persistence:javax.persistence-api:' + project.property('persistenceApiVersion'),
+            javaxJmsApi             :'javax.jms:javax.jms-api:' + project.property('javaxJmsVersion'),
+            apacheActiveMQSpring    :'org.apache.activemq:activemq-spring:' + project.property('activemqVersion'),
+            apacheActiveMQCore      :'org.apache.activemq:activemq-core:' + project.property('activemqCoreVersion'),
+            mysqlConnector          :'mysql:mysql-connector-java:' + project.property('mysqlConnectorJavaVersion'),
+
+            springTest              :'org.springframework:spring-test:' + project.property('springVersion'),
+            hamcrest                :'org.hamcrest:hamcrest-library:' + project.property('hamcrestLibraryVersion'),
+            springBootTest          :'org.springframework.boot:spring-boot-starter-test:' + project.property('springBootVersion'),
+            junit                   :'junit:junit:' + project.property('junitVersion'),
+            mockito                 :'org.mockito:mockito-all:' + project.property('mockitoAllVersion'),
+            javaxElApi              :'javax.el:javax.el-api:' + project.property('javaxElApiVersion'),
+            jsonassert              :'org.skyscreamer:jsonassert:' + project.property('jsonassertVersion')
+    ]
+}

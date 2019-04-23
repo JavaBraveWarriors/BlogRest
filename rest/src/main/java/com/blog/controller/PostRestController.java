@@ -26,13 +26,13 @@ import java.util.Optional;
 public class PostRestController {
 
     @Value("${postController.defaultResponsePostSize}")
-    private Long DEFAULT_RESPONSE_POST_SIZE;
+    private Long defaultResponsePostSize;
 
     @Value("${postController.defaultResponsePostPage}")
-    private Long DEFAULT_RESPONSE_POST_PAGE;
+    private Long defaultResponsePostPage;
 
     @Value("${postController.defaultResponsePostSort}")
-    private String DEFAULT_RESPONSE_POST_SORT;
+    private String defaultResponsePostSort;
 
     private PostService postService;
 
@@ -59,7 +59,8 @@ public class PostRestController {
     }
 
     /**
-     * Gets a list of post objects from a specific page, a specific size. If page is null will be returned first page by default.
+     * Gets a list of post objects from a specific page, a specific size.
+     * If page is null will be returned first page by default.
      * If page is not null and size is null - 10 items will be returned by default.
      *
      * @param page is {Long} value ID of the post from which you want to get objects.
@@ -74,9 +75,9 @@ public class PostRestController {
             @RequestParam(value = "size", required = false) Long size,
             @RequestParam(value = "sort", required = false) String sort) {
         return postService.getPostsWithPaginationAndSorting(
-                Optional.ofNullable(page).orElse(DEFAULT_RESPONSE_POST_PAGE),
-                Optional.ofNullable(size).orElse(DEFAULT_RESPONSE_POST_SIZE),
-                Optional.ofNullable(sort).orElse(DEFAULT_RESPONSE_POST_SORT));
+                Optional.ofNullable(page).orElse(defaultResponsePostPage),
+                Optional.ofNullable(size).orElse(defaultResponsePostSize),
+                Optional.ofNullable(sort).orElse(defaultResponsePostSort));
     }
 
     /**

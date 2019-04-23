@@ -1,0 +1,11 @@
+def globalConf = rootProject.ext
+
+dependencies {
+    Map<String, String> dependencies = globalConf.commonDependencies
+
+    compile dependencies.hibernateValidator
+    compile dependencies.javaxApi
+    compile dependencies.javaxPersistenceApi
+    compile dependencies.jacksonCore
+    compile dependencies.jacksonDatabind
+}

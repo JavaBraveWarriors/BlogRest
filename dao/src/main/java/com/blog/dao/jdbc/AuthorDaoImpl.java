@@ -67,7 +67,7 @@ public class AuthorDaoImpl implements AuthorDao {
     private NamedParameterJdbcTemplate jdbcTemplate;
 
     /**
-     * Create a new AuthorDaoImpl for the given {@link AuthorRowMapper} and {@link NamedParameterJdbcTemplate }
+     * Create a new AuthorDaoImpl for the given {@link AuthorRowMapper} and {@link NamedParameterJdbcTemplate }.
      *
      * @param authorRowMapper the author row mapper
      * @param jdbcTemplate    the jdbc template

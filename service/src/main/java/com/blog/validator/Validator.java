@@ -18,11 +18,14 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * The Validator.
+ */
 @Component
 public class Validator {
 
     /**
-     * This field used for logging events
+     * This field used for logging events.
      */
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -101,29 +104,35 @@ public class Validator {
 
     public void validateTagId(Long id) {
         LOGGER.debug("Validates tag id = [{}].", id);
-        if (id == null || id < 0L)
+        if (id == null || id < 0L) {
             throw new ValidationException(incorrectTagId);
-        if (!tagDao.checkTagById(id))
+        }
+        if (!tagDao.checkTagById(id)) {
             throw new NotFoundException(notExistTag);
+        }
     }
 
     public void checkTagWithTitle(Tag tag) {
         LOGGER.debug("Check tag title = [{}].", tag.getTitle());
-        if (tagDao.checkTagByTitle(tag.getTitle()))
+        if (tagDao.checkTagByTitle(tag.getTitle())) {
             throw new ValidationException(existTag);
+        }
     }
 
     public void validateTagInPost(Long postId, Long tagId) {
-        if (postDao.checkTagInPostById(postId, tagId))
+        if (postDao.checkTagInPostById(postId, tagId)) {
             throw new ValidationException(tagExistInPost);
+        }
     }
 
     public void validatePostId(Long id) {
         LOGGER.debug("Validates post id = [{}].", id);
-        if (id == null || id < 0L)
+        if (id == null || id < 0L) {
             throw new ValidationException(incorrectPostId);
-        if (!postDao.checkPostById(id))
+        }
+        if (!postDao.checkPostById(id)) {
             throw new NotFoundException(notExistPost);
+        }
     }
 
     public void checkPost(Post post) {
@@ -133,66 +142,80 @@ public class Validator {
     }
 
     public void validateSizeOfPages(Long size) {
-        if (size == null || size < 0L)
+        if (size == null || size < 0L) {
             throw new ValidationException(incorrectQuantityNumber);
+        }
     }
 
     public void validatePageAndSize(Long page, Long size) {
         LOGGER.debug("Validate numbers page = [{}], size = [{}]", page, size);
-        if (page == null || page < 0L)
+        if (page == null || page < 0L) {
             throw new ValidationException(incorrectInitialNumber);
-        if (size == null || size < 0L)
+        }
+        if (size == null || size < 0L) {
             throw new ValidationException(incorrectQuantityNumber);
+        }
     }
 
     public void validateUpdatedComment(Comment comment) {
         LOGGER.debug("Validate comment = [{}].", comment);
-        if (!commentDao.checkCommentInPostById(comment.getId(), comment.getPostId()))
+        if (!commentDao.checkCommentInPostById(comment.getId(), comment.getPostId())) {
             throw new NotFoundException(commentDoesNotExist);
-        if (!commentDao.getAuthorIdByCommentId(comment.getId()).equals(comment.getAuthorId()))
+        }
+        if (!commentDao.getAuthorIdByCommentId(comment.getId()).equals(comment.getAuthorId())) {
             throw new ValidationException(commentIncorrectUpdate);
+        }
     }
 
     public void validateCommentId(Long commentId) {
         LOGGER.debug("Validate commentId = [{}].", commentId);
-        if (commentId == null || commentId < 0L)
+        if (commentId == null || commentId < 0L) {
             throw new ValidationException(incorrectCommentId);
-        if (!commentDao.checkCommentById(commentId))
+        }
+        if (!commentDao.checkCommentById(commentId)) {
             throw new NotFoundException(commentDoesNotExist);
+        }
     }
 
     public void checkAuthorExistence(Author author) {
         LOGGER.debug("Check author existence = [{}]", author);
-        if (authorDao.checkAuthorByLogin(author.getLogin()))
+        if (authorDao.checkAuthorByLogin(author.getLogin())) {
             throw new ValidationException(authorExist);
+        }
     }
 
     public void validateAuthorId(Long authorId) {
         LOGGER.debug("Validate author = [{}].", authorId);
-        if (authorId == null || authorId < 0L)
+        if (authorId == null || authorId < 0L) {
             throw new ValidationException(incorrectAuthorId);
-        if (!authorDao.checkAuthorById(authorId))
+        }
+        if (!authorDao.checkAuthorById(authorId)) {
             throw new NotFoundException(authorDoesNotExist);
+        }
     }
 
     public void validateAuthorLogin(String authorLogin) {
         LOGGER.debug("Validate author = [{}].", authorLogin);
-        if (authorLogin == null || authorLogin.isEmpty())
+        if (authorLogin == null || authorLogin.isEmpty()) {
             throw new ValidationException(incorrectAuthorLogin);
-        if (!authorDao.checkAuthorByLogin(authorLogin))
+        }
+        if (!authorDao.checkAuthorByLogin(authorLogin)) {
             throw new NotFoundException(authorDoesNotExist);
+        }
     }
 
     public void validateCommentInPost(Long postId, Long commentId) {
         LOGGER.debug("Validate comment in post id = [{}], comment id = [{}].", postId, commentId);
         validatePostId(postId);
         validateCommentId(commentId);
-        if (!commentDao.checkCommentInPostById(commentId, postId))
+        if (!commentDao.checkCommentInPostById(commentId, postId)) {
             throw new NotFoundException(notExistCommentInPost);
+        }
     }
-    public void validateCommentText(String text){
+
+    public void validateCommentText(String text) {
         LOGGER.debug("Validate comment in text= [{}].", text);
-        if(text==null|| text.isEmpty()){
+        if (text == null || text.isEmpty()) {
             throw new ValidationException(commentTextNull);
         }
     }

@@ -71,14 +71,16 @@ public class ViewDaoImpl implements ViewDao {
     }
 
     public List<View> getListViewsOfPost(Long initial, Long size, Long postId) {
-        LOGGER.debug("Get list of view with initial = [{}], size = [{}] and post id = [{}] in database.", initial, size, postId);
+        LOGGER.debug("Get list of view with initial = [{}], size = [{}] and post id = [{}] in database.",
+                initial, size, postId);
         MapSqlParameterSource parameterSource = getViewParameterSource(initial, size);
         parameterSource.addValue(POST_ID, postId);
         return queryForListViews(getListViewOfPostSql, parameterSource);
     }
 
     public List<View> getListViewsOfUser(Long initial, Long size, Long userId) {
-        LOGGER.debug("Get list of view with initial = [{}], size = [{}] and user id = [{}] in database.", initial, size, userId);
+        LOGGER.debug("Get list of view with initial = [{}], size = [{}] and user id = [{}] in database.",
+                initial, size, userId);
         MapSqlParameterSource parameterSource = getViewParameterSource(initial, size);
         parameterSource.addValue(AUTHOR_ID, userId);
         return queryForListViews(getListViewOfUserSql, parameterSource);

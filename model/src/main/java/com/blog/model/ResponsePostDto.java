@@ -4,6 +4,9 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
+/**
+ * The model Response post dto.
+ */
 @Entity
 public class ResponsePostDto extends Post {
 

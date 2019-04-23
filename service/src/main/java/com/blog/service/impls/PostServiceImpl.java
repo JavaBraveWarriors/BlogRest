@@ -22,12 +22,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * The Post service.
+ */
 @Service
 @Transactional
 public class PostServiceImpl implements PostService {
 
     /**
-     * This field used for logging events
+     * This field used for logging events.
      */
     private static final Logger LOGGER = LogManager.getLogger();
 
@@ -63,7 +66,12 @@ public class PostServiceImpl implements PostService {
     private String deleteTagInPost;
 
     @Autowired
-    public PostServiceImpl(PostDao postDao, Validator validator, TagService tagService, CommentService commentService, ViewDao viewDao) {
+    public PostServiceImpl(
+            PostDao postDao,
+            Validator validator,
+            TagService tagService,
+            CommentService commentService,
+            ViewDao viewDao) {
         this.postDao = postDao;
         this.validator = validator;
         this.tagService = tagService;
@@ -79,7 +87,7 @@ public class PostServiceImpl implements PostService {
         addTagsToPosts(postListWrapper.getPosts());
         Long countOfPosts = postDao.getCountOfPosts();
         postListWrapper.setCountPosts(countOfPosts);
-        // TODO: refactor this method - add pagination
+        // TODO(refactor this method - add pagination)
         // postListWrapper.setCountPages(PageCounter.getCountPages());
         return postListWrapper;
     }
@@ -110,7 +118,7 @@ public class PostServiceImpl implements PostService {
         postDao.deleteComment(postId);
     }
 
-    // TODO: refactor this method
+    // TODO(refactor this method)
     public PostListWrapper getAllPostsByTagId(Long tagId) {
         LOGGER.debug("Gets list of posts by tag id = [{}].", tagId);
         validator.validateTagId(tagId);
@@ -127,7 +135,7 @@ public class PostServiceImpl implements PostService {
 
         View view = new View();
         view.setPostId(postId);
-        // TODO: refactor when will be security(add userId from)
+        // TODO(refactor when will be security(add userId from))
         //view.setUserId();
         //if (!viewDao.checkViewByPostIdAndUserId(postId, view.getUserId())) {
         //  viewDao.addView(view);
@@ -154,8 +162,9 @@ public class PostServiceImpl implements PostService {
         validator.validatePostId(postId);
         validator.validateTagId(tagId);
         validator.validateTagInPost(postId, tagId);
-        if (!postDao.addTagToPost(postId, tagId))
+        if (!postDao.addTagToPost(postId, tagId)) {
             throw new InternalServerException(addTagToPost);
+        }
     }
 
     public void updatePost(RequestPostDto post) {
@@ -163,15 +172,17 @@ public class PostServiceImpl implements PostService {
         validator.checkPost(post);
         validator.validateTags(post.getTags());
         updatePostTags(post);
-        if (!postDao.updatePost(post))
+        if (!postDao.updatePost(post)) {
             throw new InternalServerException(updateError);
+        }
     }
 
     public void deletePost(Long postId) {
         LOGGER.debug("Deletes post by id = [{}].", postId);
         validator.validatePostId(postId);
-        if (!postDao.deletePost(postId))
+        if (!postDao.deletePost(postId)) {
             throw new InternalServerException(deleteError);
+        }
     }
 
     public void deleteTagInPost(Long postId, Long tagId) {
@@ -179,8 +190,9 @@ public class PostServiceImpl implements PostService {
         validator.validatePostId(postId);
         validator.validateTagId(tagId);
         validator.validateTagInPost(postId, tagId);
-        if (!postDao.deleteTagInPost(postId, tagId))
+        if (!postDao.deleteTagInPost(postId, tagId)) {
             throw new InternalServerException(deleteTagInPost);
+        }
     }
 
     private void updatePostTags(RequestPostDto post) {

@@ -22,10 +22,10 @@ import java.util.Optional;
 public class CommentRestController {
 
     @Value("${commentController.defaultResponseCommentPage}")
-    private Long DEFAULT_RESPONSE_COMMENT_PAGE;
+    private Long defaultResponseCommentPage;
 
     @Value("${commentController.defaultResponseCommentSize}")
-    private Long DEFAULT_RESPONSE_COMMENT_SIZE;
+    private Long defaultResponseCommentSize;
 
     private CommentService commentService;
 
@@ -48,8 +48,8 @@ public class CommentRestController {
             @RequestParam(value = "size", required = false) Long size,
             @RequestParam(value = "postId") Long postId) {
         return commentService.getListCommentsByPostIdWithPagination(
-                Optional.ofNullable(page).orElse(DEFAULT_RESPONSE_COMMENT_PAGE),
-                Optional.ofNullable(size).orElse(DEFAULT_RESPONSE_COMMENT_SIZE),
+                Optional.ofNullable(page).orElse(defaultResponseCommentPage),
+                Optional.ofNullable(size).orElse(defaultResponseCommentSize),
                 postId);
     }
 

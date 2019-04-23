@@ -50,7 +50,7 @@ public interface PostDao {
     List<ResponsePostDto> getAllPostsByTagId(Long tagId);
 
     /**
-     * Gets a {Post} object where id is equal to argument parameter
+     * Gets a {Post} object where id is equal to argument parameter.
      *
      * @param id {Long} value the ID of the post you want to get
      * @return {Post} is a object which has this ID.
@@ -117,7 +117,7 @@ public interface PostDao {
     boolean checkTagInPostById(Long id, Long tagId);
 
     /**
-     * Checks the presence of posts by the author
+     * Checks the presence of posts by the author.
      *
      * @param authorId is {Long} value which identifies the author ID.
      * @return {boolean} value, if the post has a given tag - returns true, if not - false

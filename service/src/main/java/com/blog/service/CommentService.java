@@ -38,7 +38,8 @@ public interface CommentService {
      * @param comment {Comment} to be added.
      * @return {Long} is the value that is the id of the new comment.
      * @throws ValidationException Will throw an error if postId or authorId is not valid.
-     * @throws NotFoundException   Will throw an error if not found post or author with this postId or authorId in database.
+     * @throws NotFoundException   Will throw an error if not found post
+     * or author with this postId or authorId in database.
      */
     Long addComment(Comment comment) throws ValidationException, NotFoundException;
 
@@ -47,7 +48,8 @@ public interface CommentService {
      *
      * @param comment {Comment} to be updated.
      * @throws ValidationException     Will throw an error if postId or authorId is not valid.
-     * @throws NotFoundException       Will throw an error if not found comment with this id, postId or authorId in database.
+     * @throws NotFoundException       Will throw an error if not found comment with this id,
+     * postId or authorId in database.
      * @throws InternalServerException Will throw an error if comment in post is not updated.
      */
     void updateComment(Comment comment) throws ValidationException, NotFoundException, InternalServerException;

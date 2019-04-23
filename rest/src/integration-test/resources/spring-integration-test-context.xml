@@ -39,8 +39,8 @@
     </bean>
 
     <jdbc:initialize-database data-source="dataSource">
-        <jdbc:script location="classpath:integration-test-create-tables.sql"/>
-        <jdbc:script location="classpath:integration-test-data-script.sql"/>
+        <jdbc:script location="classpath:resources/integration-test-create-tables.sql"/>
+        <jdbc:script location="classpath:resources/integration-test-data-script.sql"/>
     </jdbc:initialize-database>
 
     <bean class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -49,9 +49,6 @@
     <bean class="org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate">
         <constructor-arg ref="dataSource"/>
     </bean>
-
-    <bean class="com.blog.it.config.JmsTestConfiguration"/>
-    <bean class="com.blog.it.config.BrokerServiceConfig"/>
 
     <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
         <property name="messageConverters">

@@ -3,6 +3,9 @@ package com.blog.model;
 import javax.persistence.Entity;
 import java.util.List;
 
+/**
+ * The model Comment list wrapper.
+ */
 @Entity
 public class CommentListWrapper {
     List<Comment> commentsPage;

@@ -17,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * The Author service.
+ */
 @Service
 @Transactional
 public class AuthorServiceImpl implements AuthorService {
@@ -75,14 +78,16 @@ public class AuthorServiceImpl implements AuthorService {
     public void updateAuthor(Author author) throws NotFoundException, InternalServerException {
         LOGGER.debug("Updates author where id = [{}]", author.getId());
         validator.validateAuthorId(author.getId());
-        if (!authorDao.updateAuthor(author))
+        if (!authorDao.updateAuthor(author)) {
             throw new InternalServerException(authorNotUpdated);
+        }
     }
 
     public void deleteAuthor(Long authorId) throws ValidationException, NotFoundException, InternalServerException {
         LOGGER.debug("Deletes author by id = [{}]", authorId);
         validator.validateAuthorId(authorId);
-        if (!authorDao.deleteAuthor(authorId))
+        if (!authorDao.deleteAuthor(authorId)) {
             throw new InternalServerException(authorNotDeleted);
+        }
     }
 }

@@ -1,0 +1,18 @@
+def globalConf = rootProject.ext
+
+description = ''
+dependencies {
+    Map<String, String> dependencies = globalConf.commonDependencies
+    compile project(':model')
+    compile dependencies.springContext
+    compile dependencies.springTx
+    compile dependencies.springJdbc
+    compile dependencies.log4jApi
+    compile dependencies.log4jCore
+    compile dependencies.log4jJcl
+    runtime dependencies.mysqlConnector
+
+    testCompile dependencies.h2
+    testCompile dependencies.junit
+    testCompile dependencies.springTest
+}

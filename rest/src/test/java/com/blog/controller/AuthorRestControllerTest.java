@@ -24,7 +24,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Collections;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -32,6 +31,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * The Author rest controller test.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 public class AuthorRestControllerTest extends AbstractControllerTest {
 
@@ -55,7 +57,7 @@ public class AuthorRestControllerTest extends AbstractControllerTest {
     private static final String INCORRECT_AUTHOR_LOGIN = "1";
     private static final String NOT_EXIST_AUTHOR_LOGIN = "NotExistLogin";
 
-    private static Author CORRECT_AUTHOR = new Author(
+    private static final Author CORRECT_AUTHOR = new Author(
             1L,
             "test@mail.ru",
             "testLogin",
@@ -64,7 +66,7 @@ public class AuthorRestControllerTest extends AbstractControllerTest {
             "testLastName",
             "testDescription",
             "testPhone");
-    private static Author INCORRECT_AUTHOR = new Author(
+    private static final Author INCORRECT_AUTHOR = new Author(
             1L,
             "incorrectEmail",
             "testLogin",
@@ -74,7 +76,7 @@ public class AuthorRestControllerTest extends AbstractControllerTest {
             "testDescription",
             "testPhone");
 
-    private static ResponsePostDto POST = new ResponsePostDto(
+    private static final ResponsePostDto POST = new ResponsePostDto(
             1L,
             "testTitle",
             "testDescription",

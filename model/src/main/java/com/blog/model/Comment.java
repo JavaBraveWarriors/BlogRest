@@ -10,6 +10,9 @@ import javax.validation.constraints.Size;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * The model Comment.
+ */
 @Entity
 public class Comment implements Serializable {
 

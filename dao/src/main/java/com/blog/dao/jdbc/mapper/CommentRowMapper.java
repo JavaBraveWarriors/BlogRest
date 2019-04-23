@@ -8,17 +8,47 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 
+/**
+ * The Comment row mapper.
+ */
 @Component
 public class CommentRowMapper implements RowMapper<Comment> {
 
+    /**
+     * The constant ID.
+     */
     public static final String ID = "comment_id";
+    /**
+     * The constant TEXT.
+     */
     public static final String TEXT = "comment_text";
+    /**
+     * The constant CREATED_DATE.
+     */
     public static final String CREATED_DATE = "comment_created_date";
+    /**
+     * The constant POST_ID.
+     */
     public static final String POST_ID = "comment_post_id";
+    /**
+     * The constant AUTHOR_ID.
+     */
     public static final String AUTHOR_ID = "comment_author_id";
+    /**
+     * The constant INITIAL.
+     */
     public static final String INITIAL = "initial";
+    /**
+     * The constant QUANTITY.
+     */
     public static final String QUANTITY = "quantity";
+    /**
+     * The constant AUTHOR_FIRST_NAME.
+     */
     public static final String AUTHOR_FIRST_NAME = "first_name";
+    /**
+     * The constant AUTHOR_LAST_NAME.
+     */
     public static final String AUTHOR_LAST_NAME = "last_name";
 
     public Comment mapRow(ResultSet rs, int rowNum) throws SQLException {

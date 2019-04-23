@@ -75,7 +75,8 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Handle validation exception. Throw if there was an error validating the data of the object supplied in the request body.
+     * Handle validation exception.
+     * Throw if there was an error validating the data of the object supplied in the request body.
      *
      * @param ex      is {javax.validation.ValidationException}.
      * @param request the web request with which an error occurred.
@@ -83,7 +84,9 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(javax.validation.ValidationException.class)
     public final @ResponseBody
-    ResponseEntity<ExceptionResponse> handleValidationExceptionObjects(javax.validation.ValidationException ex, WebRequest request) {
+    ResponseEntity<ExceptionResponse> handleValidationExceptionObjects(
+            javax.validation.ValidationException ex,
+            WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 Collections.singletonList(ex.getMessage()),
                 request.getDescription(false));
@@ -107,7 +110,8 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Handle data integrity violation exception. Throw if it is wrong to add links to the database (tag_id or post_id does not exist).
+     * Handle data integrity violation exception.
+     * Throw if it is wrong to add links to the database (tag_id or post_id does not exist).
      *
      * @param ex      is {DataIntegrityViolationException}.
      * @param request the web request with which an error occurred.
@@ -115,7 +119,9 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(DataIntegrityViolationException.class)
     public final @ResponseBody
-    ResponseEntity<ExceptionResponse> handleDataIntegrityViolationException(DataIntegrityViolationException ex, WebRequest request) {
+    ResponseEntity<ExceptionResponse> handleDataIntegrityViolationException(
+            DataIntegrityViolationException ex,
+            WebRequest request) {
         ExceptionResponse exceptionResponse = new ExceptionResponse(
                 Collections.singletonList(ex.getMessage()),
                 request.getDescription(false));
@@ -123,7 +129,8 @@ public class RestErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Handle method argument not valid exception. Throw if it is wrong to add links to the database (tag_id or post_id does not exist).
+     * Handle method argument not valid exception.
+     * Throw if it is wrong to add links to the database (tag_id or post_id does not exist).
      *
      * @param ex      is {MethodArgumentNotValidException}.
      * @param headers headers that were in the request.

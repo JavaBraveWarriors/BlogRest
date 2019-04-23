@@ -2,6 +2,9 @@ package com.blog.model;
 
 import java.util.List;
 
+/**
+ * The model Post list wrapper.
+ */
 public class PostListWrapper {
     List<ResponsePostDto> posts;
     Long countPages;

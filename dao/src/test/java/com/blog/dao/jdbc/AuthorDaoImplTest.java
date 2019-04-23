@@ -14,6 +14,9 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+/**
+ * The Author dao impl test.
+ */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:test-spring-dao.xml"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -32,7 +35,7 @@ public class AuthorDaoImplTest {
     private static final String UPDATED_AUTHOR_PASSWORD = "testUpdatePsw1";
     private static final String UPDATED_AUTHOR_LAST_NAME = "testUpdateLast1";
 
-    private static Author CORRECT_AUTHOR = new Author(
+    private static final Author CORRECT_AUTHOR = new Author(
             null,
             "testMail4",
             "testLogin4",

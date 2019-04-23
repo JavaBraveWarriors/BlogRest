@@ -10,8 +10,6 @@
         http://www.springframework.org/schema/mvc
         http://www.springframework.org/schema/mvc/spring-mvc.xsd">
 
-    <import resource="classpath:camel-configuration.xml"/>
-
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
         <property name="locations">
             <list>
@@ -50,25 +48,9 @@
         <property name="prettyPrint" value="true"/>
     </bean>
 
-    <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
-        <property name="poolName" value="mercatus_connection_pool"/>
-        <property name="dataSourceClassName" value="${jdbc.driverClassName}"/>
-        <property name="maximumPoolSize" value="30"/>
-        <property name="maxLifetime" value="60000"/>
-        <property name="idleTimeout" value="30000"/>
-        <property name="dataSourceProperties">
-            <props>
-                <prop key="url">${jdbc.url}</prop>
-                <prop key="user">${jdbc.username}</prop>
-                <prop key="password">${jdbc.password}</prop>
-                <prop key="cachePrepStmts">true</prop>
-                <prop key="allowMultiQueries">true</prop>
-                <prop key="useServerPrepStmts">true</prop>
-            </props>
-        </property>
-    </bean>
-    <bean id="dataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
-        <constructor-arg ref="hikariConfig"/>
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="proxyInterface" value="javax.sql.DataSource"/>
+        <property name="jndiName" value="java:jboss/datasources/MySQLDataSource"/>
     </bean>
 
 </beans>

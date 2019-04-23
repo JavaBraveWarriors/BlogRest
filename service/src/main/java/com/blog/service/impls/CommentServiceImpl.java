@@ -17,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
+/**
+ * The Comment service.
+ */
 @Service
 @Transactional
 public class CommentServiceImpl implements CommentService {
@@ -46,7 +49,8 @@ public class CommentServiceImpl implements CommentService {
         return commentDao.getCommentById(commentId);
     }
 
-    public CommentListWrapper getListCommentsByPostIdWithPagination(Long page, Long size, Long postId) throws ValidationException, NotFoundException {
+    public CommentListWrapper getListCommentsByPostIdWithPagination(Long page, Long size, Long postId)
+            throws ValidationException, NotFoundException {
         LOGGER.debug("Gets list of comments by page id = [{}], size = [{}] and postId = [{}].", page, size, postId);
         validator.validatePageAndSize(page, size);
         validator.validatePostId(postId);
@@ -72,15 +76,17 @@ public class CommentServiceImpl implements CommentService {
     public void updateComment(Comment comment) throws ValidationException, NotFoundException, InternalServerException {
         LOGGER.debug("Updates post = [{}].", comment);
         validator.validateUpdatedComment(comment);
-        if (!commentDao.updateComment(comment))
+        if (!commentDao.updateComment(comment)) {
             throw new InternalServerException(updateError);
+        }
     }
 
     public void deleteComment(Long commentId) throws ValidationException, NotFoundException, InternalServerException {
         LOGGER.debug("Deletes post = [{}].", commentId);
         validator.validateCommentId(commentId);
-        if (!commentDao.deleteComment(commentId))
+        if (!commentDao.deleteComment(commentId)) {
             throw new InternalServerException(updateError);
+        }
     }
 
     public Long getCountOfPagesWithPagination(Long postId, Long size) throws ValidationException, NotFoundException {

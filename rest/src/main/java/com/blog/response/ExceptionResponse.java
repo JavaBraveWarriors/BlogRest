@@ -2,6 +2,9 @@ package com.blog.response;
 
 import java.util.List;
 
+/**
+ * The Exception response.
+ */
 public class ExceptionResponse {
 
     private List<String> message;
